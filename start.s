@@ -157,6 +157,7 @@ Serial_Init:
 	// Core 0 branch to app	
 	b main	
 
+.globl delay
 delay:
   cbz w0, _delay_end
 delay_loop:
