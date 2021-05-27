@@ -28,12 +28,12 @@ loop1:
 	mov x1, SCREEN_WIDTH        // X Size
 
 loop0: // 320w 240h -> 76800 + 240
-	@ stur x10, [x0]	   			// Set color of pixel N
-	@ add x0, x0, 4	   			// Next pixel
-	@ sub x1, x1, 1	   			// decrement X counter
-	@ cbnz x1, loop0	   			// If not end row jump
-	@ sub x2, x2, 1	   			// Decrement Y counter
-	@ cbnz x2, loop1	   			// if not last row, jump
+	// stur x10, [x0]	   			// Set color of pixel N
+	// add x0, x0, 4	   			// Next pixel
+	// sub x1, x1, 1	   			// decrement X counter
+	// cbnz x1, loop0	   			// If not end row jump
+	// sub x2, x2, 1	   			// Decrement Y counter
+	// cbnz x2, loop1	   			// if not last row, jump
 	stur x10,[x0]	   			// Set color of pixel N
 	bl delay					// Mini delay before drawing
 	add x0,x0,4	   				// Next pixel
@@ -108,7 +108,7 @@ setColour:
 	// Return
 	// x18 Color a pintar
 	// Args
-	// x13:r
+	// x13 r
 	// x14 g
 	// x15 b
 	// 24 bits
@@ -118,7 +118,7 @@ setColour:
 	add x18, x18, x15			// RG+B
 	ret
 
-doSquare:	// Crea cuadrados //
+doSquare:	// Crea cuadrados // 50x50
 	mov x29, x30 				// Punto de retorno x30 dónde volver en el "main"
 	// BL sobreescribe el registro x30 y RET lee el registro x30 //
 	// Return -> nada
@@ -150,11 +150,15 @@ fj: // Se encarga de cada pixel de una fila
 	// TODO Continuar
 
 doRectagule:	// Crea rectángulos //
+	// @Diego
 	// Return -> nada
 	// Args
 	// x21 x2 lugar dónde empiezo a dibujar la figura
 	// x22 y2 lugar dónde empiezo a dibujar la figura
+	// x23 w cantidad de píxeles
 	// x18 colour
+
+	// 
 
 doCircle:
 	// Return -> nada
@@ -162,20 +166,34 @@ doCircle:
 	// x18 colour
 	// TODO Continuar
 
+doTriangle:
+	// @Diego
+	// Return -> nada
+	// Args
+	// x21 x2 lugar dónde empiezo a dibujar la figura
+	// x22 y2 lugar dónde empiezo a dibujar la figura
+	// x23 w cantidad de píxeles
+	// x18 colour
+
+	// A) Asignar el primer pixel de lado izquierdo inferior
+	// Luego pintarlo
+	// Bucle... Movernos al siguiente píxel (arriba o abajo)
+	// Hasta w...
+
+	// Luego bucle: bajamos hasta w
+
+	// Nos movemos hacia la izquierda hasta w-1
+
+	// Repetimos paso A)... hasta w=0
+	ret
+
+doDiego:
+	//@Diego
+
+	// Square 50x50
+	// Circle 50x50...
+
+	ret
+
 InfLoop:
 	b InfLoop
-
-timeLoop:
-	subi sp, sp, #16
-	stur x1, [sp, #0]
-	stur x2, [sp, #8]
-	add x2, xzr, xzr
-recTimeLoop:
-	cmp x2, x1
-	b.eq endTimeLoop
-	addi x2, x2, #1
-	b timeLoop
-endTimeLoop:
-	ldur x2, [sp, #8]
-	ldur x1, [sp, #0]
-	ret
