@@ -19,4 +19,3 @@ kernel8.img : memmap $(ASM_OBJS)
 
 run : all
 	qemu-system-aarch64 -M raspi3 -kernel kernel8.img -serial stdio
-	

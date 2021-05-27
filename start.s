@@ -26,7 +26,7 @@
 	.equ Set_ClkRate,  0x00038002 // UART: Set Clock Rate
 
 	.equ MMIO_BASE_ALTA,    0x3f20
-	
+
 	.equ GPFSEL0,			0x0000
 	.equ GPFSEL1,			0x0004
 	.equ GPPUD,				0x0094
@@ -49,8 +49,8 @@ _start:
 	mrs     x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
 	and     x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
 	cbz     x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
-	// Infinite Loop For Core 1, 2 and 3	
-CoreLoop:  
+	// Infinite Loop For Core 1, 2 and 3
+CoreLoop:
     wfe
 	b CoreLoop
 
@@ -62,7 +62,7 @@ StackInit:
     // clear bss
     ldr     x1, =__bss_start
     ldr     w2, =__bss_size
-_StackInit_loop:  
+_StackInit_loop:
     cbz     w2, FB_Init
     str     xzr, [x1], #8
     sub     w2, w2, #1
@@ -113,13 +113,13 @@ Serial_Init:
 	mov x0, GPPUD
 	movk x0, MMIO_BASE_ALTA, lsl #16
     str	wzr, [x0] // GPPUD = 0;
-	
+
 	mov w0, #200
 	bl delay    // delay ~200 cycles
 
 	mov  x21, GPPUDCLK0
 	movk x21, MMIO_BASE_ALTA, lsl #16
-	mov	w19, #0xc000 
+	mov	w19, #0xc000
     str	w19, [x21] // Set GPPUDCLK0
 
 	mov w0, #200
@@ -131,41 +131,41 @@ Serial_Init:
 	movk x0, MMIO_BASE_ALTA, lsl #16
 	mov	w1, #0x7ff
     str	w1, [x0] // UART0_ICR = 0x7FF clear interrupts
-	
+
 	mov x0, UART0_IBRD
 	movk x0, MMIO_BASE_ALTA, lsl #16
 	mov	w1, #0x2
 	str	w1, [x0] // 115200 baud
-	
+
 	mov x0, UART0_FBRD
 	movk x0, MMIO_BASE_ALTA, lsl #16
 	mov	w1, #0xB
-	str	w1, [x0] 
+	str	w1, [x0]
 
 	mov x0, UART0_LCRH
 	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x60 
+	mov	w1, #0x60
 	str	w1, [x0] // 8n1
 
 	mov x0, UART0_CR
 	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x301 
+	mov	w1, #0x301
 	str	w1, [x0] // enable Tx, Rx, FIFO
 
 
 	mov w0, w10 // Restore FrameBuffer Pointer
-	// Core 0 branch to app	
-	b main	
+	// Core 0 branch to app
+	b main
 
 .globl delay
 delay:
-  cbz w0, _delay_end
+	cbz w0, _delay_end
 delay_loop:
-  nop
-  subs w0, w0, #1
-  bne delay_loop
+	nop
+	subs w0, w0, #1
+	bne delay_loop
 _delay_end:
-  ret
+	ret
 
 
 
@@ -233,21 +233,21 @@ UART_STRUCT: // Mailbox Property Interface Buffer Structure
 	// Request Codes: $00000000 Process Request Response Codes: $80000000 Request Successful, $80000001 Partial Response
 	// Sequence Of Concatenated Tags
 	.word Set_ClkRate // Tag Identifier
-	.word 12 
-	.word 9 
+	.word 12
+	.word 9
 	.word 2 // UART CLK
 	.word 4000000 // UART at 4Mhz
-	.word 0 // UART Clear Turbo 
+	.word 0 // UART Clear Turbo
 
 	.word 0x00000000 // $0 (End Tag)
 UART_STRUCT_END:
 
 
 .globl uart_putc
-uart_putc:  
-  	sub sp, sp, #16
-  	str x2, [sp, 8]
-  	str x1, [sp, 0]
+uart_putc:
+	sub sp, sp, #16
+	str x2, [sp, 8]
+	str x1, [sp, 0]
     /* wait until we can send */
 	mov x1, UART0_FR
 	movk x1, MMIO_BASE_ALTA, lsl #16
@@ -255,22 +255,22 @@ _uart_putc_loop:
 	nop
     ldr	w2, [x1]      // UART0_ICR = 0x7FF clear interrupts
   	tbnz x2, 5, _uart_putc_loop	// If bit 5 is not zero, loop
-    
+
 	mov x1, UART0_DR
 	movk x1, MMIO_BASE_ALTA, lsl #16
 	ldr	w0, [x1]      // Send char in UART0_DR
 
-  	ldr x1, [sp, 0]
-  	ldr x2, [sp, 8]
-  	add sp, sp, #16
+	ldr x1, [sp, 0]
+	ldr x2, [sp, 8]
+	add sp, sp, #16
 	ret
 
 
 .globl uart_puts
-uart_puts:  
-  	sub sp, sp, #16
-  	str x2, [sp, 8]
-  	str x1, [sp, 0]
+uart_puts:
+	sub sp, sp, #16
+	str x2, [sp, 8]
+	str x1, [sp, 0]
     /* wait until we can send */
 	mov x1, UART0_FR
 	movk x1, MMIO_BASE_ALTA, lsl #16
@@ -278,13 +278,12 @@ _uart_puts_loop:
 	nop
     ldr	w2, [x1]      // UART0_ICR = 0x7FF clear interrupts
   	tbnz x2, 5, _uart_putc_loop	// If bit 5 is not zero, loop
-    
+
 	mov x1, UART0_DR
 	movk x1, MMIO_BASE_ALTA, lsl #16
 	ldr	w0, [x1]      // Send char in UART0_DR
 
-  	ldr x1, [sp, 0]
-  	ldr x2, [sp, 8]
-  	add sp, sp, #16
+	ldr x1, [sp, 0]
+	ldr x2, [sp, 8]
+	add sp, sp, #16
 	ret
-
