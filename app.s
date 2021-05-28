@@ -78,6 +78,7 @@ loop0: // 320w 240h -> 76800 + 240
 	add x0, x0, 4	   			// Next pixel
 	stur x18, [x0]
 
+	//TODO limpiar pantalla al final
 	//---------------------------------------------------------------
 	// Infinite Loop
 
@@ -158,6 +159,34 @@ doRectagule:	// Crea rectángulos //
 	// x23 w cantidad de píxeles
 	// x18 colour
 
+	mov x12, x21
+	mov x16, x22
+rectLoopAb:
+	// TODO Resolver tema de filas y columnas
+	cmp x21, x23 		// Reviso si llegue al punto
+	b.eq finRect		// Termino si llegue al final
+	bl setPixel			// Ubico el pixel
+	stur x18, [x0]		// Lo pinto
+	sub x22, x22, #1 	// Bajo 1 pixel
+	cmp x22, x23		// Me fijo si llegue al punto mas bajo del rectangulo
+	b.eq movDer			// Me muevo 1 pixel a la derecha si llegue al punto mas bajo
+	b rectLoopAb		// Me muevo para arriba
+movDer:
+	add x21, x21, #1	// Me muevo a la derecha
+	b rectLoopAr		// Me muevo para arriba
+rectLoopAr:
+	cmp x21, x23
+	b.eq finRect
+	bl setPixel
+	stur x18, [x0]
+	add x22, x22, #1
+	cmp x22, x23
+	b.eq movDer
+	b rectLoopAb
+
+finRect:
+	ret
+
 	// 
 
 doCircle:
@@ -176,15 +205,43 @@ doTriangle:
 	// x18 colour
 
 	// A) Asignar el primer pixel de lado izquierdo inferior
+	mov x16, x21	// Instancio x16 para setPixel
+	mov x12, x22	// Instancio x12 para setPixel
+rectAr:
+	bl setPixel		// Calculo el pixel
 	// Luego pintarlo
+	stur x18, [x0]	// Lo pinto
 	// Bucle... Movernos al siguiente píxel (arriba o abajo)
+	add x16, x16, #1	// Me muevo al siguiente
+	add x12, x12, #1	// Me muevo al siguiente
+	sub x9, x21, x23	// Calculo el rango entre el principio y el final
+	//sdiv x9, x9, #2		// TODO Corregir, idea: Calculo la mitad
+	sub x9, x9, #1		// 
+	cbnz x9, rectAr
 	// Hasta w...
-
+rectBaj:
+	bl setPixel
+	stur x18, [x0]
+	sub x12, x12, #1
+	add x16, x16, #1
+	cmp x16, x23
+	b.eq rectIzq
 	// Luego bucle: bajamos hasta w
+	b rectBaj
 
 	// Nos movemos hacia la izquierda hasta w-1
+rectIzq:
+	bl setPixel
+	stur x18, [x0]
+	sub x21, x21, #1
+	sub x9, x23, #1
+	adds xzr, x9, #0
+	b.eq endTriang
+	cmp x21, x9
+	b.eq rectAr
 
 	// Repetimos paso A)... hasta w=0
+endTriang: //TODO revisar
 	ret
 
 doDiego:
