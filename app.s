@@ -7,6 +7,9 @@
 .equ COLOR_NEGRO,		0x00
 
 // 32 bits (4 bytes)
+// Registros basura
+// x8
+// x9
 // x10 Guarda el color
 .globl main
 main:
@@ -28,19 +31,12 @@ loop1:
 	mov x1, SCREEN_WIDTH        // X Size
 
 loop0: // 320w 240h -> 76800 + 240
-	// stur x10, [x0]	   			// Set color of pixel N
-	// add x0, x0, 4	   			// Next pixel
-	// sub x1, x1, 1	   			// decrement X counter
-	// cbnz x1, loop0	   			// If not end row jump
-	// sub x2, x2, 1	   			// Decrement Y counter
-	// cbnz x2, loop1	   			// if not last row, jump
-	stur x10,[x0]	   			// Set color of pixel N
-	bl delay					// Mini delay before drawing
-	add x0,x0,4	   				// Next pixel
-	sub x1,x1,1	   				// decrement X counter
-	cbnz x1,loop0	  			// If not end row jump
-	sub x2,x2,1	   				// Decrement Y counter
-	cbnz x2,loop1	   			// if not last row, jump
+	stur x10, [x0]	   			// Set color of pixel N
+	add x0, x0, 4	   			// Next pixel
+	sub x1, x1, 1	   			// decrement X counter
+	cbnz x1, loop0	   			// If not end row jump
+	sub x2, x2, 1	   			// Decrement Y counter
+	cbnz x2, loop1	   			// if not last row, jump
 
 	// Dibujamos un oso de pixeles
 	// Dirección = Dirección de inicio + 4 * [x + (y * 640)]
@@ -62,25 +58,39 @@ loop0: // 320w 240h -> 76800 + 240
 	//
 	mov x16, 2
 	mov x12, 2
-	bl setPixel
-	mov x13, 162
-	mov x14, 85
-	mov x15, 255
-	bl setColour
+	bl setPixel					// Pixel a pintar
+	mov x13, 162				// R
+	mov x14, 85					// G
+	mov x15, 255				// B
+	bl setColour				// R+G+B = Morado
 	stur x18, [x0]
 	add x0, x0, 4	   			// Next pixel
 	stur x18, [x0]
-	add x0, x0, 640
-	add x0, x0, 640
-	add x0, x0, 640
-	add x0, x0, 640
+	add x0, x0, 2560            // 640 * 4
 	stur x18, [x0]
 	add x0, x0, 4	   			// Next pixel
 	stur x18, [x0]
 
+	// TODO Dibujamos un círculo
+	// Medio es 320 x 240
+	mov x13, 250				// R
+	mov x14, 81					// G
+	mov x15, 171				// B
+	bl setColour				// R+G+B = Blanco
+	stur x18, [x0]
+	mov x21, 320				// xc x centro
+	mov x22, 240				// yc y centro
+	mov x23, 50					// radio
+	bl doCircle
+
+	mov x13, 17					// R
+	mov x14, 88					// G
+	mov x15, 253				// B
+	bl setColour				// Azul
+
+
 	//TODO limpiar pantalla al final
-	//---------------------------------------------------------------
-	// Infinite Loop
+	b InfLoop
 
 setPixel:
 	// Return
@@ -89,8 +99,8 @@ setPixel:
 	// x12 y
 	// x16 x
 
-	mul x0, x16, x1             // y * WIDTH
-	add x0, x16, x0             // + x
+	mul x0, x12, x1             // y * WIDTH
+	add x0, x0, x16				// + x
 	lsl x0, x0, 2				// *4
 	add x0, x20, x0				// Pixel a pintar
 	ret
@@ -121,7 +131,6 @@ setColour:
 
 doSquare:	// Crea cuadrados // 50x50
 	mov x29, x30 				// Punto de retorno x30 dónde volver en el "main"
-	// BL sobreescribe el registro x30 y RET lee el registro x30 //
 	// Return -> nada
 	// Args
 	// x21 x2 lugar dónde empiezo a dibujar la figura
@@ -146,7 +155,7 @@ fi:	// Se encarga de cambiar la fila
 	//B.ge x9, x7               // ...
 	// TODO Hacer bucle
 
-fj: // Se encarga de cada pixel de una fila
+fj:	// Se encarga de cada pixel de una fila
 	mov x8, x21					// counter (para cambiar las x)
 	// TODO Continuar
 
@@ -161,6 +170,11 @@ doRectagule:	// Crea rectángulos //
 
 	mov x12, x21
 	mov x16, x22
+
+// BL sobreescribe el registro x30 y RET lee el registro x30 //
+// BL (Break and link -> funciones) es para salto incondicional, cambia el program counter y cambia el registro x30 //
+// B (Break dentro de funciones) es para saltos condicionales cambia el program counter //
+
 rectLoopAb:
 	// TODO Resolver tema de filas y columnas
 	cmp x21, x23 		// Reviso si llegue al punto
@@ -171,9 +185,11 @@ rectLoopAb:
 	cmp x22, x23		// Me fijo si llegue al punto mas bajo del rectangulo
 	b.eq movDer			// Me muevo 1 pixel a la derecha si llegue al punto mas bajo
 	b rectLoopAb		// Me muevo para arriba
+
 movDer:
 	add x21, x21, #1	// Me muevo a la derecha
 	b rectLoopAr		// Me muevo para arriba
+
 rectLoopAr:
 	cmp x21, x23
 	b.eq finRect
@@ -187,13 +203,117 @@ rectLoopAr:
 finRect:
 	ret
 
-	// 
-
 doCircle:
+	// (0, 0) centro
+	// point p(x, y)
+	// F(p) = x^2 + y^2 - r^2
 	// Return -> nada
 	// Args
+	// x21 xc x centro
+	// x22 yc y centro
+	// x23 r radio (asumimos que el radio es mayor que 0)
 	// x18 colour
-	// TODO Continuar
+	// sub sp, sp, #8
+	// stur x30, [sp, #0]  // Guardamos el return pointer en memoria
+	mov x27, x30
+
+	mov x25, x21		// x = r
+	mov x26, xzr   		// y = 0 (xzr = 0)
+	// Initialising the value of P
+	sub x10, xzr, x23   // x10 = -r  // FIXME Checkear
+	add x28, x10, #1	// P = 1 - r
+	// startCircleLoop...
+
+startCircleLoop:		// While x > y
+	add x26, x26, #1
+	// Mid-point is inside or on the perimeter
+	cmp x28, xzr		// P <= 0
+	b.eq cirif1			// Si P == 0 entra en el if
+	b.lt cirif1			// Si P < 0 entra en el if
+	b cirelse1       	// Si no, entra en el else
+
+cirif1:
+	// P = P + 2*y + 1
+	lsl x8, x26, 1		// x8 = 2*y
+	add x8, x8, 1   	// x8 = 2*y + 1
+	add x28, x28, x8 	// P = P + 2*y + 1
+	b cirif2
+
+cirelse1:	// Mid-point is outside the perimeter
+	sub x25, x25, 1		// x--
+	// P = P + 2*y - 2*x + 1
+	lsl x8, x25, 1		// x8 = 2*x
+	lsl x9, x26, 1		// x9 = 2*y
+	add x8, x8, 1		// x8 = 2*x + 1
+	sub x9, x9, x8		// x9 = 2*y - (2*x + 1)
+	add x28, x28, x9	// x8 = x + x9 = P + 2*y - 2*x + 1
+
+cirif2:		// if (x < y)
+	// xc : x21 -- yc : x22
+	// x : x25 -- y : x26
+	// setPixel x16 : x -- x12 : y -- x18: colour
+
+	cmp x25, x26
+	b.lt circleEnd
+
+	add x16, x26, x22	// x16 draw x = y + y_centre
+	add x12, x25, x21	// x12 draw y = x + x_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	add x16, x26, x22	// x16 draw x = y + y_centre
+	sub x12, x25, x21	// x12 draw y = -x + x_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	sub x16, x22, x26	// x16 draw x = -y + y_centre
+	add x12, x25, x21	// x12 draw y = x + x_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	sub x16, x22, x26	// x16 draw x = -y + y_centre
+	sub x12, x25, x21	// x12 draw y = -x + x_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	cmp x25, x26
+	b.eq startCircleLoop
+
+	// If the generated point is on the line x = y then
+	// the perimeter points have already been printed
+	// if (x != y)
+
+	// xc : x21 -- yc : x22
+	// x : x25 -- y : x26
+	// setPixel x16 : x -- x12 : y -- x18: colour
+
+	add x16, x26, x21	// x16 draw x = y + x_centre
+	add x12, x25, x22	// x12 draw y = x + y_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+    sub x16, x21, x26	// x16 draw x = -y + x_centre
+	// add x12, x25, x22	// x12 draw y = x + y_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	add x16, x26, x21 	// x16 draw x = y + x_centre
+	sub x12, x22, x25	// x12 draw y = -x + y_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	sub x16, x21, x26	// x16 draw x = -y + x_centre
+	// sub x12, x22, x25	// x12 draw y = -x + y_centre
+	bl setPixel			// Pixel a pintar
+	stur x18, [x0]		// Se pinta
+
+	b.eq startCircleLoop
+
+circleEnd:
+	mov x30, x27
+	// ldur x30, [sp, #0]  // Guardamos el return pointer en memoria	ret
+	// add sp, sp, #8
+	ret
 
 doTriangle:
 	// @Diego
@@ -207,6 +327,7 @@ doTriangle:
 	// A) Asignar el primer pixel de lado izquierdo inferior
 	mov x16, x21	// Instancio x16 para setPixel
 	mov x12, x22	// Instancio x12 para setPixel
+
 rectAr:
 	bl setPixel		// Calculo el pixel
 	// Luego pintarlo
@@ -216,9 +337,10 @@ rectAr:
 	add x12, x12, #1	// Me muevo al siguiente
 	sub x9, x21, x23	// Calculo el rango entre el principio y el final
 	//sdiv x9, x9, #2		// TODO Corregir, idea: Calculo la mitad
-	sub x9, x9, #1		// 
+	sub x9, x9, #1		//
 	cbnz x9, rectAr
 	// Hasta w...
+
 rectBaj:
 	bl setPixel
 	stur x18, [x0]
@@ -245,11 +367,15 @@ endTriang: //TODO revisar
 	ret
 
 doDiego:
-	//@Diego
+	// @Diego
 
 	// Square 50x50
 	// Circle 50x50...
 
+	ret
+
+doVale:
+	// @Valentina Vispo
 	ret
 
 InfLoop:
