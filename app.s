@@ -24,8 +24,12 @@
 main:
 break:
 	mov x20, x0					// X0 Direccion base del framebuffer
-
 	bl cleanScreen
+	mov x13, 96					// R
+	mov x14, 96					// G
+	mov x15, 96					// B
+	bl setColour				// Azul
+	bl paintScreen
 
 	//bl circleTest
 
@@ -102,6 +106,8 @@ break:
 	bl setColour				// R+G+B = Naranja
 	mov x21, 200
 	bl verticalLine
+	mov x21, 300
+	bl verticalLine
 
 EndMain:
 	bl delay
@@ -121,6 +127,7 @@ borderLoop:
 	b borderLoop
 
 borderEnd:
+	// TODO
 
 circleTest:
 	sub sp, sp, #8
@@ -146,16 +153,19 @@ circleTest:
 delay:
 	ret
 
+// NOTE drawPixel
 drawPixel:
-	// Return: Nada
+	// Return -> Nada
 	// Args: y=x12  -- x=x16  -- colour=x18
 	sub sp, sp, #8
 	stur x30, [sp, #0]
 	bl setPixel
+	stur w18, [x0]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits)
 	ldur x30, [sp, #0]
 	add sp, sp, #8
 	ret
 
+// NOTE setPixel
 setPixel:
 	// Return:  x0 Pixel a pintar
 	// Args: y=x12  -- x=x16
@@ -240,8 +250,7 @@ verticalLine:
 verLineLoop:
 	cmp x1, x12					// Comparamos SCREEN_HEIGH con y
 	b.eq verLineEnd				// Si x1 es igual a x12 termina
-	bl setPixel					// Sino, pintamos el pixel
-	stur x18, [x0]				// Pintamos
+	bl drawPixel
 	add x12, x12, #1			// Pasamos a la siguiente "fila" (bajamos 1 en y)
 	b verLineLoop				// Continuamos con el loop
 
@@ -274,6 +283,7 @@ doRectagule:	// Crea rectángulos //
 
 preRectLoopDer:
 	b endRect
+
 rectLoopDer:
 	cmp x16, x23 		// Reviso si llegue al punto
 	b.eq rectLoopBaj	// Termino si llegue al final
@@ -310,7 +320,7 @@ endRect:
 	ret
 
 // NOTE Circle
-doCircle:
+doCircle: // Mid-Point Circle Drawing Algorithm
 	// (0, 0) centro
 	// point p(x, y)
 	// F(p) = x^2 + y^2 - r^2
@@ -357,118 +367,87 @@ cirelse1:	// Mid-point is outside the perimeter
 	add x8, x8, #1		// x8 = 2*x + 1
 	sub x9, x9, x8		// x9 = 2*y - (2*x + 1)
 	add x28, x28, x9	// x8 = x + x9 = P + 2*y - 2*x + 1
+	// cirif2...
 
-cirif2:		// if (x < y)
-	// xc : x21 -- yc : x22
-	// x : x25 -- y : x26
-	// setPixel x16 : x -- x12 : y -- x18: colour
+cirif2:					// if (x < y)
 	cmp x25, x26
 	b.lt circleEnd
 
-	// xd = x + x_centre
-	// yd = y + y_centre
 	add x16, x25, x21	// x16 xd = x + x_centre  [c]
 	add x12, x26, x22	// x12 yd = y + y_centre  [c]
-	bl setPixel			// Pixel a pintar
 	mov x13, 250		// R
 	mov x14, 0			// G
 	mov x15, 0			// B
 	bl setColour		// R+G+B = Rojo
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = -x + x_centre
-	// yd = y + y_centre
 	sub x16, x21, x25	// x16 draw x = -x + x_centre [c]
 	add x12, x26, x22	// x12 draw y = y + y_centre  [c]
-	bl setPixel			// Pixel a pintar
 	mov x13, 250		// R
 	mov x14, 128		// G
 	mov x15, 0			// B
 	bl setColour		// R+G+B = Naranja
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = x + x_centre
-	// yd = -y + y_centre
-	add x16, x25, x21	// x16 xd = x + x_centre  [c]
-	sub x12, x22, x26	// x12 draw y = -y + y_centre [c]
-	bl setPixel			// Pixel a pintar
+	add x16, x25, x21	// x16 xd = x + x_centre
+	sub x12, x22, x26	// x12 draw y = -y + y_centre
 	mov x13, 255		// R
 	mov x14, 255		// G
 	mov x15, 0			// B
 	bl setColour		// R+G+B = Amarillo
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = -x + x_centre
-	// yd = -y + y_centre
-	sub x16, x21, x25	// x16 draw x = -x + x_centre [c]
-	sub x12, x22, x26	// x12 draw y = -y + y_centre [c]
-	bl setPixel			// Pixel a pintar
+	sub x16, x21, x25	// x16 draw x = -x + x_centre
+	sub x12, x22, x26	// x12 draw y = -y + y_centre
 	mov x13, 128		// R
 	mov x14, 255		// G
 	mov x15, 0			// B
 	bl setColour		// R+G+B = VerdeRana
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
 	cmp x25, x26
 	b.eq startCircleLoop
 
 	// If the generated point is on the line x = y then
 	// the perimeter points have already been printed
-	// if (x != y)
+	// if (x != y) :
 
-	// xc : x21 -- yc : x22
-	// x : x25 -- y : x26
-	// setPixel x16 : x -- x12 : y -- x18: colour
-
-	// xd = y + x_centre
-	// yd = x + y_centre
-	add x16, x26, x21	// x16 draw x = y + x_centre [c]
-	add x12, x25, x22	// x12 draw y = x + y_centre [c]
-	bl setPixel			// Pixel a pintar
+	add x16, x26, x21	// x16 draw x = y + x_centre
+	add x12, x25, x22	// x12 draw y = x + y_centre
 	mov x13, 0			// R
 	mov x14, 255		// G
 	mov x15, 0			// B
 	bl setColour		// R+G+B = Verde
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = -y + x_centre
-	// yd = x + y_centre
-    sub x16, x21, x26	// x16 draw x = -y + x_centre [c]
-	add x12, x25, x22	// x12 draw y = x + y_centre [c]
-	bl setPixel			// Pixel a pintar
+    sub x16, x21, x26	// x16 draw x = -y + x_centre
+	add x12, x25, x22	// x12 draw y = x + y_centre
 	mov x13, 255		// R
 	mov x14, 0			// G
 	mov x15, 255		// B
 	bl setColour		// R+G+B = Rosa
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = y + x_centre
-	// yd = -x + y_centre
-	add x16, x26, x21	// x16 draw x = y + x_centre [c]
-	sub x12, x22, x25	// x12 draw y = -x + y_centre [c]
-	bl setPixel			// Pixel a pintar
+	add x16, x26, x21	// x16 draw x = y + x_centre
+	sub x12, x22, x25	// x12 draw y = -x + y_centre
 	mov x13, 0			// R
 	mov x14, 255		// G
 	mov x15, 255		// B
 	bl setColour		// R+G+B = Celeste
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
-	// xd = -y + x_centre
-	// yd = -x + y_centre
-	sub x16, x21, x26	// x16 draw x = -y + x_centre [c]
-	sub x12, x22, x25	// x12 draw y = -x + y_centre [c]
-	bl setPixel			// Pixel a pintar
+	sub x16, x21, x26	// x16 draw x = -y + x_centre
+	sub x12, x22, x25	// x12 draw y = -x + y_centre
 	mov x13, 255		// R
 	mov x14, 255		// G
 	mov x15, 255		// B
 	bl setColour		// R+G+B = Blanco
-	stur x18, [x0]		// Se pinta
+	bl drawPixel
 
 	cmp x25, x26
 	b.gt startCircleLoop
 
 circleEnd:
-	//mov x30, x27
 	ldur x30, [sp, #0]  // Guardamos el return pointer en memoria	ret
 	add sp, sp, #8
 	ret
@@ -540,19 +519,20 @@ cleanScreen:  // Pinta toda la pantalla de negro
 	add sp, sp, #8
 	ret
 
+// NOTE paintScreen
 paintScreen:	// 320w 240h -> 76800 + 240
 	// Return -> nada
-	// Args
-	// x18 Colour
+	// Args: x18 Colour
+	mov x0, x20					// Origen del frameBuffer
 	mov x8, SCREEN_WIDTH
 	mov x9, SCREEN_HEIGH
 	mul x8, x8, x9  			// x8 contador de pixeles a pintar
 	// paintScreenLoop...
 
 paintScreenLoop:
-	stur x18, [x0]	   			// Set color of pixel N
+	stur w18, [x0]	   			// Set color of pixel N
 	add x0, x0, 4	   			// Next pixel
-	sub x8, x8, 1	   			// decrement X counter
+	sub x8, x8, 1	   			// decrement pixel counter
 	cbnz x8, paintScreenLoop	// If not end row jump
 	ret
 
