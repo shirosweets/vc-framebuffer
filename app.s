@@ -1,3 +1,7 @@
+// --
+// --
+// --
+// --
 
 .equ SCREEN_WIDTH, 		640
 .equ SCREEN_HEIGH, 		480
@@ -7,90 +11,80 @@
 .equ COLOR_NEGRO,		0x00
 
 // 32 bits (4 bytes)
-// Registros basura
-// x8
-// x9
-// x10 Guarda el color
+// Registros basura: x1, x2, x8, x9, x10
+
+// NOTE Registros globales //
+// SCREEN_HEIGH
+// SCREEN_WIDTH
+// x18 Colour
+// x20 Base del framebuffer
+
 .globl main
 main:
-	mov x20, x0					// Guarda la dirección del primer pixel
-	mov x0, x20					// Dirección de memoria para pintar
-	// X0 contiene la direccion base del framebuffer
+	mov x20, x0					// X0 Direccion base del framebuffer
 
 	//---------------- CODE HERE ------------------------------------
 
-	movz x10, COLOR_1, lsl 16	// R en los primeros 8 bits
-	movk x10, COLOR_2, lsl 00	// Solo deja 16 bits G+B
-	// 0xC71585 0x0000FF 0x1585
-	// ROJO 0x1504
-	// ROSA 0x1585
-
-	mov x2, SCREEN_HEIGH        // Y Size
-
-loop1:
-	mov x1, SCREEN_WIDTH        // X Size
-
-loop0: // 320w 240h -> 76800 + 240
-	stur x10, [x0]	   			// Set color of pixel N
-	add x0, x0, 4	   			// Next pixel
-	sub x1, x1, 1	   			// decrement X counter
-	cbnz x1, loop0	   			// If not end row jump
-	sub x2, x2, 1	   			// Decrement Y counter
-	cbnz x2, loop1	   			// if not last row, jump
-
-	// Dibujamos un oso de pixeles
-	// Dirección = Dirección de inicio + 4 * [x + (y * 640)]
-	// ( ¬ _ ¬ )
-	mov x0, x20					// Nos posicionamos en el primer pixel #0
-	add x0, x0, 4	   			// Next pixel #1
-	mov x16, 240				// y
-	mov x17, SCREEN_WIDTH		// W
-	mul x0, x16, x17
-	mov x16, 320				// x
-	add x0, x0, x16
-	lsl x0, x0, 2				// *4
-	add x0, x20, x0				// Pixel a pintar
-	// Seteamos el color a negro
-	movz x18, COLOR_NEGRO, lsl 0
-	// movk x18, COLOR_NEGRO, lsl 0
-	stur x18, [x0]				//
-
-	//
-	mov x16, 2
-	mov x12, 2
-	bl setPixel					// Pixel a pintar
-	mov x13, 162				// R
-	mov x14, 85					// G
-	mov x15, 255				// B
-	bl setColour				// R+G+B = Morado
-	stur x18, [x0]
-	add x0, x0, 4	   			// Next pixel
-	stur x18, [x0]
-	add x0, x0, 2560            // 640 * 4
-	stur x18, [x0]
-	add x0, x0, 4	   			// Next pixel
-	stur x18, [x0]
-
-	// TODO Dibujamos un círculo
+	// Dibujamos un círculo
 	// Medio es 320 x 240
 	mov x13, 250				// R
 	mov x14, 81					// G
 	mov x15, 171				// B
 	bl setColour				// R+G+B = Blanco
 	stur x18, [x0]
+	mov x16, 320
+	mov x12, 240
 	mov x21, 320				// xc x centro
 	mov x22, 240				// yc y centro
 	mov x23, 50					// radio
 	bl doCircle
 
+	// Dibujamos un pixel axul al medio de la pantalla
+	mov x16, 320
+	mov x12, 240
+	bl setPixel					// Pixel a pintar
 	mov x13, 17					// R
 	mov x14, 88					// G
 	mov x15, 253				// B
 	bl setColour				// Azul
+	stur x18, [x0]
+
+	// Dibujamos un pixel axul al medio de la pantalla
+	mov x16, 320
+	mov x12, 240
+	bl setPixel					// Pixel a pintar
+	mov x13, 17					// R
+	mov x14, 253				// G
+	mov x15, 64					// B
+	bl setColour				// Verde
+	stur x18, [x0]
+
+EndMain:
+	bl delay
+	b EndMain
 
 
-	//TODO limpiar pantalla al final
-	b InfLoop
+circleTest:
+
+
+delay:
+	ret
+
+cleanScreen:	// 320w 240h -> 76800 + 240
+	// Return -> nada
+	// Args
+	// x18 Colour
+	mov x8, SCREEN_WIDTH
+	mov x9, SCREEN_HEIGH
+	mul x8, x8, x9  			// x8 contador de pixeles a pintar
+	// cleanloop...
+
+cleanloop:
+	stur x18, [x0]	   			// Set color of pixel N
+	add x0, x0, 4	   			// Next pixel
+	sub x8, x8, 1	   			// decrement X counter
+	cbnz x8, cleanloop	   		// If not end row jump
+	ret
 
 setPixel:
 	// Return
@@ -98,8 +92,8 @@ setPixel:
 	// Args
 	// x12 y
 	// x16 x
-
-	mul x0, x12, x1             // y * WIDTH
+	mov x8, SCREEN_WIDTH
+	mul x0, x12, x8   			// y * WIDTH
 	add x0, x0, x16				// + x
 	lsl x0, x0, 2				// *4
 	add x0, x20, x0				// Pixel a pintar
@@ -203,6 +197,7 @@ rectLoopAr:
 finRect:
 	ret
 
+// NOTE Circle
 doCircle:
 	// (0, 0) centro
 	// point p(x, y)
@@ -213,13 +208,11 @@ doCircle:
 	// x22 yc y centro
 	// x23 r radio (asumimos que el radio es mayor que 0)
 	// x18 colour
-	// sub sp, sp, #8
-	// stur x30, [sp, #0]  // Guardamos el return pointer en memoria
-	mov x27, x30
+	sub sp, sp, #8
+	stur x30, [sp, #0]  // Guardamos el return pointer en memoria
 
 	mov x25, x21		// x = r
 	mov x26, xzr   		// y = 0 (xzr = 0)
-	// Initialising the value of P
 	sub x10, xzr, x23   // x10 = -r  // FIXME Checkear
 	add x28, x10, #1	// P = 1 - r
 	// startCircleLoop...
@@ -310,11 +303,12 @@ cirif2:		// if (x < y)
 	b.eq startCircleLoop
 
 circleEnd:
-	mov x30, x27
-	// ldur x30, [sp, #0]  // Guardamos el return pointer en memoria	ret
-	// add sp, sp, #8
+	//mov x30, x27
+	ldur x30, [sp, #0]  // Guardamos el return pointer en memoria	ret
+	add sp, sp, #8
 	ret
 
+// NOTE Triangle
 doTriangle:
 	// @Diego
 	// Return -> nada
@@ -377,6 +371,3 @@ doDiego:
 doVale:
 	// @Valentina Vispo
 	ret
-
-InfLoop:
-	b InfLoop
