@@ -22,6 +22,7 @@
 
 .globl main
 main:
+break:
 	mov x20, x0					// X0 Direccion base del framebuffer
 
 	bl cleanScreen
@@ -73,6 +74,7 @@ main:
 	mov x14, 255				// G
 	mov x15, 255				// B
 	bl setColour				// Blanco
+	// FIXME?
 	//bl doRectagule
 
 	// Dibujamos un círculo
@@ -89,9 +91,9 @@ main:
 	//stur x18, [x0]
 	//mov x16, 320
 	//mov x12, 240
-	mov x21, 320				// xc x centro
-	mov x22, 240				// yc y centro
-	mov x23, #50				// radio
+	mov x21, 110				// xc x centro
+	mov x22, 110				// yc y centro
+	mov x23, #100				// radio
 	bl doCircle
 
 	mov x13, 255				// R
@@ -144,12 +146,19 @@ circleTest:
 delay:
 	ret
 
+drawPixel:
+	// Return: Nada
+	// Args: y=x12  -- x=x16  -- colour=x18
+	sub sp, sp, #8
+	stur x30, [sp, #0]
+	bl setPixel
+	ldur x30, [sp, #0]
+	add sp, sp, #8
+	ret
+
 setPixel:
-	// Return
-	// x0 Pixel a pintar
-	// Args
-	// x12 y
-	// x16 x
+	// Return:  x0 Pixel a pintar
+	// Args: y=x12  -- x=x16
 	mov x8, SCREEN_WIDTH
 	mul x0, x12, x8   			// y * WIDTH
 	add x0, x0, x16				// + x
@@ -259,15 +268,15 @@ doRectagule:	// Crea rectángulos //
 
 	mov x16, x21		// y setPixel
 	mov x12, x22		// x setPixel
-	mov x9, x21
-	mov x10, x22
-	//b rectLoopAb //REVIEW No se si funciona
+	mov x9, x21			// Guardo la posicion inicial de x
+	mov x10, x22		// Idem arbiba de y
+	//b rectLoopAb
 
+preRectLoopDer:
+	b endRect
 rectLoopDer:
-	sub x23, x23, #1 //REVIEW Medio ilegal porque termina 1 antes
-	// TODO Resolver tema de filas y columnas
 	cmp x16, x23 		// Reviso si llegue al punto
-	b.eq finRect		// Termino si llegue al final
+	b.eq rectLoopBaj	// Termino si llegue al final
 	bl setPixel			// Ubico el pixel
 	stur x18, [x0]		// Lo pinto
 	add x12, x12, #1 	// Bajo 1 pixel
@@ -275,33 +284,29 @@ rectLoopDer:
 
 rectLoopBaj:
 	cmp x12, x24
-	b.eq finRect
+	b.eq rectLoopIzq
 	bl setPixel
 	stur x18, [x0]
 	sub x16, x16, #1
-	cmp x16, x23
-	b.eq rectLoopIzq
 	b rectLoopDer
 
 rectLoopIzq:
 	cmp x12, x9 		// Reviso si llegue al punto
-	b.eq finRect		// Termino si llegue al final
+	b.eq rectLoopAr		// Termino si llegue al final
 	bl setPixel			// Ubico el pixel
 	stur x18, [x0]		// Lo pinto
 	sub x12, x12, #1 	// Me muevo para atras 1 pixel
-	cmp x12, x23		// Me fijo si llegue al punto más bajo del rectángulo
-	b.eq rectLoopAr		// Me muevo 1 pixel a la derecha si llegue al punto más bajo
 	b rectLoopIzq		// Me muevo para arriba
 
 rectLoopAr:
 	cmp x12, x10
-	b.eq rectLoopDer
+	b.eq preRectLoopDer
 	bl setPixel
 	stur x18, [x0]
 	add x16, x16, #1
 	b rectLoopAr
 
-finRect:
+endRect:
 	ret
 
 // NOTE Circle
@@ -315,9 +320,12 @@ doCircle:
 	// x22 yc y centro
 	// x23 r radio (asumimos que el radio es mayor que 0)
 	// x18 colour
+	// Used
+	// x25 x
+	// x26 y
+	// x28 P
 	sub sp, sp, #8
 	stur x30, [sp, #0]  // Guardamos el return pointer en memoria
-
 	mov x25, x23		// x = r
 	mov x26, xzr   		// y = 0 (xzr = 0)
 	sub x8, xzr, x23   	// x8 = -r
@@ -328,8 +336,7 @@ startCircleLoop:		// While x > y
 	add x26, x26, #1
 	// Mid-point is inside or on the perimeter
 	cmp x28, xzr		// P <= 0
-	b.eq cirif1			// Si P == 0 entra en el if
-	b.lt cirif1			// Si P < 0 entra en el if
+	b.le cirif1			// Si P <= 0 entra en el if
 	b cirelse1       	// Si no, entra en el else
 
 cirif1:		// if (P <= 0)
@@ -358,24 +365,48 @@ cirif2:		// if (x < y)
 	cmp x25, x26
 	b.lt circleEnd
 
-	add x16, x26, x22	// x16 draw x = y + y_centre
-	add x12, x25, x21	// x12 draw y = x + x_centre
+	// xd = x + x_centre
+	// yd = y + y_centre
+	add x16, x25, x21	// x16 xd = x + x_centre  [c]
+	add x12, x26, x22	// x12 yd = y + y_centre  [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 250		// R
+	mov x14, 0			// G
+	mov x15, 0			// B
+	bl setColour		// R+G+B = Rojo
 	stur x18, [x0]		// Se pinta
 
-	add x16, x26, x22	// x16 draw x = y + y_centre
-	sub x12, x25, x21	// x12 draw y = -x + x_centre
+	// xd = -x + x_centre
+	// yd = y + y_centre
+	sub x16, x21, x25	// x16 draw x = -x + x_centre [c]
+	add x12, x26, x22	// x12 draw y = y + y_centre  [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 250		// R
+	mov x14, 128		// G
+	mov x15, 0			// B
+	bl setColour		// R+G+B = Naranja
 	stur x18, [x0]		// Se pinta
 
-	sub x16, x22, x26	// x16 draw x = -y + y_centre
-	add x12, x25, x21	// x12 draw y = x + x_centre
+	// xd = x + x_centre
+	// yd = -y + y_centre
+	add x16, x25, x21	// x16 xd = x + x_centre  [c]
+	sub x12, x22, x26	// x12 draw y = -y + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 255		// R
+	mov x14, 255		// G
+	mov x15, 0			// B
+	bl setColour		// R+G+B = Amarillo
 	stur x18, [x0]		// Se pinta
 
-	sub x16, x22, x26	// x16 draw x = -y + y_centre
-	sub x12, x25, x21	// x12 draw y = -x + x_centre
+	// xd = -x + x_centre
+	// yd = -y + y_centre
+	sub x16, x21, x25	// x16 draw x = -x + x_centre [c]
+	sub x12, x22, x26	// x12 draw y = -y + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 128		// R
+	mov x14, 255		// G
+	mov x15, 0			// B
+	bl setColour		// R+G+B = VerdeRana
 	stur x18, [x0]		// Se pinta
 
 	cmp x25, x26
@@ -389,27 +420,52 @@ cirif2:		// if (x < y)
 	// x : x25 -- y : x26
 	// setPixel x16 : x -- x12 : y -- x18: colour
 
-	add x16, x26, x21	// x16 draw x = y + x_centre
-	add x12, x25, x22	// x12 draw y = x + y_centre
+	// xd = y + x_centre
+	// yd = x + y_centre
+	add x16, x26, x21	// x16 draw x = y + x_centre [c]
+	add x12, x25, x22	// x12 draw y = x + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 0			// R
+	mov x14, 255		// G
+	mov x15, 0			// B
+	bl setColour		// R+G+B = Verde
 	stur x18, [x0]		// Se pinta
 
-    sub x16, x21, x26	// x16 draw x = -y + x_centre
-	// add x12, x25, x22	// x12 draw y = x + y_centre
+	// xd = -y + x_centre
+	// yd = x + y_centre
+    sub x16, x21, x26	// x16 draw x = -y + x_centre [c]
+	add x12, x25, x22	// x12 draw y = x + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 255		// R
+	mov x14, 0			// G
+	mov x15, 255		// B
+	bl setColour		// R+G+B = Rosa
 	stur x18, [x0]		// Se pinta
 
-	add x16, x26, x21 	// x16 draw x = y + x_centre
-	sub x12, x22, x25	// x12 draw y = -x + y_centre
+	// xd = y + x_centre
+	// yd = -x + y_centre
+	add x16, x26, x21	// x16 draw x = y + x_centre [c]
+	sub x12, x22, x25	// x12 draw y = -x + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 0			// R
+	mov x14, 255		// G
+	mov x15, 255		// B
+	bl setColour		// R+G+B = Celeste
 	stur x18, [x0]		// Se pinta
 
-	sub x16, x21, x26	// x16 draw x = -y + x_centre
-	// sub x12, x22, x25	// x12 draw y = -x + y_centre
+	// xd = -y + x_centre
+	// yd = -x + y_centre
+	sub x16, x21, x26	// x16 draw x = -y + x_centre [c]
+	sub x12, x22, x25	// x12 draw y = -x + y_centre [c]
 	bl setPixel			// Pixel a pintar
+	mov x13, 255		// R
+	mov x14, 255		// G
+	mov x15, 255		// B
+	bl setColour		// R+G+B = Blanco
 	stur x18, [x0]		// Se pinta
 
-	b.eq startCircleLoop
+	cmp x25, x26
+	b.gt startCircleLoop
 
 circleEnd:
 	//mov x30, x27
@@ -430,10 +486,11 @@ doTriangle:
 	// A) Asignar el primer pixel de lado izquierdo inferior
 	mov x16, x21	// Instancio x16 para setPixel
 	mov x12, x22	// Instancio x12 para setPixel
+	mov x9, x16
+	mov x10, x12
 
 rectAr:
 	bl setPixel		// Calculo el pixel
-	// Luego pintarlo
 	stur x18, [x0]	// Lo pinto
 	// Bucle... Movernos al siguiente píxel (arriba o abajo)
 	add x16, x16, #1	// Me muevo al siguiente
