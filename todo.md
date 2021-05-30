@@ -12,7 +12,13 @@
 
 `make`
 
-`make run`
+`make runQEMU`
+
+`make runGDB`
+
+---
+
+`make remake`
 
 ---
 
@@ -78,16 +84,34 @@ Tamaño en Y = 480 píxeles
 
 - [ ] Completar función para dibujar rectángulos.
 
-- [ ] Completar función para dibujar círculos.
+- [x] Completar función para dibujar círculos.
 
-- [ ] Modificar función `setPixel` para que use el stack pointer.
+- [-] Modificar función `setPixel` para que use el stack pointer (No la necesita).
 
-- [ ] Averiguar como correrlo con GBA (si es que se puede).
-    - [ ] (\S) Si no se puede, encontrar alternativa.
+- [x] Averiguar como correrlo con GBA (si es que se puede).
+    - [-] (\S) Si no se puede, encontrar alternativa.
 
 - [ ] Definir escenas para dibujarlas.
     - [ ] Definir animaciones de transición.
 
+- [ ] Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) (@diegogimenez04):
+    - [ ] doDm (crea una `D` en mayúscula)
+    - [ ] doO (crea una `o` en minúscula)
+    - [ ] doE (crea una `e` en minúscula)
+    - [ ] doI (crea una `i` en minúscula)
+    - [ ] doZ (crea una `z` en minúscula)
+    - [ ] doM (crea una `m` en minúscula)
+    - [ ] doG (crea una `g` en minúscula)
+    - [ ] doGm (crea una `G` en mayúscula)
+
+- [ ] Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) (@shirosweets):
+    - [ ] doAm (crea una `a` en minúscula)
+    - [ ] doT (crea una `t` en minúscula)
+    - [ ] doVm (crea una `V` en mayúscula)
+    - [ ] doN (crea una `n` en minúscula)
+    - [ ] doP (crea una `p` en minúscula)
+    - [ ] doS (crea una `s` en minúscula)
+    - [ ] doL (crea una `l` en minúscula)
 # Figuras a dibujar
 1. Mandala RBG (no es muy llamativo al animarlo) [mandala_1](assets/mand_1.jpg), [mandala_2](assets/mand_2.jpg), [mandala_3](assets/mand_3.jpg)
 

@@ -21,6 +21,8 @@
 // x20 Base del framebuffer
 
 .globl main
+.globl setColour				// https://stackoverflow.com/questions/54918639/linking-2-object-files
+.globl drawPixel
 main:
 break:
 	mov x20, x0					// X0 Direccion base del framebuffer
@@ -29,7 +31,7 @@ break:
 	mov x14, 96					// G
 	mov x15, 96					// B
 	bl setColour				// Azul
-	bl paintScreen
+	bl paintScreen				// NOTE OK
 
 	//bl circleTest
 
@@ -98,7 +100,7 @@ break:
 	mov x21, 110				// xc x centro
 	mov x22, 110				// yc y centro
 	mov x23, #100				// radio
-	bl doCircle
+	//bl doCircle
 
 	mov x13, 255				// R
 	mov x14, 145				// G
@@ -107,7 +109,26 @@ break:
 	mov x21, 200
 	bl verticalLine
 	mov x21, 300
+	bl verticalLine			// NOTE OK
+
+	//bl cleanScreen				// cleanScreen negro
+
+	mov x21, #150					// xc x centro
+	mov x22, #150					// yc y centro
+	bl doOwl					// Dibujamos un búho
+
+	mov x21, #320					// xc x centro
+	mov x22, #300					// yc y centro
+	bl doRaven					// Dibujamos un cuervo
+
+	mov x13, 250				// R
+	mov x14, 81					// G
+	mov x15, 171				// B
+	bl setColour				// R+G+B = Rosa
+	mov x21, 100
 	bl verticalLine
+
+	bl circleTest
 
 EndMain:
 	bl delay
@@ -536,14 +557,102 @@ paintScreenLoop:
 	cbnz x8, paintScreenLoop	// If not end row jump
 	ret
 
+// Font https://www.dafont.com/es/minitel.font?text=console
+
+// NOTE a
+doA:
+	// @Vale
+
+// NOTE e
+doE:
+	// @Diego
+
+// NOTE i
+doI:
+	// @Diego
+
+// NOTE o
+doO:
+	// @Diego
+
+// NOTE D
+doDm:
+	// @Diego
+
+// NOTE l
+doL:
+	// @Vale
+
+// NOTE s
+doS:
+	// @Vale
+
+// NOTE p
+doP:
+	// @Vale
+
+// NOTE m
+doM:
+	// @Diego
+
+// NOTE n
+doN:
+	// @Vale
+
+// NOTE V
+doVm:
+	// @Vale
+
+// NOTE t
+doT:
+	// @Vale
+
+// NOTE z
+doZ:
+	// @Diego
+
+// NOTE G
+doGm:
+	// @Diego
+
+// NOTE g
+doG:
+	//	@Diego
+
 // NOTE Diego
 doDiego:
 	// @Diego
-	// Square 50x50
-	// Circle 50x50...
+	// bl doDm
+	// bl doI
+	// bl doE
+	// bl doG
+	// bl doO
+
+	// bl doGm
+	// bl doI
+	// bl doM
+	// bl doE
+	// bl doN
+	// bl doE
+	// bl doZ
 	ret
 
 // NOTE Vale
 doVale:
 	// @Valentina Vispo
+	// bl doVm
+	// bl doA
+	// bl doL
+	// bl doE
+	// bl doN
+	// bl doT
+	// bl doI
+	// bl doN
+	// bl doA
+
+	// bl doVm
+	// bl doI
+	// bl doS
+	// bl doP
+	// bl doO
 	ret
