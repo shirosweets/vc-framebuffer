@@ -3,6 +3,8 @@
 
 bew
 draw
+gsd
+pruebas
 
 # Ignora
 *.txt
@@ -18,3 +20,9 @@ kernel8.list
 
 # Python
 sprite_parser.py
+
+# Examples
+assets/algorithms
+
+# Krita
+*.kra
