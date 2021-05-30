@@ -26,3 +26,6 @@ assets/algorithms
 
 # Krita
 *.kra
+
+# ToDos README
+todo_readme.md
