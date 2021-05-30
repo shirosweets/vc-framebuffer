@@ -3,9 +3,18 @@
 
 bew
 draw
+
+# Ignora
+*.txt
+*.o
+app.o
+start.o
+memory_map.txt
+
+# Kernel
 kernel8.elf
 kernel8.img
-memory_map.txt
-start.o
 kernel8.list
-app.o
+
+# Python
+sprite_parser.py

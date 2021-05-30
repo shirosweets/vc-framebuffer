@@ -14,6 +14,9 @@
 // x18 Colour
 // x20 Base del framebuffer
 
+# drawPixel
+Args: y=x12  -- x=x16  -- colour=x18
+
 # setPixel
 ```java
 setPixel(x = x16, y = x12) -> x0 : Pixel a pintar
