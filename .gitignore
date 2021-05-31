@@ -1,10 +1,14 @@
 .vscode
 .gdb_history
+memmap
 
+# Archivos test
 bew
 draw
 gsd
 pruebas
+rec
+assets/rename_me
 
 # Ignora
 *.txt
@@ -29,3 +33,5 @@ assets/algorithms
 
 # ToDos README
 todo_readme.md
+
+# Archivos grandes
