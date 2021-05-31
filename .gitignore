@@ -1,3 +1,11 @@
 .vscode
 .gdb_history
-gsd
+
+bew
+draw
+kernel8.elf
+kernel8.img
+memory_map.txt
+start.o
+kernel8.list
+app.o

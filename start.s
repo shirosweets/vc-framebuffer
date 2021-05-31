@@ -26,7 +26,7 @@
 	.equ Set_ClkRate,  0x00038002 // UART: Set Clock Rate
 
 	.equ MMIO_BASE_ALTA,    0x3f20
-
+	
 	.equ GPFSEL0,			0x0000
 	.equ GPFSEL1,			0x0004
 	.equ GPPUD,				0x0094
@@ -49,9 +49,8 @@ _start:
 	mrs     x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
 	and     x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
 	cbz     x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
-	// Infinite Loop For Core 1, 2 and 3
-CoreLoop:
-    wfe
+	// Infinite Loop For Core 1, 2 and 3	
+CoreLoop:  
 	b CoreLoop
 
 StackInit:
@@ -62,7 +61,7 @@ StackInit:
     // clear bss
     ldr     x1, =__bss_start
     ldr     w2, =__bss_size
-_StackInit_loop:
+_StackInit_loop:  
     cbz     w2, FB_Init
     str     xzr, [x1], #8
     sub     w2, w2, #1
@@ -80,94 +79,7 @@ FB_Init:
 	and w0,w0,0x3FFFFFFF // Convert Mail Box Frame Buffer Pointer From BUS Address To Physical Address ($CXXXXXXX -> $3XXXXXXX)
 	str w0,[x2] // Store Frame Buffer Pointer Physical Address
 	add w10,w0,wzr
-
-// Core 0 Init the framebuffer
-Serial_Init:
-	mov x0, UART0_CR
-	movk x0, MMIO_BASE_ALTA, lsl #16
-    str	wzr, [x0] // UART0_CR = 0    turn off UART0
-
-	mov w0, #5
-	bl delay    // delay ~200 cycles
-
-	ldr x0, =(UART_STRUCT + MAIL_TAGS)
-	ldr x1, =MAIL_BASE
-	orr x1, x1,PERIPHERAL_BASE
-	str w0, [x1,MAIL_WRITE + MAIL_TAGS] // Mail Box Write UART config
-
-
-// Set UART0 to GPIO pins
-	mov x0, GPFSEL1
-	movk x0, MMIO_BASE_ALTA, lsl #16
-    ldr	w19, [x0] 				// Read GPFSEL1
-
-	and	w19, w19, #0xfffc0fff 	// gpio14, gpio15
-
-	mov	w1, #0x4000
-	movk	w1, #0x2, lsl #16
-	orr	w19, w19, w1 			// alt0
-
-	str	w19, [x0]				// Modify GPFSEL1
-
-
-	mov x0, GPPUD
-	movk x0, MMIO_BASE_ALTA, lsl #16
-    str	wzr, [x0] // GPPUD = 0;
-
-	mov w0, #200
-	bl delay    // delay ~200 cycles
-
-	mov  x21, GPPUDCLK0
-	movk x21, MMIO_BASE_ALTA, lsl #16
-	mov	w19, #0xc000
-    str	w19, [x21] // Set GPPUDCLK0
-
-	mov w0, #200
-	bl delay    // delay ~200 cycles
-
-    str	wzr, [x21] // Set GPPUDCLK0 = 0 Flush gpio setup
-
-	mov x0, UART0_ICR
-	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x7ff
-    str	w1, [x0] // UART0_ICR = 0x7FF clear interrupts
-
-	mov x0, UART0_IBRD
-	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x2
-	str	w1, [x0] // 115200 baud
-
-	mov x0, UART0_FBRD
-	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0xB
-	str	w1, [x0]
-
-	mov x0, UART0_LCRH
-	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x60
-	str	w1, [x0] // 8n1
-
-	mov x0, UART0_CR
-	movk x0, MMIO_BASE_ALTA, lsl #16
-	mov	w1, #0x301
-	str	w1, [x0] // enable Tx, Rx, FIFO
-
-
-	mov w0, w10 // Restore FrameBuffer Pointer
-	// Core 0 branch to app
 	b main
-
-.globl delay
-delay:
-	cbz w0, _delay_end
-delay_loop:
-	nop
-	subs w0, w0, #1
-	bne delay_loop
-_delay_end:
-	ret
-
-
 
 .align 16
 FB_STRUCT: // Mailbox Property Interface Buffer Structure
@@ -224,66 +136,3 @@ FB_SIZE:
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
 
-
-
-.align 16
-UART_STRUCT: // Mailbox Property Interface Buffer Structure
-	.word UART_STRUCT_END - UART_STRUCT // Buffer Size In Bytes (Including The Header Values, The End Tag And Padding)
-	.word 0x00000000 // Buffer Request/Response Code
-	// Request Codes: $00000000 Process Request Response Codes: $80000000 Request Successful, $80000001 Partial Response
-	// Sequence Of Concatenated Tags
-	.word Set_ClkRate // Tag Identifier
-	.word 12
-	.word 9
-	.word 2 // UART CLK
-	.word 4000000 // UART at 4Mhz
-	.word 0 // UART Clear Turbo
-
-	.word 0x00000000 // $0 (End Tag)
-UART_STRUCT_END:
-
-
-.globl uart_putc
-uart_putc:
-	sub sp, sp, #16
-	str x2, [sp, 8]
-	str x1, [sp, 0]
-    /* wait until we can send */
-	mov x1, UART0_FR
-	movk x1, MMIO_BASE_ALTA, lsl #16
-_uart_putc_loop:
-	nop
-    ldr	w2, [x1]      // UART0_ICR = 0x7FF clear interrupts
-  	tbnz x2, 5, _uart_putc_loop	// If bit 5 is not zero, loop
-
-	mov x1, UART0_DR
-	movk x1, MMIO_BASE_ALTA, lsl #16
-	ldr	w0, [x1]      // Send char in UART0_DR
-
-	ldr x1, [sp, 0]
-	ldr x2, [sp, 8]
-	add sp, sp, #16
-	ret
-
-
-.globl uart_puts
-uart_puts:
-	sub sp, sp, #16
-	str x2, [sp, 8]
-	str x1, [sp, 0]
-    /* wait until we can send */
-	mov x1, UART0_FR
-	movk x1, MMIO_BASE_ALTA, lsl #16
-_uart_puts_loop:
-	nop
-    ldr	w2, [x1]      // UART0_ICR = 0x7FF clear interrupts
-  	tbnz x2, 5, _uart_putc_loop	// If bit 5 is not zero, loop
-
-	mov x1, UART0_DR
-	movk x1, MMIO_BASE_ALTA, lsl #16
-	ldr	w0, [x1]      // Send char in UART0_DR
-
-	ldr x1, [sp, 0]
-	ldr x2, [sp, 8]
-	add sp, sp, #16
-	ret
