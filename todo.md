@@ -6,9 +6,10 @@
 - [Figuras a dibujar](#Figuras-a-dibujar)
 - [Animaciones](#Animaciones)
 - [Escenas](#Escenas)
+- [Pixel Art](#Pixel-Art)
+ - [Colores](#Colores)
 
 # ¿Cómo se corre desde el QEMU?
-
 
 `make`
 
@@ -16,7 +17,7 @@
 
 `make runGDB`
 
----
+## Correr sin QEMU
 
 `make remake`
 
@@ -46,31 +47,6 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 
 ---
 
-RED[7:0]
-15 .. 16
-
-GREEN[7:0]
-15 .. 8
-
-BLUE[7:0]
-7 .. 0
-
-https://www.rapidtables.com/web/color/RGB_Color.html
-
-ROSA
-FF3399
-
-Tamaño en X = 649 píxeles
-Tamaño en Y = 480 píxeles
-
-32 bits (4 bytes)
-
-57:00
-
-1:00:00
-
----
-
 # TODO
 - [x] Configurar la tabulación = 4.
 
@@ -78,23 +54,45 @@ Tamaño en Y = 480 píxeles
 
 - [x] Agregar y definir la variable del color del fondo.
 
-- [ ] Definir variable de la velocidad de la animación (discutir).
+- [x] Definir variable de la velocidad de la animación (discutir).
+    - [ ] Definir la función `delay`.
+
+- [x] Crear función `doHorizontalLine` para dibujar líneas horizontales.
+    ```js
+    Argumentos
+    x21 : xo (valor de origen de x)
+    x22 : yo (valor de origen de y)
+    x23 : w (cantidad de pixeles a dibujar)
+    Usado
+    drawPixel: setPixel x16 x, x12 y
+    x18 : Colour
+    ```
 
 - [ ] Completar función para dibujar cuadrados.
 
-- [ ] Completar función para dibujar rectángulos.
+- [x] Completar función para dibujar rectángulos.
 
 - [x] Completar función para dibujar círculos.
+    - [x] Arreglar la "cruz" en los ejes `xc` e `yc` (no se pintan).
+    - [ ] Añadir lógica de rellenar la figura con un argumento.
 
-- [-] Modificar función `setPixel` para que use el stack pointer (No la necesita).
+- [-] Modificar función `setPixel` para que use el stack pointer **(no la necesita)**.
 
 - [x] Averiguar como correrlo con GBA (si es que se puede).
     - [-] (\S) Si no se puede, encontrar alternativa.
 
 - [ ] Definir escenas para dibujarlas.
     - [ ] Definir animaciones de transición.
+    - [x] Definir la función `paintScreen`. Esta función lo que hace es pintar la pantalla de un color.
+        ```js
+        Argumentos
+        x18 : Colour
+        ```
+    - [x] Definir la función `cleanScreen` que pinta de **negro puro** toda la pantalla.
 
-- [ ] Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) (@diegogimenez04):
+- [ ] Añadir el checkeo de que no se escriban píxeles fuera del framebuffer.
+
+- Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) y en este archivo [font.s](font.s) (@diegogimenez04):
     - [ ] doDm (crea una `D` en mayúscula)
     - [ ] doO (crea una `o` en minúscula)
     - [ ] doE (crea una `e` en minúscula)
@@ -104,7 +102,7 @@ Tamaño en Y = 480 píxeles
     - [ ] doG (crea una `g` en minúscula)
     - [ ] doGm (crea una `G` en mayúscula)
 
-- [ ] Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) (@shirosweets):
+- Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) [font.s](font.s) (@shirosweets):
     - [ ] doAm (crea una `a` en minúscula)
     - [ ] doT (crea una `t` en minúscula)
     - [ ] doVm (crea una `V` en mayúscula)
@@ -112,6 +110,35 @@ Tamaño en Y = 480 píxeles
     - [ ] doP (crea una `p` en minúscula)
     - [ ] doS (crea una `s` en minúscula)
     - [ ] doL (crea una `l` en minúscula)
+
+- Añadir al archivo [variables.md](variables.md):
+    - [ ] Tags/funciones usadas como título.
+    - [ ] Breve descripción de lo que hace.
+    - [ ] "Argumentos" a utilizar.
+
+- [ ] Averiguar por qué corre más rápido al separar archivos.
+
+- [ ] Finalizar una estructura básica del EJ1.
+
+- [ ] Estructura básica del EJ2.
+
+- [ ] Repasar
+
+# Animaciones
+1. Girar colores en RBG
+2. "Aparecer" y "desaparecer" (parpadear según una variable)
+3. Cambiar de color de manera RBG
+4. Historia/orden
+5. Parpadeo en las transiciones
+6. Flotar
+7. Saltar
+
+https://nootall.tumblr.com/image/614400376209358848
+https://nootall.tumblr.com/image/613601319149846528
+
+# Escenas
+1. Nombre de los integrantes "animado" (dibujado estilo máquina de escribir) con un logo X ([ejemplo](assets/1.jpg)).
+
 # Figuras a dibujar
 1. Mandala RBG (no es muy llamativo al animarlo) [mandala_1](assets/mand_1.jpg), [mandala_2](assets/mand_2.jpg), [mandala_3](assets/mand_3.jpg)
 
@@ -134,18 +161,12 @@ Tamaño en Y = 480 píxeles
 13. [Pétalos](assets/pet.gif)
 14. [Cuervo](assets/raven.jpg)
 
+# Pixel Art
+[Crea tu propio pixel art (sprite)](https://www.piskelapp.com/)
 
-# Animaciones
-1. Girar colores en RBG
-2. "Aparecer" y "desaparecer" (parpadear según una variable)
-3. Cambiar de color de manera RBG
-4. Historia/orden
-5. Parpadeo en las transiciones
-6. Flotar
-7. Saltar
+[Redimencionar pixel art en photoshop](https://www.photoshopessentials.com/basics/how-to-resize-pixel-art-in-photoshop/)
 
-https://nootall.tumblr.com/image/614400376209358848
-https://nootall.tumblr.com/image/613601319149846528
+## Colores
+https://www.rapidtables.com/web/color/RGB_Color.html
 
-# Escenas
-1. Nombre de los integrantes "animado" (dibujado estilo máquina de escribir) con un logo X ([ejemplo](assets/1.jpg)).
+https://htmlcolorcodes.com/es/

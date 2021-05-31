@@ -1,3 +1,5 @@
+.include "draw.s"
+
 .globl doOwl
 doOwl:
 	sub sp, sp, #8		//Reserva espacio en el stack

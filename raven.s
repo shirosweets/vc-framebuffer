@@ -1,3 +1,5 @@
+.include "draw.s"
+
 .globl doRaven
 doRaven:
 	sub sp, sp, #8		//Reserva espacio en el stack

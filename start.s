@@ -136,3 +136,4 @@ FB_SIZE:
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
 
+.include "app.s"
