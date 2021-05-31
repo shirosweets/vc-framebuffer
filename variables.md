@@ -29,6 +29,18 @@ setColour(r = x13, g = x14, b = x15) -> x18 : Color a pintar
 
 # doSquare
 
+
+# doRectangule
+	// Args
+	// setPixel x16 x, x12 y
+	// x21 x2 lugar dónde empiezo a dibujar la figura
+	// x22 y2 lugar dónde empiezo a dibujar la figura
+	// x23 w largo en pixeles
+	// x24 h alto en pixeles
+	// x18 colour
+	// Used
+	// x9 posición inicial de x
+	// x10 posición inicial de y
 # doCircle (S1)
 https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
 
@@ -59,7 +71,10 @@ x28 = P
 
 ## circleEnd (S5)
 
-# doRectangule
+# doRectangle
+```java
+doRectangle(x0 = x21, y0 = x22, width = x23, height = x24, colour = x18)
+```
 
 Return -> nada
 Args
