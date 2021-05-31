@@ -105,25 +105,28 @@ setColour:
 Your browser does not support the video tag.
 </video>
 
-# <img src="assets/logos/files.svg" width="25" height="25" title="Files"> Files
-[app.s](app.s) -> "main"
+# <img src="assets/logos/files.svg" width="25" height="25"> Files
 
-[start.s](start.s) -> inizialitation of software
+**[start.s](start.s)** **→** initialization of hardware
 
-[draw.s](draw.s) -> basic lines and figures
+**[app.s](app.s)** **→** "main"
 
-[font.s](font.s) -> upper case and lower case
+**[draw.s](draw.s)** **→** basic lines and figures
 
-[screen_animation.s](screen_animation.s) -> screen animations (animations across the screen)
+**[font.s](font.s)** **→** upper case and lower case
 
-[todo.md](todo.md)
+**[animations.s](animations.s)** **→** delay
 
-[owl.s](owl.s) -> Pixel Art
+**[screen_animations.s](screen_animation.s)** **→** screen animations (animations across the screen)
+
+**[todo.md](todo.md)**
+
+**[owl.s](owl.s)** **→** Pixel Art
 <p align="center">
   <img src="png/owl_100x100.png" width="350" title="doOwl">
 </p>
 
-[raven.s](raven.s) -> Pixel Art
+**[raven.s](raven.s)** **→** Pixel Art
 <p align="center">
   <img src="png/raven_100x100.png" width="350" title="doRaven">
 </p>
@@ -135,7 +138,7 @@ https://www.raspberrypi.org/
 ## Pillow
 https://pypi.org/project/Pillow/
 
-## <img src="assets/logos/krita.svg" width="25" height="25" title="Krita"> Krita
+## <img src="assets/logos/krita.svg" width="25" height="25"> Krita
 https://krita.org/en/
 
 # Visual Studio Extensions
