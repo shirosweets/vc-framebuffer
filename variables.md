@@ -95,3 +95,35 @@ doTriangle(x2 = x21, y2 = x22, w = x23, colour = x18) -> None
 ```java
 cleanScreen(colour = x18) -> None
 ```
+# drawLine
+```java
+drawLine(xc0 : x21, yc0 : x22, xc1 : x23, yc1 : x24, colour : x18)
+x4 dx
+x5 sx
+x6 dy
+x7 sy
+x19 err
+```
+```python
+/*
+plotLine(int x0, int y0, int x1, int y1)
+    dx =  abs(x1-x0);
+    sx = x0<x1 ? 1 : -1;
+    dy = -abs(y1-y0);
+    sy = y0<y1 ? 1 : -1;
+    err = dx+dy;  // error value e_xy
+    while (true)   // loop
+        plot(x0, y0);
+        if (x0 == x1 && y0 == y1) break;
+        e2 = 2*err;
+        if (e2 >= dy) // e_xy+e_x > 0  # e2 < dy == NOT (e2 >= dy)
+            err += dy;
+            x0 += sx;
+        end if
+        if (e2 <= dx) // e_xy+e_y < 0  # e2 > dx
+            err += dx;
+            y0 += sy;
+        end if
+    end while
+*/
+```

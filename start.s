@@ -1,3 +1,5 @@
+	.include "app.s"
+
 	.text
 	.org 0x80000
 
@@ -26,7 +28,7 @@
 	.equ Set_ClkRate,  0x00038002 // UART: Set Clock Rate
 
 	.equ MMIO_BASE_ALTA,    0x3f20
-	
+
 	.equ GPFSEL0,			0x0000
 	.equ GPFSEL1,			0x0004
 	.equ GPPUD,				0x0094
@@ -49,8 +51,8 @@ _start:
 	mrs     x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
 	and     x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
 	cbz     x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
-	// Infinite Loop For Core 1, 2 and 3	
-CoreLoop:  
+	// Infinite Loop For Core 1, 2 and 3
+CoreLoop:
 	b CoreLoop
 
 StackInit:
@@ -61,7 +63,7 @@ StackInit:
     // clear bss
     ldr     x1, =__bss_start
     ldr     w2, =__bss_size
-_StackInit_loop:  
+_StackInit_loop:
     cbz     w2, FB_Init
     str     xzr, [x1], #8
     sub     w2, w2, #1
@@ -135,5 +137,3 @@ FB_SIZE:
 
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
-
-.include "app.s"

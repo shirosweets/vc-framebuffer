@@ -3,9 +3,165 @@
 
 .include "app.s"
 
+/*
+plotLine(int x0, int y0, int x1, int y1)
+    dx =  abs(x1-x0);
+    sx = x0<x1 ? 1 : -1;
+    dy = -abs(y1-y0);
+    sy = y0<y1 ? 1 : -1;
+    err = dx+dy;  // error value e_xy
+    while (true)   // loop
+        plot(x0, y0);
+        if (x0 == x1 && y0 == y1) break;
+        e2 = 2*err;
+        if (e2 >= dy) // e_xy+e_x > 0
+            err += dy;
+            x0 += sx;
+        end if
+        if (e2 <= dx) // e_xy+e_y < 0
+            err += dx;
+            y0 += sy;
+        end if
+    end while
+*/
+
+// NOTE Line
+drawLine:
+	// Args
+	// x21 xc0 coordenada x del primer punto
+	// x22 yc0 coordenada y del primer punto
+	// x23 xc1 coordenada x del segundo punto
+	// x24 yc1 coordenada y del segundo punto
+	// Used
+	// x4 dx
+	// x5 sx
+	// x6 dy
+	// x7 sy
+	// x19 err
+
+	sub sp, sp, #40				// Reservamos 6 registros de memoria
+	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
+	stur x19, [sp, #32]
+	stur x4, [sp, #24]
+	stur x5, [sp, #16]
+	stur x6, [sp, #8]
+	stur x7, [sp, #0]
+
+	// (x0, y0) to (x1, y1)
+	// (xc0, yc0) to (xc1, yc1)
+
+	// y = f(x) = mx+b
+	// y = mx +b
+	// y = ((tri (y)) / (tri (x))) x + b
+
+	// dx = abs(xc1 - xc0)
+	cmp x21, x23				// comparamos xc0 con el xc1
+	b.gt lineGreaterThan1		// xc0 > xc1
+	// if here -> xc1 > xc0
+	sub x4, x23, x21			// dx = xc1 - xc0 lineDx
+	mov x5, #1					// xc0 < xc1 -> sx = xc0 < xc1 ? 1 : -1
+	b endlineGreaterThan1
+
+lineGreaterThan1:	// xc0 > xc1
+	sub x4, x21, x23			// dx = xc0 - xc1
+	mov x5, #1
+	sub x5, xzr, x5				// sx = xc0 < xc1 ? 1 : -1
+	// endlineGreaterThan1...
+
+endlineGreaterThan1:
+	// dy = -abs(yc1 - yc0)
+	cmp x22, x24				// comparamos yc0 con el yc1
+	b.gt lineGreaterThan2		// yc0 > yc1
+	sub x6, x24, x22			// dy = yc0 - yc1
+	mov x7, #1					// yc0 < yc1 -> sy = yc0 < yc1 ? 1 : -1
+	b endlineGreaterThan2
+
+lineGreaterThan2:	// yc0 > yc1
+	sub x6, x22, x24			// dy = yc1 - yc0
+	mov x7, #1
+	sub x7, xzr, x7				// sy = yc0 < yc1 ? 1 : -1
+	// endlineGreaterThan2...
+
+endlineGreaterThan2:
+	add x19, x4, x6				// err = dx+dy (error value e_xy)
+	b loopLine					// init loop
+
+loopLine:
+	mov x16, x21				// xdraw = xc0
+	mov x12, x22				// ydraw = yc0
+	bl drawPixel				// plot(xc0, yc0)
+
+	cmp x21, x23				// Comparamos xc0 con xc1
+	b.ne endDrawLine			// xc0 != xc1
+	cmp x22, x24				// Comparamos yc0 con yc1
+	b.ne endDrawLine			// yc0 != yc1
+
+	lsl x8, x19, #1				// x8 = e2 = 2*err
+
+	cmp x8, x6
+	b.lt skipIf1				// e2 < dy
+	// If we are here -> e2 >= dy
+	add x19, x19, x6			// err += dy
+	add x21, x21, x5			// xc0 += sx
+
+skipIf1:
+	cmp x8, x4
+	b.gt loopLine				// e2 > dx
+	// If we are here -> e2 <= dx
+	add x19, x19, x6			// err += dy
+	add x21, x21, x5			// xc0 += sx
+	b loopLine
+
+endDrawLine:
+	ldur x30, [sp, #40]
+	ldur x19, [sp, #32]
+	ldur x4, [sp, #24]
+	ldur x5, [sp, #16]
+	ldur x6, [sp, #8]
+	ldur x7, [sp, #0]
+	sub sp, sp, #40				// Liberamos espacio en memoria
+	ret
+
+// NOTE draw Border
+drawBorder:
+	// Args
+	// x21 cantidad de píxeles del borde
+	// x18 colour
+	sub sp, sp, #16				// Reservamos espacio en memoria
+	stur x5, [sp, #8]			// Guardamos el registro que usamos después
+	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
+
+	mov x5, x21
+	mov x21, xzr				// x2 = 0
+	mov x22, xzr				// y2 = 0
+	mov x23, x5					// w = tamaño del borde
+	mov x24, SCREEN_HEIGH		// h = tamaño vertical de la pantalla
+	bl doRectangle				// Primer borde, lado izquierdo
+
+	mov x23, SCREEN_WIDTH		// w = tamaño horizontal de la pantalla
+	mov x24, x5					// h = tamaño del borde
+	bl doRectangle				// Segundo borde, lado superior
+
+	mov x21, SCREEN_WIDTH		// x2 = width
+	sub x21, x21, x5			// x2 = width - borde
+	mov x23, x5					// w = tamaño del borde
+	mov x24, SCREEN_HEIGH		// h = tamaño vertical de la pantalla
+	bl doRectangle				// Tercer borde, lado derecho
+
+	mov x21, xzr				// x2 = 0
+	mov x22, SCREEN_HEIGH		// y2 = heigth
+	sub x22, x22, x5			// y2 = heigth - x5
+	mov x23, SCREEN_WIDTH		// w = tamaño horizontal de la pantalla
+	mov x24, x5					// h = tamaño del borde
+	bl doRectangle				// Cuarto borde, lado inferior
+
+	ldur x5, [sp, #8]
+	ldur x30, [sp, #0]
+	sub sp, sp, #16				// Liberamos espacio en memoria
+	ret
+
 // NOTE Square
 doSquare:
-	// Return -> nada
 	// Args
 	// x21 xo lugar dónde empiezo a dibujar la figura
 	// x22 yo lugar dónde empiezo a dibujar la figura
@@ -23,10 +179,8 @@ doSquare:
 	add sp, sp, #16				// Liberamos espacio en memoria
 	ret
 
-// NOTE Rectangle alto(h) x largo(w)
+// NOTE Rectangle alto(h) x largo(w) y se pinta todo dentro de él
 doRectangle:	// alto x largo//
-	// @Diego
-	// Return -> nada
 	// Args
 	// x21 x2 lugar dónde empiezo a dibujar la figura
 	// x22 y2 lugar dónde empiezo a dibujar la figura
@@ -39,7 +193,8 @@ doRectangle:	// alto x largo//
 	// x9 posición inicial de x
 	// x10 posición inicial de y
 
-	sub sp, sp, #16				// Reservamos 2 registros de memoria
+	sub sp, sp, #24				// Reservamos 3 registros de memoria
+	stur x22, [sp, #16]			// Guardamos el x16 en memoria
 	stur x30, [sp, #8]			// Guardamos el return pointer en memoria (8 direcciones de memoria = 1 registro de 64bits)
 	stur x5, [sp, #0]			// Guardamos el x5 en memoria (8 direcciones de memoria = 1 registro de 64bits)
 
@@ -56,7 +211,8 @@ rectangleLoop:					// Se encarga de cambiar la fila
 endRectangule:
 	ldur x5, [sp, #0]			// Restauramos el x5 original
 	ldur x30, [sp, #8]			// Guardamos el return pointer en memoria
-	add sp, sp, #16				// Liberamos la memoria (movemos el sp "más arriba")
+	ldur x22, [sp, #16]			// Restauramos el x22 original
+	add sp, sp, #24				// Liberamos la memoria (movemos el sp "más arriba")
 	ret
 
 // NOTE Circle

@@ -1,0 +1,29 @@
+
+loopLine:
+	mov x16, x21				// xdraw = xc0
+	mov x12, x22				// ydraw = yc0
+	bl drawPixel				// plot(xc0, yc0)
+
+	cmp xc0, xc1				// Comparamos xc0 con xc1
+	b.ne endDrawLine			// xc0 != xc1
+	cmp yc0, yc1				// Comparamos yc0 con yc1
+	b.ne endDrawLine			// yc0 != yc1
+
+	lsl x8, x19, #1				// x8 = e2 = 2*err
+	cmp x8, x6
+	b.ge ifLine1				// e2 >= dy
+	
+	b.ifLine2
+	// if (e2 >= dy) // e_xy + e_x > 0
+
+ifLine1:	// e2 >= dy   (e_xy + e_x > 0)
+	add x19, x19, x6			// err += dy
+	add x21, x21, x5			// xc0 += sx
+	// ifLine2...
+	
+ifLine2:
+	// if (e2 <= dx) // e_xy+e_y < 0
+	cmp x8, x4
+	b.le ifLine3
+
+ifLine3:

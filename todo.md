@@ -55,7 +55,7 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 - [x] Agregar y definir la variable del color del fondo.
 
 - [x] Definir variable de la velocidad de la animación (discutir).
-    - [ ] Definir la función `delay`.
+    - [x] Definir la función `delay`.
 
 - [x] Crear función `doHorizontalLine` para dibujar líneas horizontales.
     ```js

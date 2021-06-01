@@ -77,7 +77,7 @@ break:
 	mov x14, 255				// G
 	mov x15, 255				// B
 	bl setColour				// Blanco
-	//bl drawBorder				// TODO
+	//bl drawBorder
 
 	// NOTE Línea horizontal
 	mov x21, 320				// xo
@@ -167,12 +167,41 @@ break:
 	mov x15, 0					// B
 	bl setColour				// R+G+B = Rojo
 	//bl doValentinaVispo
-	bl delay
+
+	//bl delay
 
 	bl cleanScreen				// cleanScreen negro
 
+	// Dibujamos bordes en la pantalla de color rojo
+	mov x13, 209				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Rojo
+	mov x21, 20
+	bl drawBorder
+
+	mov x21, 200
+	mov x22, 200
+	mov x23, 30
+	mov x13, 255				// R
+	mov x14, 145				// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Rojo
+	bl doSquare
+
 	//bl animationTest
-	bl circleAnimation1
+	//bl circleAnimation1
+	bl cleanScreen				// cleanScreen negro
+
+	mov x21, 150
+	mov x22, 103
+	mov x23, 200
+	mov x24, 20
+	mov x13, 93					// R
+	mov x14, 85					// G
+	mov x15, 255				// B
+	bl setColour				// R+G+B = "morado" 5d55ff
+	bl drawLine
 
 	mov x13, 250				// R
 	mov x14, 81					// G
@@ -187,22 +216,6 @@ EndMain:
 
 return:
 	ret
-
-// TODO draw Border
-drawBorder:
-	// Args
-	// x18 colour
-	mov x16, SCREEN_HEIGH
-	mov x12, SCREEN_WIDTH
-	bl setPixel
-	// TODO
-
-borderLoop:
-	// TODO Hacer
-	b borderLoop
-
-borderEnd:
-	// TODO
 
 // NOTE Circle Test
 circleTest:
@@ -248,8 +261,7 @@ setPixel:
 
 // NOTE setColour
 setColour:
-	// Return
-	// x18 Color a pintar
+	// Return x18 Color a pintar
 	// Args
 	// x13 r
 	// x14 g
