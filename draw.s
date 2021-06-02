@@ -280,54 +280,57 @@ circleEnd:
 	ret
 
 .globl doTriangle
-// NOTE Triangle
-doTriangle:
+// NOTE Triangulo
+doTriangle:	//FIXME Ver por que no funciona
 	// @Diego
 	// Args
-	// x21 x2 lugar dónde empiezo a dibujar la figura
-	// x22 y2 lugar dónde empiezo a dibujar la figura
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
 	// x23 w cantidad de píxeles
 	// x18 colour
 
 	// A) Asignar el primer pixel de lado izquierdo inferior
-	mov x16, x21	// Instancio x16 para setPixel
+	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
-	mov x9, x16
-	mov x10, x12
+	bl setPixel		// Calculo la posicion inicial
+	mov x10, x0		// Guardo la posicion inicial
+	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
+	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
+	b rectAr
 
+preRectAr:
+	cmp x19, #0		// Si itere w cantidad de veces -->
+	b.eq endTriang	// termino
 rectAr:
-	bl setPixel		// Calculo el pixel
-	stur x18, [x0]	// Lo pinto
-	// Bucle... Movernos al siguiente píxel (arriba o abajo)
+	bl setPixel			// Calculo el pixel
+	stur x18, [x0]		// Lo pinto
 	add x16, x16, #1	// Me muevo al siguiente
-	add x12, x12, #1	// Me muevo al siguiente
-	sub x9, x21, x23	// Calculo el rango entre el principio y el final
-	//sdiv x9, x9, #2	// TODO Corregir, idea: Calculo la mitad
-	sub x9, x9, #1		//
-	cbnz x9, rectAr
-	// Hasta w...
+	sub x12, x12, #1	// Me muevo arriba
+	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
+	b.eq rectBaj		// Si llegue a la cantidad bajo
+	add x9, x9, #1		// Si no le sumo 1
+	b rectAr			// Empiezo de nuevo
 
 rectBaj:
-	bl setPixel
-	stur x18, [x0]
-	sub x12, x12, #1
-	add x16, x16, #1
-	cmp x16, x23
-	b.eq rectIzq
-	// Luego bucle: bajamos hasta w
-	b rectBaj
+	bl setPixel			// Calculo el pixel
+	stur x18, [x0]		// Lo pinto
+	add x16, x16, #1	// Me muevo al siguiente
+	add x12, x12, #1	// Bajo 1 unidad
+	cmp x9, #0			// Comparo el contador a w con 0
+	b.eq preRectIzq		// Si llegue a la "base" voy hacia la izquierda
+	sub x9, x9, #1		// Si no, le resto 1 al contador
+	b rectBaj			// Bajo de nuevo
 
-	// Nos movemos hacia la izquierda hasta w-1
-
+preRectIzq:
+	add x10, x10, #1	// Llego hasta la posicion incial + 1
+	sub x19, x19, #1	// Como tengo que iterar w veces, resto una vez a w
 rectIzq:
-	bl setPixel
-	stur x18, [x0]
-	sub x21, x21, #1
-	sub x9, x23, #1
-	adds xzr, x9, #0
-	b.eq endTriang
-	cmp x21, x9
-	b.eq rectAr
+	bl setPixel			// Calculo el pixel
+	stur x18, [x0]		// Lo pinto
+	sub x16, x16, #1	// Retrocedo hasta el punto incial
+	cmp x16, x10		// Comparo si llegue a uno menos que el punto inicial
+	b.eq preRectAr		// Subo de nuevo, viendo si termine
+	b rectIzq			// Si no me muevo de nuevo hacia la izquierda
 
 	// Repetimos paso A)... hasta w=0
 endTriang: //TODO revisar

@@ -109,14 +109,14 @@ main:
 	stur x18, [x0]
 
 	// Pintamos un cuadrado en el medio de la pantalla
-	mov x21, 100 				// x2
+	mov x21, 200 				// x2
 	mov x22, 200				// y2
 	mov x23, 20					// w largo de pixeles
 	mov x13, 255				// R
 	mov x14, 0					// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doRectangle
+	bl doTriangle
 
 	// Dibujamos un círculo
 	// Medio es 320 x 240
