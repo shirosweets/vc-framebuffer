@@ -20,6 +20,7 @@ delayEnd:
 	ret
 
 .globl lineAnimation
+// NOTE lineAnimation
 lineAnimation:
 	sub sp, sp, #8				// Guardamos 1 lugar del stack
 	stur x30, [sp, #0]			// Registro 30 para el RET en el stack
@@ -65,6 +66,7 @@ endlineAnimation:
 	ret
 
 .globl rgbAnimation
+// NOTE rgbAnimation
 rgbAnimation:
 	// Args
 	// x13 r actual
@@ -102,38 +104,82 @@ rgbAnimation:
 	// x14 g actual
 	// x15 b actual
 	// ------ inc = 85 ------
+	mov x9, #85
 case1:	// r == 255 && b == 0 && g < 255 	---> 	g += inc   	(Rojo>>>Amarillo)
-	cbz x15, case3 // no es case1 ni case2
+	cbnz x15, case3 		// b != 0 -> next case
+	cmp x13, #255			// NOTA: Legal
+	b.ne case2				// r != 255 -> next case
+	cmp x14, #255
+	b.eq case2				// g == 255 -> next case
+	add x14, x14, x9		// g += inc
+	b endRgbAnimation
 
-case2:	// g == 255 && b == 0 && r > 0		---> 	r -= inc	(Amarillo->->->Verde)
-	//cbz, x, case
+case2:	// g == 255 && b == 0 && r > 0		---> 	r -= inc	(Amarillo>>>>Verde)
+	cmp x14, #255
+	b.ne case4				// g != 255  -> next case
+	cmp x13, xzr
+	b.le case3				// r <= 0
+	cbnz x15, case3			// b != 0  -> next case
+	cbz x13, case3			// r == 0  -> next case
+	sub x13, x13, x9		// r -= inc
+	b endRgbAnimation
 
-case3:	// g == 255 && r == 0 && b < 255	--->	b += inc 	(Verde>>>Cyan)
-	//cbz, x, case5
+case3:	// g == 255 && r == 0 && b < 255	--->	b += inc 	(Verde>>>>Celeste)
+	cbnz x13, case5			// r != 0 -> next case
+	cmp x14, #255
+	b.ne case4				// g != 255 -> next case
+	cmp x15, #255
+	b.eq case4				// b == 255 -> next case
+	add x15, x15, x9		// b += inc
+	b endRgbAnimation
 
-case4:	// b == 255 && r == 0 && g > 0		--->	g -= inc	(Cyan>>>Azul)
-	//cbz, x, case5
+case4:	// b == 255 && r == 0 && g > 0		--->	g -= inc	(Cyan>>>>Azul)
+	cmp x15, #255
+	b.ne case6 				// b != 255 -> no es ni case4 ni case5
+	cbnz x13, case5			// r != 0 -> next case
+	cbz x14, case5			// g == 0 -> next case
+	sub x14, x14, x9		// g -= inc
+	b endRgbAnimation
 
-case5:	// b == 255 && g == 0 && r < 255	--->	r += inc	(Azul>>>Violeta)
-		// (0, 0, 255) -> (85, 0, 255) -> (170, 0, 255) -> (255, 0, 255)
+case5:	// b == 255 && g == 0 && r < 255	--->	r += inc	(Azul>>>>Violeta)
+	cmp x13, #255
+	b.eq case6				// r == 255 --> last case
+	add x13, x13, x9		// r += inc
+	b endRgbAnimation
 
-case6:	// r == 255	&& g == 0 && b > 0		--->	b -= inc	(Violeta>>>Rojo)
-	
-
-	////////////////////////////////////////
-	// Sencuencia "ciclo por ciclo"
-	// case 1
-	// (255, 0, 0) -> (255, 85, 0) -> (255, 170, 0) -> (255, 255, 0)
-	// case 2
-	// (255, 255, 0) -> (170, 255, 0) -> (85, 255, 0) -> (0, 255, 0)
-	// case 3
-	// (0, 255, 0) -> (0, 255, 85) -> (0, 255, 170) -> (0, 255, 255)
-	// case 4
-	// (0, 255, 255) -> (0, 170, 255) -> (0, 85, 255) -> (0, 0, 255)
-	// case 5
-	// (255, 0, 255) -> (255, 0, 170) -> (255, 0, 85) -> (255, 0, 0)
+case6:	// r == 255	&& g == 0 && b > 0		--->	b -= inc	(Violeta>>>>Rojo)
+	sub x15, x15, x9		// b -= inc
+	b endRgbAnimation
 
 endRgbAnimation:
 	ret
 
+	////////////////////////////////////////
+	// Sencuencia "ciclo por ciclo"
+	// case 1
+	// Rojo (255, 0, 0) -> (255, 85, 0) -> (255, 170, 0) -> (255, 255, 0)
+	// case 2
+	// (255, 255, 0) -> (170, 255, 0) -> (85, 255, 0) -> (0, 255, 0)
+	// case 3
+	// (0, 255, 0) -> (0, 255, 85) -> (0, 255, 170) -> Celeste (0, 255, 255)
+	// case 4
+	// (0, 255, 255) -> (0, 170, 255) -> (0, 85, 255) -> (0, 0, 255)
+	// case 5
+	// (0, 0, 255) -> (85, 0, 255) -> (170, 0, 255) -> (255, 0, 255)
+	// case 6
+	// (255, 0, 255) -> (255, 0, 170) -> (255, 0, 85) -> (255, 0, 0)
+
 //.endif
+
+.globl rgbcycletest
+rgbcycletest:
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+rgbaniloop:
+	bl setColour
+	bl paintScreen
+	bl delay
+	bl rgbAnimation
+	b rgbaniloop
+

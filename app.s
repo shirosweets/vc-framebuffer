@@ -224,7 +224,8 @@ main:
 	bl setColour				// R+G+B = Rosa
 	mov x21, 100
 	//bl verticalLine
-	bl lineAnimation
+	//bl lineAnimation
+	bl rgbcycletest
 
 EndMain:
 	bl delay
@@ -300,10 +301,18 @@ setColour:
 	// x14 g
 	// x15 b
 	// 24 bits
+	sub sp, sp, #16
+	stur x13, [sp, #8]
+	stur x14, [sp, #0]
+
 	lsl x13, x13, 16			// Movemos 16 bits
 	lsl x14, x14, 8				// Movemos 8 bits
 	add x18, x13, x14			// R+G
 	add x18, x18, x15			// RG+B
+
+	ldur x13, [sp, #8]
+	ldur x14, [sp, #0]
+	add sp, sp, #16
 	ret
 
 // NOTE Line
