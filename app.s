@@ -224,6 +224,7 @@ main:
 	bl setColour				// R+G+B = Rosa
 	mov x21, 100
 	//bl verticalLine
+	bl lineAnimation
 
 EndMain:
 	bl delay
