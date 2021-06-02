@@ -3,6 +3,111 @@
 
 //.include "app.s"
 
+.globl drawLine
+// NOTE Line
+drawLine:
+	// Args
+	// x21 xc0 coordenada x del primer punto
+	// x22 yc0 coordenada y del primer punto
+	// x23 xc1 coordenada x del segundo punto
+	// x24 yc1 coordenada y del segundo punto
+	// Used
+	// x4 dx
+	// x5 sx
+	// x6 dy
+	// x7 sy
+	// x19 err
+
+	sub sp, sp, #48				// Reservamos 6 registros de memoria
+	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
+	stur x19, [sp, #32]
+	stur x4, [sp, #24]
+	stur x5, [sp, #16]
+	stur x6, [sp, #8]
+	stur x7, [sp, #0]
+
+	// (x0, y0) to (x1, y1)
+	// (xc0, yc0) to (xc1, yc1)
+
+	// y = f(x) = mx+b
+	// y = mx +b
+	// y = ((tri (y)) / (tri (x))) x + b
+
+	// dx = abs(xc1 - xc0)
+	cmp x21, x23				// comparamos xc0 con el xc1
+	b.gt lineGreaterThan1		// xc0 > xc1
+	// if here -> xc1 > xc0
+	sub x4, x23, x21			// dx = xc1 - xc0 lineDx
+	mov x5, #1					// xc0 < xc1 -> sx = xc0 < xc1 ? 1 : -1
+	b endlineGreaterThan1
+
+lineGreaterThan1:	// xc0 > xc1
+	sub x4, x21, x23			// dx = xc0 - xc1
+	mov x5, #1
+	sub x5, xzr, x5				// sx = xc0 < xc1 ? 1 : -1
+	// endlineGreaterThan1...
+
+endlineGreaterThan1:
+	// dy = -abs(yc1 - yc0)
+	cmp x22, x24				// comparamos yc0 con el yc1
+	b.gt lineGreaterThan2		// yc0 > yc1
+	sub x6, x22, x24			// dy = yc0 - yc1
+	mov x7, #1					// yc0 < yc1 -> sy = yc0 < yc1 ? 1 : -1
+	b endlineGreaterThan2
+
+lineGreaterThan2:	// yc0 > yc1
+	sub x6, x24, x22			// dy = yc1 - yc0
+	mov x7, #1
+	sub x7, xzr, x7				// sy = yc0 < yc1 ? 1 : -1
+	// endlineGreaterThan2...
+
+endlineGreaterThan2:
+	add x19, x4, x6				// err = dx+dy (error value e_xy)
+	b loopLine					// init loop
+
+loopLine:
+	mov x16, x21				// xdraw = xc0
+	mov x12, x22				// ydraw = yc0
+	bl drawPixel				// plot(xc0, yc0)
+
+	cmp x21, x23				// Comparamos xc0 con xc1
+	b.ne checkLine				// xc0 != xc1	// FIXME
+	b endDrawLine				// break
+
+checkLine:
+	cmp x22, x24				// Comparamos yc0 con yc1
+	b.ne lineNoBreak			// yc0 != yc1	// FIXME
+	b endDrawLine				// break
+
+lineNoBreak:
+	//lsl x8, x19, #1				// x8 = e2 = 2*err
+	add x8, x19, x19			// x8 = e2 = 2*err
+
+	cmp x8, x6
+	b.lt skipIf1				// e2 < dy
+	// If we are here -> e2 >= dy
+	add x19, x19, x6			// err += dy
+	add x21, x21, x5			// xc0 += sx
+
+skipIf1:
+	cmp x8, x4
+	b.gt loopLine				// e2 > dx
+	// If we are here -> e2 <= dx
+break2:
+	add x19, x19, x4			// err += dx
+	add x22, x22, x7			// yc0 += sy
+	b loopLine
+
+endDrawLine:
+	ldur x30, [sp, #40]
+	ldur x19, [sp, #32]
+	ldur x4, [sp, #24]
+	ldur x5, [sp, #16]
+	ldur x6, [sp, #8]
+	ldur x7, [sp, #0]
+	add sp, sp, #48				// Liberamos espacio en memoria
+	ret
+
 .globl doSquare
 // NOTE Square
 doSquare:

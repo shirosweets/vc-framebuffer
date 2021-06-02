@@ -151,11 +151,56 @@ main:
 
 	mov x21, #150					// xc x centro
 	mov x22, #150					// yc y centro
-	bl doOwl					// Dibujamos un búho
+	//bl doOwl					// Dibujamos un búho
+
+	// Dibujamos una línea "vertical"
+	mov x21, 59
+	mov x22, 59
+	mov x23, 100
+	mov x24, 100
+	mov x13, 255				// R
+	mov x14, 145				// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Naranja
+	bl drawLine
+
+	mov x13, 17					// R
+	mov x14, 253				// G
+	mov x15, 64					// B
+	bl setColour				// Verde
+	mov x16, 59
+	mov x12, 59
+	bl drawPixel
+	mov x16, 100
+	mov x12, 100
+	bl drawPixel
+	///
+
+	// Dibujamos una línea xc0, yc0 -> xc1, yc1
+	mov x21, 150
+	mov x22, 30
+	mov x23, 50
+	mov x24, 200
+	mov x13, 85					// R
+	mov x14, 255				// G
+	mov x15, 237				// B
+	bl setColour				// R+G+B = cyan 55ffed
+	bl drawLine
+
+	mov x13, 255				// R
+	mov x14, 251				// G
+	mov x15, 0					// B
+	bl setColour				// Amarillo fffb00
+	mov x16, 150
+	mov x12, 30
+	bl drawPixel
+	mov x16, 50
+	mov x12, 200
+	bl drawPixel
+	///
 
 	mov x21, #320					// xc x centro
 	mov x22, #300					// yc y centro
-break:
 	bl doRaven					// Dibujamos un cuervo
 
 	//bl circleTest
@@ -168,17 +213,17 @@ break:
 	//bl doValentinaVispo
 	//bl delay
 
-	bl cleanScreen				// cleanScreen negro
+	//bl cleanScreen				// cleanScreen negro
 
 	//bl animationTest
-	bl circleAnimation1
+	//bl circleAnimation1
 
 	mov x13, 250				// R
 	mov x14, 81					// G
 	mov x15, 171				// B
 	bl setColour				// R+G+B = Rosa
 	mov x21, 100
-	bl verticalLine
+	//bl verticalLine
 
 EndMain:
 	bl delay
