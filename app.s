@@ -106,17 +106,19 @@ main:
 	mov x14, 0					// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	stur x18, [x0]
+	stur x18, [x0]				// Lo pinto
 
+	bl cleanScreen
 	// Pintamos un cuadrado en el medio de la pantalla
-	mov x21, 200 				// x2
+	mov x21, 400 				// x2
 	mov x22, 200				// y2
-	mov x23, 20					// w largo de pixeles
+	mov x23, 120				// w largo de pixeles
 	mov x13, 255				// R
-	mov x14, 0					// G
+	mov x14, 244					// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doTriangle
+	bl doTriangle				// REVIEW Checkear
+	//ret
 
 	// Dibujamos un círculo
 	// Medio es 320 x 240
@@ -377,15 +379,17 @@ endHorizontalLine:
 .globl cleanScreen
 // NOTE cleanScreen
 cleanScreen:  // Pinta toda la pantalla de negro
-	sub sp, sp, #8
-	stur x30, [sp, #0]  		// Guardamos el return pointer en memoria
+	sub sp, sp, #16
+	stur lr, [sp]				// Guardo el link register para no pisarlo
+	stur x30, [sp, #8]  		// Guardamos el return pointer en memoria
 	mov x13, xzr				// R
 	mov x14, xzr				// G
 	mov x15, xzr				// B
 	bl setColour				// Negro
 	bl paintScreen
-	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria	ret
-	add sp, sp, #8
+	ldur x30, [sp, #8]  		// Guardamos el return pointer en memoria	ret
+	ldur lr, [sp]				// Devuelvo el link register
+	add sp, sp, #16
 	ret
 
 .globl paintScreen

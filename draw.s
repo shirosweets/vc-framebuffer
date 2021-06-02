@@ -281,7 +281,7 @@ circleEnd:
 
 .globl doTriangle
 // NOTE Triangulo
-doTriangle:	//FIXME Ver por que no funciona
+doTriangle:
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -290,18 +290,17 @@ doTriangle:	//FIXME Ver por que no funciona
 	// x18 colour
 
 	// A) Asignar el primer pixel de lado izquierdo inferior
+	sub sp, sp, #8
+	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
 	bl setPixel		// Calculo la posicion inicial
-	mov x10, x0		// Guardo la posicion inicial
+	ldur x10, [x0]	// Guardo la posicion inicial
 	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
 	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
-	b rectAr
+	b preRectIzq
 
-preRectAr:
-	cmp x19, #0		// Si itere w cantidad de veces -->
-	b.eq endTriang	// termino
-rectAr:
+rectAr:					// Dibuja la diagonal hacia arriba
 	bl setPixel			// Calculo el pixel
 	stur x18, [x0]		// Lo pinto
 	add x16, x16, #1	// Me muevo al siguiente
@@ -311,7 +310,7 @@ rectAr:
 	add x9, x9, #1		// Si no le sumo 1
 	b rectAr			// Empiezo de nuevo
 
-rectBaj:
+rectBaj:				// Dibuja la diagonal hacia abajo
 	bl setPixel			// Calculo el pixel
 	stur x18, [x0]		// Lo pinto
 	add x16, x16, #1	// Me muevo al siguiente
@@ -321,19 +320,25 @@ rectBaj:
 	sub x9, x9, #1		// Si no, le resto 1 al contador
 	b rectBaj			// Bajo de nuevo
 
-preRectIzq:
+preRectIzq:				// Se encarga de calcular el valor al cual debe llegar cuando se dibuje la "base" y calcula nuevamente la altura
 	add x10, x10, #1	// Llego hasta la posicion incial + 1
 	sub x19, x19, #1	// Como tengo que iterar w veces, resto una vez a w
-rectIzq:
+rectIzq:				// Dibuja hacia la izquierda
 	bl setPixel			// Calculo el pixel
 	stur x18, [x0]		// Lo pinto
 	sub x16, x16, #1	// Retrocedo hasta el punto incial
-	cmp x16, x10		// Comparo si llegue a uno menos que el punto inicial
+	cmp x16, x23		// Comparo si llegue a uno menos que el punto inicial
 	b.eq preRectAr		// Subo de nuevo, viendo si termine
 	b rectIzq			// Si no me muevo de nuevo hacia la izquierda
 
-	// Repetimos paso A)... hasta w=0
-endTriang: //TODO revisar
+preRectAr:			// Se fija si itero la cantidad de veces necesarias
+	cmp x19, #0		// Si itere w cantidad de veces -->
+	b.eq endTriang	// Termino
+	b rectAr		// Si no, sigo
+
+endTriang:
+	ldur lr, [sp]
+	add sp, sp, #8
 	ret
 
 //.endif
