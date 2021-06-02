@@ -1,5 +1,5 @@
-.ifndef _APP_S
-.equ    _APP_S, 1
+//.ifndef _APP_S
+//.equ    _APP_S, 1
 
 .equ SCREEN_WIDTH, 		640
 .equ SCREEN_HEIGH, 		480
@@ -7,9 +7,6 @@
 .equ COLOR_1,			0xFF   // Color blanco R // 0xC7
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
-
-.data
-	WHITE:				.word 0xFFFFFF
 
 // 32 bits (4 bytes)
 // Registros basura: x1, x2, x8, x9, x10
@@ -21,17 +18,18 @@
 // x18 Colour
 // x20 Base del framebuffer
 
-.include "font.s"
-.include "draw.s"
-.include "animations.s"
-.include "screen_animations.s"
+//.include "font.s"
+//.include "draw.s"
+//.include "animations.s"
+//.include "screen_animations.s"
 
-//.globl main
-//.globl setColour				// https://stackoverflow.com/questions/54918639/linking-2-object-files
-//.globl drawPixel
+.globl main
+.globl setColour				// https://stackoverflow.com/questions/54918639/linking-2-object-files
+.globl drawPixel
+.globl setPixel
 # NOTE Main
 main:
-break:
+//break:
 	mov x20, x0					// X0 Direccion base del framebuffer
 	bl cleanScreen				// Limpiamos la pantalla
 	mov x13, 96					// R
@@ -157,6 +155,7 @@ break:
 
 	mov x21, #320					// xc x centro
 	mov x22, #300					// yc y centro
+break:
 	bl doRaven					// Dibujamos un cuervo
 
 	//bl circleTest
@@ -167,7 +166,7 @@ break:
 	mov x15, 0					// B
 	bl setColour				// R+G+B = Rojo
 	//bl doValentinaVispo
-	bl delay
+	//bl delay
 
 	bl cleanScreen				// cleanScreen negro
 
@@ -287,6 +286,7 @@ verLineEnd:
 	add sp, sp, #16				// Libera el stack
 	ret
 
+.globl doHorizontalLine
 // NOTE LineH
 doHorizontalLine:	// Crea líneas horizontales en la coordenada (xo, po) con w cantidad de pixeles que se extienden hacia la derecha //
 	// Args
@@ -319,6 +319,7 @@ endHorizontalLine:
 // BL (Break and link -> funciones) es para salto incondicional, cambia el program counter y cambia el registro x30 //
 // B (Break dentro de funciones) es para saltos condicionales cambia el program counter //
 
+.globl cleanScreen
 // NOTE cleanScreen
 cleanScreen:  // Pinta toda la pantalla de negro
 	sub sp, sp, #8
@@ -332,6 +333,7 @@ cleanScreen:  // Pinta toda la pantalla de negro
 	add sp, sp, #8
 	ret
 
+.globl paintScreen
 // NOTE paintScreen
 paintScreen:	// 320w 240h -> 76800 + 240
 	// Return -> nada
@@ -349,4 +351,4 @@ paintScreenLoop:
 	cbnz x8, paintScreenLoop	// If not end row jump
 	ret
 
-.endif
+//.endif

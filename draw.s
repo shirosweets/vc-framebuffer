@@ -1,8 +1,9 @@
-.ifndef _DRAW_S
-.equ    _DRAW_S, 1
+//.ifndef _DRAW_S
+//.equ    _DRAW_S, 1
 
-.include "app.s"
+//.include "app.s"
 
+.globl doSquare
 // NOTE Square
 doSquare:
 	// Return -> nada
@@ -23,6 +24,7 @@ doSquare:
 	add sp, sp, #16				// Liberamos espacio en memoria
 	ret
 
+.globl doRectangle
 // NOTE Rectangle alto(h) x largo(w)
 doRectangle:	// alto x largo//
 	// @Diego
@@ -59,6 +61,7 @@ endRectangule:
 	add sp, sp, #16				// Liberamos la memoria (movemos el sp "más arriba")
 	ret
 
+.globl doCircle
 // NOTE Circle
 doCircle: // Mid-Point Circle Drawing Algorithm //
 	// (0, 0) centro
@@ -171,6 +174,7 @@ circleEnd:
 	add sp, sp, #8
 	ret
 
+.globl doTriangle
 // NOTE Triangle
 doTriangle:
 	// @Diego
@@ -224,4 +228,4 @@ rectIzq:
 endTriang: //TODO revisar
 	ret
 
-.endif
+//.endif

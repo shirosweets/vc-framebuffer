@@ -1,8 +1,12 @@
-.ifndef _SCREEN_ANIMATIONS_S
-.equ    _SCREEN_ANIMATIONS_S, 1
+//.ifndef _SCREEN_ANIMATIONS_S
+//.equ    _SCREEN_ANIMATIONS_S, 1
 
-.include "app.s"
+//.include "app.s"
 
+.data
+	WHITE:				.word 0xFFFFFF
+
+.globl animationTest
 // NOTE Animation Test
 animationTest:
 	sub sp, sp, #8
@@ -19,6 +23,7 @@ antestloop:
 	add sp, sp, #8
 	ret
 
+.globl circleAnimation1
 // NOTE circle Animation 1
 circleAnimation1:
 	sub sp, sp, #8
@@ -50,6 +55,7 @@ circlend:
 	add sp, sp, #8
 	ret
 
+.globl circleAnimation2
 // NOTE circle Animation 2
 circleAnimation2:
 	sub sp, sp, #8
@@ -83,6 +89,4 @@ circ2lend:
 	add sp, sp, #8
 	ret
 
-
-
-.endif
+//.endif

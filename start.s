@@ -26,7 +26,7 @@
 	.equ Set_ClkRate,  0x00038002 // UART: Set Clock Rate
 
 	.equ MMIO_BASE_ALTA,    0x3f20
-	
+
 	.equ GPFSEL0,			0x0000
 	.equ GPFSEL1,			0x0004
 	.equ GPPUD,				0x0094
@@ -136,4 +136,4 @@ FB_SIZE:
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
 
-.include "app.s"
+//.include "app.s"
