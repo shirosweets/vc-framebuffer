@@ -38,36 +38,24 @@ doI:
 	stur x24, [sp, #32]
 	mov x16, x21
 	mov x12, x22
-	mov x9, #0
+	mov x10, x23
+	mov x9, 0
 
 doITop:
-	bl drawPixel
-	add x21, x21, 1
-	cmp x9, 20
-	b.eq preIDown
-	add x9, x9, 1
-	b doITop
-
-preIDown:
-	mov x21, x16
-	mov x22, x12
-	add x16, x16, #10
+	mov x23, 20
+	bl doHorizontalLine
+	mov x23, x10
 
 doIDown:
 	bl drawPixel
 	add x12, x12, #1
 	cmp x9, #20
-	b.eq endI
+	b.eq doIBot
 	add x9, x9, #1
 	b doIDown
 
 doIBot:
-	bl drawPixel
-	sub x21, x21, 1
-	cmp x9, 0
-	b.eq endI
-	sub x9, x9, 1
-	b doITop
+	mov 
 
 endI:
 	ldur x24, [sp, #32]
