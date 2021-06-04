@@ -8,7 +8,8 @@
 delay:
 	add x8, xzr, xzr			// counter = 0
 	add x8, x8, #0xFFF			// counter = 0xF...F (un numero enorme)
-	lsl x8, x8, #11				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+	lsl x8, x8, #9				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+
 delayloop:
 	cbz x8, delayEnd
 	ldur x9, [sp, #0]
@@ -72,39 +73,8 @@ rgbAnimation:
 	// x13 r actual
 	// x14 g actual
 	// x15 b actual
-	// setColour -> x18
+	mov x9, #85				// inc = 85
 
-	// x = 128, r = 255, g = 0, b = 0
-	// ...Rojo (255, 0, 0) -> Naranja (255, 128, 0) -> Amarillo (255, 255, 0)...
-	// --r >= g && r == 255 && g < 255 -> g = g + 128-borrar?-
-	// r == 255 && b == 0 && g < 255 -> g = g + 128
-
-	// x = 128, r = 255, g = 255, b = 0
-	// Amarillo (255, 255, 0) -> Verde claro (128, 255, 0) -> Verde (0, 255, 0)...
-	// --r == g && r == 255 -> r = r - 128-borrar?-
-	// b == 0 && g == 255 && r > 0 -> r = r - 128
-
-	// Verde (0, 255, 0) -> Verde lima? (0, 255, 128) -> Celeste (0, 255, 255)...
-	// r == 0 && g == 255 && b<g -> b = b + 128
-
-	// Celeste (0, 255, 255) -> Mar (0, 128, 255) -> Azul (0, 0, 255)...
-	// r == 0 && b == 255 && g > 0 -> g = g - 128
-
-	// Azul (0, 0, 255) -> Morado (128, 0, 255) -> Rosa (255, 0, 255)...
-	// -> r = r + 128
-
-	// Rosa (255, 0, 255) -> Pink2 (255, 0, 128) -> Rojo (255, 0, 0)...
-	// -> b = b - 128
-
-	// x = 85
-	// 0 -> 85 -> 170 -> 255
-
-	////////////////////////////////////////
-	// x13 r actual
-	// x14 g actual
-	// x15 b actual
-	// ------ inc = 85 ------
-	mov x9, #85
 case1:	// r == 255 && b == 0 && g < 255 	---> 	g += inc   	(Rojo>>>Amarillo)
 	cbnz x15, case3 		// b != 0 -> next case
 	cmp x13, #255			// NOTA: Legal
