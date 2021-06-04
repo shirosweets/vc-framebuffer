@@ -385,4 +385,57 @@ endTriangDown:
 	add sp, sp, #8
 	ret
 
+.globl doPiramide
+// NOTE Triangulo
+doPiramide:
+	// @Diego
+	// Args
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
+	// x23 w cantidad de píxeles
+	// x18 colour
+
+	sub sp, sp, #8
+	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
+	mov x16, x21	// Instancio x16 para dibujar
+	mov x12, x22	// Instancio x12 para setPixel
+	bl setPixel		// Calculo la posicion inicial
+	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
+	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
+	b pirAr
+
+pirAr:					// Dibuja la diagonal hacia arriba
+	sub x16, x16, #1	// Me muevo al siguiente
+	sub x12, x12, #1	// Me muevo arriba
+	bl setPixel			// Calculo el pixel
+	stur x18, [x0]		// Lo pinto
+	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
+	b.eq pirBaj		// Si llegue a la cantidad bajo
+	add x9, x9, #1		// Si no le sumo 1
+	b pirAr			// Empiezo de nuevo
+
+pirBaj:				// Dibuja la diagonal hacia abajo
+	sub x16, x16, #1	// Me muevo al siguiente
+	add x12, x12, #1	// Bajo 1 unidad
+	bl setPixel			// Calculo el pixel
+	stur x18, [x0]		// Lo pinto
+	cmp x9, #0			// Comparo el contador a w con 0
+	b.eq prepirAr		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
+	sub x9, x9, #1		// Si no, le resto 1 al contador
+	b pirBaj			// Bajo de nuevo
+
+prepirAr:				// Se fija si itero la cantidad de veces necesarias
+	add x21, x21, #1	// Itero una vez menos
+	mov x16, x21		// Empiezo de nuevo
+	mov x12, x22		// Instancio x12 para setPixel
+	cmp x19, xzr		// Si itere w cantidad de veces -->
+	b.eq endPir			// Termino
+	sub x19, x19, #1	// Si no, resto 1 iteracion
+	b pirAr				// sigo
+
+endPir:
+	ldur lr, [sp]
+	add sp, sp, #8
+	ret
+
 //.endif
