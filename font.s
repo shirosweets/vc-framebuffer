@@ -98,7 +98,7 @@ doGm:
 .globl doG
 // NOTE g
 doG:
-	//	@Diego
+	//@Diego
 
 .globl doDiego
 // NOTE Diego

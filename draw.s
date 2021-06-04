@@ -280,7 +280,7 @@ circleEnd:
 	ret
 
 .globl doTriangleUp
-// NOTE Triangulo
+// NOTE Triangulo hacia arriba
 doTriangleUp:
 	// @Diego
 	// Args
@@ -293,7 +293,6 @@ doTriangleUp:
 	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
-	bl setPixel		// Calculo la posicion inicial
 	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
 	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
 	b rectAr
@@ -302,7 +301,7 @@ rectAr:					// Dibuja la diagonal hacia arriba
 	add x16, x16, #1	// Me muevo al siguiente
 	sub x12, x12, #1	// Me muevo arriba
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	stur w18, [x0]		// Lo pinto
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
 	b.eq rectBaj		// Si llegue a la cantidad bajo
 	add x9, x9, #1		// Si no le sumo 1
@@ -312,7 +311,7 @@ rectBaj:				// Dibuja la diagonal hacia abajo
 	add x16, x16, #1	// Me muevo al siguiente
 	add x12, x12, #1	// Bajo 1 unidad
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	stur w18, [x0]		// Lo pinto
 	cmp x9, #0			// Comparo el contador a w con 0
 	b.eq preRectAr		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
 	sub x9, x9, #1		// Si no, le resto 1 al contador
@@ -333,7 +332,7 @@ endTriang:
 	ret
 
 .globl doTriangleDown
-// NOTE Triangulo
+// NOTE Triangulo hacia abajo
 doTriangleDown:
 	// @Diego
 	// Args
@@ -351,34 +350,34 @@ doTriangleDown:
 	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
 	b rectArDown
 
-rectArDown:					// Dibuja la diagonal hacia arriba
+rectArDown:				// Dibuja la diagonal hacia arriba
 	add x16, x16, #1	// Me muevo al siguiente
 	add x12, x12, #1	// Me muevo arriba
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	stur w18, [x0]		// Lo pinto
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
-	b.eq rectBajDown		// Si llegue a la cantidad bajo
+	b.eq rectBajDown	// Si llegue a la cantidad bajo
 	add x9, x9, #1		// Si no le sumo 1
-	b rectArDown			// Empiezo de nuevo
+	b rectArDown		// Empiezo de nuevo
 
 rectBajDown:				// Dibuja la diagonal hacia abajo
 	add x16, x16, #1	// Me muevo al siguiente
 	sub x12, x12, #1	// Bajo 1 unidad
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	bl drawPixel		// Lo pinto
 	cmp x9, #0			// Comparo el contador a w con 0
-	b.eq preRectArDown		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
+	b.eq preRectArDown	// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
 	sub x9, x9, #1		// Si no, le resto 1 al contador
-	b rectBajDown			// Bajo de nuevo
+	b rectBajDown		// Bajo de nuevo
 
-preRectArDown:				// Se fija si itero la cantidad de veces necesarias
+preRectArDown:			// Se fija si itero la cantidad de veces necesarias
 	add x21, x21, #1	// Itero una vez menos
 	mov x16, x21		// Empiezo de nuevo
 	mov x12, x22		// Instancio x12 para setPixel
 	cmp x19, xzr		// Si itere w cantidad de veces -->
-	b.eq endTriangDown		// Termino
+	b.eq endTriangDown	// Termino
 	sub x19, x19, #1	// Si no, resto 1 iteracion
-	b rectArDown			// sigo
+	b rectArDown		// sigo
 
 endTriangDown:
 	ldur lr, [sp]
@@ -386,39 +385,37 @@ endTriangDown:
 	ret
 
 .globl doPiramide
-// NOTE Triangulo
+// NOTE Piramide
 doPiramide:
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
 	// x23 w cantidad de píxeles
-	// x18 colour
+	// w18 colour
 
 	sub sp, sp, #8
 	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
-	bl setPixel		// Calculo la posicion inicial
 	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
 	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
-	b pirAr
 
 pirAr:					// Dibuja la diagonal hacia arriba
-	sub x16, x16, #1	// Me muevo al siguiente
+	sub x16, x16, #1	// Me muevo atras
 	sub x12, x12, #1	// Me muevo arriba
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	stur w18, [x0]		// Lo pinto
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
-	b.eq pirBaj		// Si llegue a la cantidad bajo
-	add x9, x9, #1		// Si no le sumo 1
-	b pirAr			// Empiezo de nuevo
+	b.eq pirBaj			// Si llegue a la cantidad bajo
+	add x9, x9, #1		// Si no le sumo 1 al contador
+	b pirAr				// Empiezo de nuevo
 
-pirBaj:				// Dibuja la diagonal hacia abajo
-	sub x16, x16, #1	// Me muevo al siguiente
+pirBaj:					// Dibuja la diagonal hacia abajo
+	sub x16, x16, #1	// Me muevo atras
 	add x12, x12, #1	// Bajo 1 unidad
 	bl setPixel			// Calculo el pixel
-	stur x18, [x0]		// Lo pinto
+	stur w18, [x0]		// Lo pinto
 	cmp x9, #0			// Comparo el contador a w con 0
 	b.eq prepirAr		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
 	sub x9, x9, #1		// Si no, le resto 1 al contador

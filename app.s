@@ -112,9 +112,19 @@ main:
 	// Pintamos un cuadrado en el medio de la pantalla
 	mov x21, 300 				// x2
 	mov x22, 300				// y2
-	mov x23, 50				// w largo de pixeles
+	mov x23, 50					// w largo de pixeles
 	mov x13, 255				// R
-	mov x14, 244				// G
+	mov x14, 255				// G
+	mov x15, 8					// B
+	bl setColour				// R+G+B = Rojo
+	//bl doSquare
+
+	// Pintamos una forma triangular (variable) en el medio de la pantalla
+	mov x21, 300 				// x2
+	mov x22, 300				// y2
+	mov x23, 50					// w largo de pixeles
+	mov x13, 255				// R
+	mov x14, 255				// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
 	bl doPiramide				// REVIEW Checkear
@@ -340,7 +350,7 @@ drawPixel:
 	sub sp, sp, #8
 	stur x30, [sp, #0]
 	bl setPixel
-	stur w18, [x0]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits)
+	stur w18, [x0]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
 	ldur x30, [sp, #0]
 	add sp, sp, #8
 	ret
