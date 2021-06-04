@@ -124,6 +124,8 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 
 - [ ] Repasar
 
+- [ ] Buscar alternativa para no tener que checkear el memory_map.txt
+
 # Animaciones
 1. Girar colores en RBG
 2. "Aparecer" y "desaparecer" (parpadear según una variable)

@@ -151,7 +151,7 @@ main:
 
 	mov x21, #150					// xc x centro
 	mov x22, #150					// yc y centro
-	//bl doOwl					// Dibujamos un búho
+	bl doOwl					// Dibujamos un búho
 
 	// Dibujamos una línea "vertical"
 	mov x21, 59
@@ -225,7 +225,7 @@ main:
 	mov x21, 100
 	//bl verticalLine
 	//bl lineAnimation
-	bl rgbcycletest
+	//bl rgbcycletest
 
 EndMain:
 	bl delay
