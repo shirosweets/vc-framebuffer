@@ -110,15 +110,15 @@ main:
 
 	bl cleanScreen
 	// Pintamos un cuadrado en el medio de la pantalla
-	mov x21, 400 				// x2
+	mov x21, 300 				// x2
 	mov x22, 200				// y2
 	mov x23, 120				// w largo de pixeles
 	mov x13, 255				// R
-	mov x14, 244					// G
+	mov x14, 244				// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doTriangle				// REVIEW Checkear
-	//ret
+	bl doTriangleUp				// REVIEW Checkear
+	ret
 
 	// Dibujamos un círculo
 	// Medio es 320 x 240
@@ -236,13 +236,74 @@ EndMain:
 return:
 	ret
 
-// TODO draw Border
+// TODO revisar
 drawBorder:
 	// Args
 	// x18 colour
-	mov x16, SCREEN_HEIGH
-	mov x12, SCREEN_WIDTH
+	sub sp, sp, #8			// Guardo el link register para no sobreescribirlo
+	stur lr, [sp]
+
+	mov x16, 0				// Guardo la posicion en x a la que quiero llegar
+	mov x12, SCREEN_HEIGH	// Guardo la posicion y donde quiero llegar
 	bl setPixel
+	ldur x9, [x0]
+
+	mov x16, SCREEN_WIDTH	// REVIEW esto esta bien? No deberia ser SCREEN_WIDTH para los x?
+	mov x12, SCREEN_HEIGH	// Y SCREEN_HEIGH para los y?
+	bl setPixel
+	stur x18, [x0]
+
+drawLeft:
+	bl setPixel
+	stur x18, [x0]
+	sub x16, x16, #1
+	cmp x9, x0
+	b.eq preDrawUp
+	b drawLeft
+
+preDrawUp:
+	mov x9, #0
+drawUp:
+	bl setPixel
+	stur x18, [x0]
+	sub x12, x12, #1
+	cmp x9, x0
+	b.eq preDrawRight
+	b drawUp
+
+preDrawRight:
+	mov x12, #0
+	mov x16, SCREEN_WIDTH
+	bl setPixel
+	ldur x9, [x0]
+drawRight:
+	bl setPixel
+	stur x18, [x0]
+	sub x16, x16, #1
+	cmp x9, x0
+	b.eq preDrawDown
+	b drawRight
+
+preDrawDown:
+	mov x12, SCREEN_HEIGH
+	mov x16, SCREEN_WIDTH
+	bl setPixel
+	ldur x9, [x0]
+drawDown:
+	bl setPixel
+	stur x18, [x0]
+	add x12, x12, #1
+	cmp x9, x0
+	b.eq endBorder
+	b drawDown
+
+endBorder:
+	ldur lr, [sp]
+	add sp, sp, #8
+	ret
+
+/*
+endDraw:
 	// TODO
 
 borderLoop:
@@ -251,6 +312,7 @@ borderLoop:
 
 borderEnd:
 	// TODO
+*/
 
 // NOTE Circle Test
 circleTest:
