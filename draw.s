@@ -339,7 +339,7 @@ doTriangleDown:
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
 	// x23 w cantidad de píxeles
-	// x18 colour
+	// w18 colour
 
 	sub sp, sp, #8
 	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel

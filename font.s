@@ -26,6 +26,57 @@ doE:
 // NOTE i
 doI:
 	// @Diego
+	// Args
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
+	// w18 color
+	sub sp, sp, 40
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	stur x23, [sp, #24]
+	stur x24, [sp, #32]
+	mov x16, x21
+	mov x12, x22
+	mov x9, #0
+
+doITop:
+	bl drawPixel
+	add x21, x21, 1
+	cmp x9, 20
+	b.eq preIDown
+	add x9, x9, 1
+	b doITop
+
+preIDown:
+	mov x21, x16
+	mov x22, x12
+	add x16, x16, #10
+
+doIDown:
+	bl drawPixel
+	add x12, x12, #1
+	cmp x9, #20
+	b.eq endI
+	add x9, x9, #1
+	b doIDown
+
+doIBot:
+	bl drawPixel
+	sub x21, x21, 1
+	cmp x9, 0
+	b.eq endI
+	sub x9, x9, 1
+	b doITop
+
+endI:
+	ldur x24, [sp, #32]
+	ldur x23, [sp, #24]
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	add sp, sp, 40
+	ret
 
 .globl doO
 // NOTE o

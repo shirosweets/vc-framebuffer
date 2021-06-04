@@ -124,10 +124,20 @@ main:
 	mov x22, 300				// y2
 	mov x23, 50					// w largo de pixeles
 	mov x13, 255				// R
-	mov x14, 255				// G
+	mov x14, 0				// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doPiramide				// REVIEW Checkear
+	//bl doPiramide				// REVIEW Checkear
+
+	// Pintamos una I en la pantalla
+	mov x21, 300 				// x2
+	mov x22, 300				// y2
+	mov x23, 50					// w largo de pixeles
+	mov x13, 255				// R
+	mov x14, 0				// G
+	mov x15, 8					// B
+	bl setColour				// R+G+B = Rojo
+	bl doI				// FIXME Checkear
 	ret
 
 	// Dibujamos un círculo
