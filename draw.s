@@ -19,12 +19,12 @@ drawLine:
 	// x19 err
 
 	sub sp, sp, #48				// Reservamos 6 registros de memoria
-	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
-	stur x19, [sp, #32]
-	stur x4, [sp, #24]
-	stur x5, [sp, #16]
-	stur x6, [sp, #8]
 	stur x7, [sp, #0]
+	stur x6, [sp, #8]
+	stur x5, [sp, #16]
+	stur x4, [sp, #24]
+	stur x19, [sp, #32]
+	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
 
 	// (x0, y0) to (x1, y1)
 	// (xc0, yc0) to (xc1, yc1)

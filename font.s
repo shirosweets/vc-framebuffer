@@ -19,12 +19,59 @@ doA:
 
 .globl doE
 // NOTE e
-doE:
+doE:	//FIXME
 	// @Diego
+	// Args
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
+	// w18 color
+	sub sp, sp, 32
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	stur x23, [sp, #24]
+	mov x9, #0
+
+doETop:
+	mov x23, 15
+	bl doHorizontalLine
+	ldur x21, [sp, #8]
+	ldur x22, [sp, #16]
+	mov x16, x21
+	mov x12, x22
+
+doEDown:
+	bl drawPixel
+	add x12, x12, #1
+	cmp x9, #10
+	b.eq drawEMid
+	cmp x9, #20
+	b.eq endE
+	add x9, x9, #1
+	b doEDown
+
+drawEMid:
+	mov x23, #10
+	bl doHorizontalLine
+	add x9, x9, #1
+	b doEDown
+
+
+drawEBot:
+	mov x23, 15
+	bl doHorizontalLine
+	b endE
+
+endE:
+	ldur x23, [sp, #24]
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	ret
 
 .globl doI
 // NOTE i
-doI:
+doI:			//REVIEW Done
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -41,21 +88,29 @@ doI:
 	mov x10, x23
 	mov x9, 0
 
-doITop:
+drawITop:
 	mov x23, 20
 	bl doHorizontalLine
-	mov x23, x10
+	ldur x21, [sp, #8] 
+	ldur x22, [sp, #16]
+	mov x16, x21
+	mov x12, x22
+	add x16, x16, 10
 
 doIDown:
 	bl drawPixel
 	add x12, x12, #1
 	cmp x9, #20
-	b.eq doIBot
+	b.eq drawIBot
 	add x9, x9, #1
 	b doIDown
 
-doIBot:
-	mov 
+drawIBot:
+	mov x23, 20
+	ldur x21, [sp, #8]
+	ldur x22, [sp, #16]
+	add x22, x22, 20
+	bl doHorizontalLine
 
 endI:
 	ldur x24, [sp, #32]
