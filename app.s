@@ -127,7 +127,7 @@ main:
 	mov x14, 254				// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	//bl doPiramide
+	bl doI
 
 	// Pintamos una I en la pantalla
 	mov x21, 300 				// x2
@@ -268,8 +268,8 @@ drawBorder:
 	bl setPixel
 	ldur x9, [x0]
 
-	mov x16, SCREEN_WIDTH	// REVIEW esto esta bien? No deberia ser SCREEN_WIDTH para los x?
-	mov x12, SCREEN_HEIGH	// Y SCREEN_HEIGH para los y?
+	mov x16, SCREEN_WIDTH
+	mov x12, SCREEN_HEIGH
 	bl setPixel
 	stur x18, [x0]
 
@@ -435,7 +435,12 @@ doHorizontalLine:	// Crea líneas horizontales en la coordenada (xo, po) con w c
 	// Used
 	// drawPixel: setPixel x16 x, x12 y
 	// x18 Colour
-	sub sp, sp, #8
+	sub sp, sp, #48
+	stur x12, [sp, #40]
+	stur x16, [sp, #32]
+	stur x23, [sp, #24]
+	stur x22, [sp, #16]
+	stur x21, [sp, #8]
 	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x16, x21				// x = xo
 	// horLineLoop...
@@ -451,7 +456,12 @@ horLineLoop:
 
 endHorizontalLine:
 	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria
-	add sp, sp, #8				// Liberamos espacio en memoria
+	ldur x21, [sp, #8]
+	ldur x22, [sp, #16]
+	ldur x23, [sp, #24]
+	ldur x16, [sp, #32]
+	ldur x12, [sp, #40]
+	add sp, sp, #48				// Liberamos espacio en memoria
 	ret
 
 // BL sobreescribe el registro x30 y RET lee el registro x30 //

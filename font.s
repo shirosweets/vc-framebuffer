@@ -19,12 +19,14 @@ doA:
 
 .globl doE
 // NOTE e
-doE:	//FIXME
+doE:	// REVIEW Done
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
 	// w18 color
+	// Usa:
+	// x23 para la funcion doHorizontalLine
 	sub sp, sp, 32
 	stur lr, [sp]
 	stur x21, [sp, #8]
@@ -35,23 +37,22 @@ doE:	//FIXME
 doETop:
 	mov x23, 15
 	bl doHorizontalLine
-	ldur x21, [sp, #8]
-	ldur x22, [sp, #16]
 	mov x16, x21
 	mov x12, x22
 
 doEDown:
 	bl drawPixel
 	add x12, x12, #1
+	add x22, x22, #1
 	cmp x9, #10
 	b.eq drawEMid
 	cmp x9, #20
-	b.eq endE
+	b.eq drawEBot
 	add x9, x9, #1
 	b doEDown
 
 drawEMid:
-	mov x23, #10
+	mov x23, 10
 	bl doHorizontalLine
 	add x9, x9, #1
 	b doEDown
@@ -91,8 +92,8 @@ doI:			//REVIEW Done
 drawITop:
 	mov x23, 20
 	bl doHorizontalLine
-	ldur x21, [sp, #8] 
-	ldur x22, [sp, #16]
+	add x22, x22, 1
+	bl doHorizontalLine
 	mov x16, x21
 	mov x12, x22
 	add x16, x16, 10
@@ -110,6 +111,8 @@ drawIBot:
 	ldur x21, [sp, #8]
 	ldur x22, [sp, #16]
 	add x22, x22, 20
+	bl doHorizontalLine
+	add x22, x22, 1
 	bl doHorizontalLine
 
 endI:
@@ -136,7 +139,7 @@ doDm:
 doL:
 	// @Vale
 
-.globl doDm
+.globl doS
 // NOTE s
 doS:
 	// @Vale
