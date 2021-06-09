@@ -128,11 +128,111 @@ endI:
 // NOTE o
 doO:
 	// @Diego
+	sub sp, sp, 24
+	stur x22, [sp, #16]
+	stur x21, [sp, #8]
+	stur lr, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+	mov x23, 5
+	bl doHorizontalLine
+
+endO:
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	add sp, sp, 24
+	ret
 
 .globl doDm
 // NOTE D
-doDm:
+doDm:	// REVIEW Done
 	// @Diego
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// w18 color
+	// Uses
+	// x23 par doHorizontalLine
+	sub sp, sp, 24
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+dIzq:
+	add x12, x12, 1
+	bl drawPixel
+	cmp x9, 20
+	b.eq preDDer
+	add x9, x9, 1
+	b dIzq
+
+preDDer:
+	mov x23, 5
+	bl doHorizontalLine
+	add x21, x21, 6
+	add x22, x22, 1
+	mov x16, x21
+	mov x12, x22
+	bl drawPixel
+	add x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	add x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	add x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	add x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	mov x9, 0
+
+dDer:
+	add x12, x12, 1
+	bl drawPixel
+	cmp x9, 10
+	b.eq dDoIzq
+	add x9, x9, 1
+	b dDer
+
+dDoIzq:
+	sub x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	sub x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	sub x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	sub x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	sub x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	sub x16, x16, 1
+	bl drawPixel
+	sub x16, x16, 1
+	bl drawPixel
+	sub x16, x16, 1
+	bl drawPixel
+	sub x16, x16, 1
+	bl drawPixel
+
+endD:
+	stur x22, [sp, #16]
+	stur x21, [sp, #8]
+	stur lr, [sp]
+	sub sp, sp, 24
+	ret
 
 .globl doL
 // NOTE l
@@ -151,8 +251,65 @@ doP:
 
 .globl doM
 // NOTE m
-doM:
+doM:	// REVIEW Done
 	// @Diego
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// w18 color
+	// Uses
+	// x23 par doHorizontalLine
+	sub sp, sp, 24
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+doPalo:
+	add x12, x12, 1
+	bl drawPixel
+	cmp x9, 20
+	b.eq doMr
+	add x9, x9, 1
+	b doPalo
+
+doMr:
+	mov x12, x22
+	mov x9, 0
+doMrLoop:
+	add x16, x16, 1
+	add x12, x12, 1
+	bl drawPixel
+	cmp x9, 10
+	b.eq doMrUp
+	add x9, x9, 1
+	b doMrLoop
+
+doMrUp:
+	add x16, x16, 1
+	sub x12, x12, 1
+	bl drawPixel
+	cmp x9, 0
+	b.eq doPaloD
+	sub x9, x9, 1
+	b doMrUp
+
+doPaloD:
+	add x12, x12, 1
+	bl drawPixel
+	cmp x9, 20
+	b.eq endM
+	add x9, x9, 1
+	b doPaloD
+
+endM:
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	add sp, sp, 24
+	ret
 
 .globl doN
 // NOTE n
@@ -184,8 +341,48 @@ doT:
 
 .globl doZ
 // NOTE z
-doZ:
+doZ:	// REVIEW Done
 	// @Diego
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x18 Color
+	// Usa:
+	// x23 para doHorizontalLine
+	sub sp, sp, 24
+	stur lr, [sp, 16]
+	stur x21, [sp, 8]
+	stur x22, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+	mov x23, 20
+	bl doHorizontalLine
+	add x21, x21, 20
+	add x16, x16, 20
+
+doZDiag:
+	bl drawPixel
+	add x22, x22, 1
+	sub x21, x21, 1
+	sub x16, x16, 1
+	add x12, x12, 1
+	cmp x9, 20
+	b.eq doZBot
+	add x9, x9, 1
+	b doZDiag
+
+doZBot:
+	mov x23, 20
+	bl doHorizontalLine
+
+endZ:
+	ldur x22, [sp]
+	ldur x21, [sp, 8]
+	ldur lr, [sp, 16]
+	add sp, sp, 24
+	ret
 
 .globl doGm
 // NOTE G
