@@ -132,12 +132,8 @@ doO:
 	stur x22, [sp, #16]
 	stur x21, [sp, #8]
 	stur lr, [sp]
-	mov x16, x21
-	mov x12, x22
-	mov x9, 0
 
-	mov x23, 5
-	bl doHorizontalLine
+	bl doCircle
 
 endO:
 	stur lr, [sp]
@@ -386,13 +382,142 @@ endZ:
 
 .globl doGm
 // NOTE G
-doGm:
+doGm:	//REVIEW Done
 	// @Diego
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x18 color
+	// AUX fun:
+	// doVertLine
+	sub sp, sp, 40
+	stur x21, [sp, 32]
+	stur x22, [sp, 24]
+	stur x18, [sp, 16]
+	stur x23, [sp, 8]
+	stur lr, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x23, 3
+	mov x9, 0
+	bl doHorizontalLine
+	add x16, x16, 3
+
+doGmStart:
+	bl drawPixel
+	add x12, x12, 1
+	add x16, x16, 1
+	cmp x9, 5
+	b.eq preDoGMDiag
+	add x9, x9, 1
+	b doGmStart
+
+preDoGMDiag:
+	mov x9, 0
+	mov x16, x21
+	mov x12, x22
+
+doGMDiag:
+	bl drawPixel
+	add x12, x12, 1
+	sub x16, x16, 1
+	cmp x9, 10
+	b.eq preDoGMDiagR
+	add x9, x9, 1
+	b doGMDiag
+
+preDoGMDiagR:
+	mov x21, x16
+	mov x22, x12
+	mov x23, 10
+	bl vertLine
+
+doGMDiagR:
+	bl drawPixel
+	add x12, x12, 1
+	add x16, x16, 1
+	cmp x9, 0
+	b.eq doGMbot
+	sub x9, x9, 1
+	b doGMDiagR
+
+doGMbot:
+	mov x21, x16
+	mov x22, x12
+	mov x23, 5
+	bl doHorizontalLine
+	add x16, x16, 5
+	mov x9, 0
+
+doGMdiagUR:
+	bl drawPixel
+	add x16, x16, 1
+	sub x12, x12, 1
+	cmp x9, 10
+	b.eq doGend
+	add x9, x9, 1
+	b doGMdiagUR
+
+doGend:
+	mov x22, x12
+	mov x21, x16
+	sub x22, x22, 5
+	mov x23, 5
+	bl vertLine
+	sub x21, x21, 10
+	mov x23, 10
+	bl doHorizontalLine
+
+endGm:
+	ldur x21, [sp, 32]
+	ldur x22, [sp, 24]
+	ldur x18, [sp, 16]
+	ldur x23, [sp, 8]
+	ldur lr, [sp]
+	add sp, sp, 40
+	ret
 
 .globl doG
 // NOTE g
 doG:
-	//@Diego
+	// @Diego
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x18 color
+	sub sp, sp, 40
+	stur x21, [sp, 32]
+	stur x22, [sp, 24]
+	stur x18, [sp, 16]
+	stur x23, [sp, 8]
+	stur lr, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x23, 3
+	mov x9, 0
+	bl doCircle
+	add x16, x16, x23
+	add x16, x16, x23
+	add x12, x12, x23
+	add x12, x12, 1
+
+doGDiag:
+	bl drawPixel
+	add x12, x12, 1
+	sub x16, x16, 1
+	cmp x9, 10
+	b.eq endG
+	add x9, x9, 1
+	b doGDiag
+
+endG:
+	ldur x21, [sp, 32]
+	ldur x22, [sp, 24]
+	ldur x18, [sp, 16]
+	ldur x23, [sp, 8]
+	ldur lr, [sp]
+	add sp, sp, 40
+	ret
 
 .globl doDiego
 // NOTE Diego

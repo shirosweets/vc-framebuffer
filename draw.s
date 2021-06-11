@@ -3,6 +3,42 @@
 
 //.include "app.s"
 
+.globl vertLine
+// NOTE Vertilcal line with a height
+vertLine:
+	// Args
+	// x21 x
+	// x22 y
+	// x18 colour
+	// x23 height
+	sub sp, sp, 40
+	stur x9, [sp, 32]
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
+	stur x23, [sp, 8]
+	stur lr, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+doVertL:
+	bl drawPixel
+	add x12, x12, 1
+	cmp x9, x23
+	b.eq endVertLine
+	add x9, x9, 1
+	b doVertL
+
+endVertLine:
+	ldur lr, [sp]
+	ldur x23, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	ldur x9, [sp, 32]
+	add sp, sp, 40
+	ret
+
+
 .globl drawLine
 // NOTE Line
 drawLine:
@@ -19,12 +55,12 @@ drawLine:
 	// x19 err
 
 	sub sp, sp, #48				// Reservamos 6 registros de memoria
-	stur x7, [sp, #0]
-	stur x6, [sp, #8]
-	stur x5, [sp, #16]
-	stur x4, [sp, #24]
-	stur x19, [sp, #32]
 	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
+	stur x19, [sp, #32]
+	stur x4, [sp, #24]
+	stur x5, [sp, #16]
+	stur x6, [sp, #8]
+	stur x7, [sp, #0]
 
 	// (x0, y0) to (x1, y1)
 	// (xc0, yc0) to (xc1, yc1)

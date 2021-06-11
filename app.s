@@ -137,7 +137,7 @@ main:
 	mov x14, 0					// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doO						
+	bl doG					
 	ret
 
 	// Dibujamos un círculo
