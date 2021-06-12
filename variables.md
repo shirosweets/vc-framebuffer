@@ -49,7 +49,7 @@ doCircle(xc = x21, yc = x22, radio=x23, colour=x18) -> None
 
 x25 = x
 x26 = y
-x28 = P
+x27 = P
 
 ```
 `xc` - coordenada x del centro

@@ -294,18 +294,18 @@ circleTest:
 drawPixel:
 	// Args: y=x12  -- x=x16  -- colour=x18
 	sub sp, sp, #16
-	stur x28, [sp, 8]
-	stur x30, [sp, #0]
+	str x28, [sp, 8]
+	str x30, [sp, #0]
 	bl setPixel
-	stur w18, [x28]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
-	ldur x30, [sp, #0]
-	ldur x28, [sp, 8]
+	str w18, [x28]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
+	ldr x30, [sp, #0]
+	ldr x28, [sp, 8]
 	add sp, sp, #16
 	ret
 
 // NOTE setPixel
 setPixel:
-	// Return:  x0 Pixel a pintar
+	// Return:  x29 Pixel a pintar
 	// Args: y=x12  -- x=x16	
 	mov x8, SCREEN_WIDTH
 	mul x17, x12, x8   			// y * WIDTH
@@ -318,6 +318,12 @@ setPixel:
 drawUpdate:
 	// x28 PreFrameBuffer
 	// x20 FrameBuffer
+	sub sp, sp, 40
+	str x8, [sp, 32]
+	str x7, [sp, 24]
+	str x9, [sp, 16]
+	str x10, [sp, 8]
+	str lr, [sp]
 	mov x8, x20
 	mov x7, x28
 	mov x9, 0
@@ -334,6 +340,12 @@ updateLoop:
 	b updateLoop
 
 endUpdate:
+	ldr x8, [sp, 32]
+	ldr x7, [sp, 24]
+	ldr x9, [sp, 16]
+	ldr x10, [sp, 8]
+	ldr lr, [sp]
+	add sp, sp, 40
 	ret
 
 // NOTE setColour
@@ -346,16 +358,16 @@ setColour:
 	// x15 b
 	// 24 bits
 	sub sp, sp, #16
-	stur x13, [sp, #8]
-	stur x14, [sp, #0]
+	str x13, [sp, #8]
+	str x14, [sp, #0]
 
 	lsl x13, x13, 16			// Movemos 16 bits
 	lsl x14, x14, 8				// Movemos 8 bits
 	add x18, x13, x14			// R+G
 	add x18, x18, x15			// RG+B
 
-	ldur x13, [sp, #8]
-	ldur x14, [sp, #0]
+	ldr x13, [sp, #8]
+	ldr x14, [sp, #0]
 	add sp, sp, #16
 	ret
 
@@ -365,8 +377,8 @@ verticalLine:
 	// x21 x
 	// x18 Colour
 	sub sp, sp, #16				// Guardamos 2 lugares del stack
-	stur x30, [sp, #8]			// registro 30 para el RET en el stack
-	stur x1, [sp, #0]			// Guardamos en el stack pointer el registro x1 anterior
+	str x30, [sp, #8]			// registro 30 para el RET en el stack
+	str x1, [sp, #0]			// Guardamos en el stack pointer el registro x1 anterior
 	mov x1, SCREEN_HEIGH
 	mov x16, x21  				// x = argument
 	mov x12, xzr  				// y = 0
@@ -380,8 +392,8 @@ verLineLoop:
 	b verLineLoop				// Continuamos con el loop
 
 verLineEnd:
-	ldur x1, [sp, #0]			// Carga lo que guardó en el stack
-	ldur x30, [sp, #8]			// Cargamos variables anteriores
+	ldr x1, [sp, #0]			// Carga lo que guardó en el stack
+	ldr x30, [sp, #8]			// Cargamos variables anteriores
 	add sp, sp, #16				// Libera el stack
 	ret
 
@@ -396,12 +408,12 @@ doHorizontalLine:	// Crea líneas horizontales en la coordenada (xo, po) con w c
 	// drawPixel: setPixel x16 x, x12 y
 	// x18 Colour
 	sub sp, sp, #48
-	stur x12, [sp, #40]
-	stur x16, [sp, #32]
-	stur x23, [sp, #24]
-	stur x22, [sp, #16]
-	stur x21, [sp, #8]
-	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
+	str x12, [sp, #40]
+	str x16, [sp, #32]
+	str x23, [sp, #24]
+	str x22, [sp, #16]
+	str x21, [sp, #8]
+	str x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x16, x21				// x = xo
 	// horLineLoop...
 
@@ -415,12 +427,12 @@ horLineLoop:
 	b horLineLoop
 
 endHorizontalLine:
-	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria
-	ldur x21, [sp, #8]
-	ldur x22, [sp, #16]
-	ldur x23, [sp, #24]
-	ldur x16, [sp, #32]
-	ldur x12, [sp, #40]
+	ldr x30, [sp, #0]  		// Guardamos el return pointer en memoria
+	ldr x21, [sp, #8]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #24]
+	ldr x16, [sp, #32]
+	ldr x12, [sp, #40]
 	add sp, sp, #48				// Liberamos espacio en memoria
 	ret
 

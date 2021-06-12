@@ -95,11 +95,11 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) y en este archivo [font.s](font.s) (@diegogimenez04):
     - [x] doDm (crea una `D` en mayúscula)
     - [x] doO (crea una `o` en minúscula)
-    - [ ] doE (crea una `e` en minúscula)
-    - [ ] doI (crea una `i` en minúscula)
+    - [x] doE (crea una `e` en minúscula)
+    - [x] doI (crea una `i` en minúscula)
     - [x] doZ (crea una `z` en minúscula)
-    - [ ] doM (crea una `m` en minúscula)
-    - [ ] doG (crea una `g` en minúscula)
+    - [x] doM (crea una `m` en minúscula)
+    - [x] doG (crea una `g` en minúscula)
     - [x] doGm (crea una `G` en mayúscula)
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) [font.s](font.s) (@shirosweets):
@@ -118,7 +118,7 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 
 - [ ] Averiguar por qué corre más rápido al separar archivos.
 
-- [ ] Finalizar una estructura básica del EJ1.
+- [x] Finalizar una estructura básica del EJ1.
 
 - [ ] Estructura básica del EJ2.
 

@@ -6,31 +6,77 @@
 .globl doAnimacionInicial
 doAnimacionInicial:
 	sub sp, sp, 48
+	str x25, [sp, 40]
+	str x24, [sp, 32]
+	str x23, [sp, 24]
+	str x21, [sp, 16]
+	str x22, [sp, 8]
+	str lr, [sp]
+	mov x25, 0
+
+loopDelay:
+	bl delay		// Retraso
+	bl cleanScreen	// Limpio la pantalla
+	bl drawUpdate	// Actualizo FB
+	bl doCompuVentana
+	add x21, x21, 6	// 
+	sub x22, x22, 3	// Muevo el mouse
+	bl doMouse
+	cmp x25, 19
+	b.eq loopDelay2
+	add x25, x25, 1
+	b loopDelay
+
+loopDelay2:
+	bl delay
+	bl cleanScreen
+	bl doComputerBroken
+	bl drawUpdate
+	bl cleanScreen
+
+endAnimacion:
+	ldr lr, [sp]
+	ldr x22, [sp, 8]
+	ldr x21, [sp, 16]
+	ldr x23, [sp, 24]
+	ldr x24, [sp, 32]
+	ldr x25, [sp, 40]
+	add sp, sp, 48
+	ret
+
+.globl doComputerBroken
+doComputerBroken:
+	sub sp, sp, 48
 	stur x25, [sp, 40]
 	stur x24, [sp, 32]
 	stur x23, [sp, 24]
 	stur x21, [sp, 16]
 	stur x22, [sp, 8]
 	stur lr, [sp]
-	mov x25, 0
 
-loopDelay:
-	bl drawUpdate
-	bl delay
-	bl cleanScreen
-	add x21, x21, 10
-	sub x22, x22, 5
 	bl doCompuVentana
 	bl doMouse
-	cmp x25, 10
-	b.eq loopDelay2
-	add x25, x25, 1
-	b loopDelay
+	mov x21, 115
+	mov x22, 114
+	mov x23, 10
+	mov x24, 10
+	bl doRectangle
+	add x21, x21, 50
+	add x22, x22, 20
+	bl doRectangle
+	add x21, x21, 100
+	sub x22, x22, 40
+	bl doRectangle
 
-loopDelay2:
-	ret
+	mov x21, 300
+	mov x22, 300
+	mov x23, 5
+	bl doRectangle
 
-endAnimacion:
+	mov x21, 350
+	mov x22, 200
+	bl doRectangle
+
 	ldr lr, [sp]
 	ldr x22, [sp, 8]
 	ldr x21, [sp, 16]
@@ -46,25 +92,20 @@ doMouse:
 	// Args
 	// x21 x
 	// x22 y
-	sub sp, sp, 40
-	stur x24, [sp, 32]
-	stur x23, [sp, 24]
-	stur x21, [sp, 16]
-	stur x22, [sp, 8]
-	stur lr, [sp]
+	sub sp, sp, 24
+	str x24, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
 
 	mov x23, 3
 	mov x24, 5
 	bl doTriangleUp
-	sub x21, x21, 4
 	mov x23, 9
 	bl doRectangle
 
-	ldur lr, [sp]
-	ldur x22, [sp, 8]
-	ldur x21, [sp, 16]
-	ldur x23, [sp, 24]
-	ldur x24, [sp, 32]
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x24, [sp, 16]
 	add sp, sp, 24
 	ret
 
@@ -76,7 +117,7 @@ doCompuVentana:
 	stur x13, [sp, 32]
 	stur x21, [sp, 24]
 	stur x22, [sp, 16]
-	stur w18, [sp, 8]
+	stur x18, [sp, 8]
 	stur lr, [sp]
 
 	// Fondo
@@ -158,6 +199,12 @@ doCompuVentana:
 	mov x22, 60
 	mov x23, 20
 	mov x24, 20
+	bl doRectangle
+
+	mov x21, 0
+	mov x22, 410
+	mov x23, 640
+	mov x24, 70
 	bl doRectangle
 
 	ldur lr, [sp]
@@ -446,14 +493,14 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	// Used
 	// x25 x
 	// x26 y
-	// x28 P
+	// x27 P
 	sub sp, sp, #16
-	stur x28, [sp, 8]
+	stur x27, [sp, 8]
 	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x25, x23				// x = r
 	mov x26, xzr   				// y = 0 (xzr = 0)
 	sub x8, xzr, x23   			// x8 = -r
-	add x28, x8, #1	 			// P = 1 - r
+	add x27, x8, #1	 			// P = 1 - r
 
 	// Dibujamos las esquinas
 	mov x16, x21				// x16 xd = xc
@@ -473,7 +520,7 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 doCircleLoop:				// While x > y
 	add x26, x26, #1
 	// Mid-point is inside or on the perimeter
-	cmp x28, xzr				// P <= 0
+	cmp x27, xzr				// P <= 0
 	b.le cirif1					// Si P <= 0 entra en el if
 	b cirelse1       			// Si no, entra en el else
 
@@ -482,7 +529,7 @@ cirif1:							// if (P <= 0)
 	// F(p) = 0 -> the point is on the perimeter
 	lsl x8, x26, #1				// x8 = 2*y
 	add x8, x8, #1   			// x8 = 2*y + 1
-	add x28, x28, x8 			// P = P + 2*y + 1
+	add x27, x27, x8 			// P = P + 2*y + 1
 	b cirif2
 
 cirelse1:						// Mid-point is outside the perimeter
@@ -492,7 +539,7 @@ cirelse1:						// Mid-point is outside the perimeter
 	lsl x9, x26, #1				// x9 = 2*y
 	add x8, x8, #1				// x8 = 2*x + 1
 	sub x9, x9, x8				// x9 = 2*y - (2*x + 1)
-	add x28, x28, x9			// P = P + 2*y - 2*x + 1
+	add x27, x27, x9			// P = P + 2*y - 2*x + 1
 	// cirif2...
 
 cirif2:							// if (x < y)
@@ -543,7 +590,7 @@ cirif2:							// if (x < y)
 
 circleEnd:
 	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
-	ldur x28, [sp, 8]
+	ldur x27, [sp, 8]
 	add sp, sp, #16
 	ret
 
@@ -557,8 +604,11 @@ doTriangleUp:
 	// x23 w cantidad de píxeles
 	// x18 colour
 
-	sub sp, sp, #8
-	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
+	sub sp, sp, #32
+	str x23, [sp, 24]
+	str x22, [sp, 16]
+	str x21, [sp, 8]
+	str lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
 	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
@@ -593,8 +643,11 @@ preRectAr:				// Se fija si itero la cantidad de veces necesarias
 	b rectAr			// sigo
 
 endTriang:
-	ldur lr, [sp]
-	add sp, sp, #8
+	ldr lr, [sp]
+	ldr x21, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x23, [sp, 24]
+	add sp, sp, #32
 	ret
 
 .globl doTriangleDown
@@ -607,7 +660,10 @@ doTriangleDown:
 	// x23 w cantidad de píxeles
 	// w18 colour
 
-	sub sp, sp, #8
+	sub sp, sp, #32
+	stur x23, [sp, 24]
+	stur x22, [sp, 16]
+	stur x21, [sp, 8]
 	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
@@ -645,8 +701,11 @@ preRectArDown:			// Se fija si itero la cantidad de veces necesarias
 	b rectArDown		// sigo
 
 endTriangDown:
-	ldur lr, [sp]
-	add sp, sp, #8
+	ldr lr, [sp]
+	ldr x21, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x23, [sp, 24]
+	add sp, sp, #32
 	ret
 
 .globl doPiramide
@@ -659,7 +718,10 @@ doPiramide:
 	// x23 w cantidad de píxeles
 	// w18 colour
 
-	sub sp, sp, #8
+	sub sp, sp, #32
+	str x23, [sp, 24]
+	str x22, [sp, 16]
+	str x21, [sp, 8]
 	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
 	mov x16, x21	// Instancio x16 para dibujar
 	mov x12, x22	// Instancio x12 para setPixel
@@ -695,7 +757,10 @@ prepirAr:				// Se fija si itero la cantidad de veces necesarias
 
 endPir:
 	ldur lr, [sp]
-	add sp, sp, #8
+	ldr x21, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x23, [sp, 24]
+	add sp, sp, #32
 	ret
 
 //.endif
