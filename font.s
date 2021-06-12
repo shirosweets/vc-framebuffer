@@ -86,7 +86,7 @@ doE:	// REVIEW Done
 	stur x22, [sp, #16]
 	stur x23, [sp, #24]
 
-	mov x23, 10
+	mov x23, 11
 	add x22, x22, 10
 	sub x21, x21, 5
 	bl doHorizontalLine
@@ -100,10 +100,10 @@ doE:	// REVIEW Done
 	bl doHorizontalLine
 	sub x21, x21, 1
 	add x22, x22, 1
-	mov x23, 14
+	mov x23, 16
 	bl vertLine
 	add x21, x21, 1
-	add x22, x22, 15
+	add x22, x22, 17
 	mov x23, 14
 	bl doHorizontalLine
 
@@ -207,19 +207,32 @@ doI:			//REVIEW Done
 
 .globl doO
 // NOTE o
-doO:
+doO:	//REVIEW Done
 	// @Diego
+	// Args
+	// x21 x
+	// x22 y
+	// w18 color
 	sub sp, sp, 24
 	stur x22, [sp, #16]
 	stur x21, [sp, #8]
 	stur lr, [sp]
 
-	bl doCircle
+	add x21, x21, 1
+	mov x23, 10
+	bl doHorizontalLine
+	sub x21, x21, 1
+	add x22, x22, 1
+	bl vertLine
+	add x21, x21, 11
+	bl vertLine
+	sub x21, x21, 10
+	add x22, x22, 11
+	bl doHorizontalLine
 
-endO:
-	stur lr, [sp]
-	stur x21, [sp, #8]
-	stur x22, [sp, #16]
+	ldur lr, [sp]
+	ldur x21, [sp, #8]
+	ldur x22, [sp, #16]
 	add sp, sp, 24
 	ret
 
@@ -341,10 +354,27 @@ doM:	// REVIEW Done
 	stur lr, [sp]
 	stur x21, [sp, #8]
 	stur x22, [sp, #16]
-	mov x16, x21
-	mov x12, x22
-	mov x9, 0
 
+	mov x23, 16
+	bl vertLine
+
+	mov x23, 5
+	bl doHorizontalLine
+	add x21, x21, 6
+	add x22, x22, 1
+	mov x23, 15
+	bl vertLine
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 5
+	bl doHorizontalLine
+	add x21, x21, 6
+	add x22, x22, 1
+	mov x23, 15
+	bl vertLine
+
+
+/*
 doPalo:
 	add x12, x12, 1
 	bl drawPixel
@@ -381,6 +411,7 @@ doPaloD:
 	b.eq endM
 	add x9, x9, 1
 	b doPaloD
+*/
 
 endM:
 	ldur x22, [sp, #16]
@@ -463,7 +494,7 @@ endZ:
 	ret
 
 .globl doGm
-// NOTE G
+// NOTE G mayus
 doGm:	//REVIEW Done
 	// @Diego
 	// Args
@@ -478,79 +509,34 @@ doGm:	//REVIEW Done
 	stur x18, [sp, 16]
 	stur x23, [sp, 8]
 	stur lr, [sp]
-	mov x16, x21
-	mov x12, x22
-	mov x23, 3
+	mov x23, 11
 	mov x9, 0
 	bl doHorizontalLine
 	add x16, x16, 3
 
-doGmStart:
-	bl drawPixel
-	add x12, x12, 1
-	add x16, x16, 1
-	cmp x9, 5
-	b.eq preDoGMDiag
-	add x9, x9, 1
-	b doGmStart
-
-preDoGMDiag:
-	mov x9, 0
-	mov x16, x21
-	mov x12, x22
-
-doGMDiag:
-	bl drawPixel
-	add x12, x12, 1
-	sub x16, x16, 1
-	cmp x9, 5
-	b.eq preDoGMDiagR
-	add x9, x9, 1
-	b doGMDiag
-
-preDoGMDiagR:
-	mov x21, x16
-	mov x22, x12
-	mov x23, 10
+	add x21, x21, 11
+	add x22, x22, 1
+	mov x23, 3
 	bl vertLine
 
-doGMDiagR:
-	bl drawPixel
-	add x12, x12, 1
-	add x16, x16, 1
-	cmp x9, 0
-	b.eq doGMbot
-	sub x9, x9, 1
-	b doGMDiagR
-
-doGMbot:
-	mov x21, x16
-	mov x22, x12
-	mov x23, 5
-	bl doHorizontalLine
-	add x16, x16, 5
-	mov x9, 0
-
-doGMdiagUR:
-	bl drawPixel
-	add x16, x16, 1
-	sub x12, x12, 1
-	cmp x9, 5
-	b.eq doGend
-	add x9, x9, 1
-	b doGMdiagUR
-
-doGend:
-	mov x22, x12
-	mov x21, x16
-	sub x22, x22, 5
-	mov x23, 5
+	sub x21, x21, 12
+	mov x23, 18
 	bl vertLine
-	sub x21, x21, 10
+
+	add x21, x21, 1
+	add x22, x22, 19
 	mov x23, 10
 	bl doHorizontalLine
 
-endGm:
+	add x21, x21, 11
+	sub x22, x22, 8
+	mov x23, 7
+	bl vertLine
+
+	sub x21, x21, 5
+	mov x23, 5
+	bl doHorizontalLine
+
 	ldur x21, [sp, 32]
 	ldur x22, [sp, 24]
 	ldur x18, [sp, 16]
@@ -561,7 +547,7 @@ endGm:
 
 .globl doG
 // NOTE g
-doG:
+doG:	//REVIEW Done
 	// @Diego
 	// Args
 	// x21 x inicial
@@ -573,26 +559,34 @@ doG:
 	stur x18, [sp, 16]
 	stur x23, [sp, 8]
 	stur lr, [sp]
-	mov x16, x21
-	mov x12, x22
-	mov x23, 3
-	mov x9, 0
-	bl doCircle
-	add x16, x16, x23
-	add x16, x16, x23
-	add x12, x12, x23
-	add x12, x12, 1
 
-doGDiag:
-	bl drawPixel
-	add x12, x12, 1
-	sub x16, x16, 1
-	cmp x9, 10
-	b.eq endG
-	add x9, x9, 1
-	b doGDiag
+	mov x23, 10
+	bl doHorizontalLine
+	sub x21, x21, 1
+	add x22, x22, 1
+	mov x23, 5
+	bl vertLine
 
-endG:
+	add x21, x21, 1
+	add x22, x22, 5
+	mov x23, 10
+	bl doHorizontalLine
+	
+	add x21, x21, 10
+	sub x22, x22, 5
+	mov x23, 14
+	bl vertLine
+	
+	add x22, x22, 15
+	sub x21, x21, 9
+	mov x23, 9
+	bl doHorizontalLine
+	
+	sub x21, x21, 1
+	sub x22, x22, 5
+	mov x23, 4
+	bl vertLine
+
 	ldur x21, [sp, 32]
 	ldur x22, [sp, 24]
 	ldur x18, [sp, 16]
@@ -619,27 +613,38 @@ doDiego:
 
 	bl doDm
 
-	add x21, x21, 50
+	add x21, x21, 25
 	bl doI
 
-	add x21, x21, 50
+	add x21, x21, 25
 	bl doE
 
-	add x21, x21, 50
+	add x21, x21, 20
 	bl doGm
 
-	add x21, x21, 50
-	add x22, x22, 10
-	mov x23, 10
+	add x21, x21, 20
+	add x22, x22, 8
 	bl doO
 
-	// bl doGm
-	// bl doI
-	// bl doM
-	// bl doE
-	// bl doN
-	// bl doE
-	// bl doZ
+	sub x22, x22, 8
+	add x21, x21, 50
+	bl doGm
+	add x21, x21, 20
+	bl doI
+	add x21, x21, 10
+	add x22, x22, 5
+	bl doM
+	sub x22, x22, 5
+	add x21, x21, 30
+	bl doE
+	add x21, x21, 20
+	bl doN
+	add x21, x21, 20
+	bl doE
+	add x21, x21, 20
+	bl doZ
+
+endDiego:
 	ldur lr, [sp]
 	ldur w18, [sp, 8]
 	ldur x22, [sp, 16]

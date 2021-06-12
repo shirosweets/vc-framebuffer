@@ -124,6 +124,25 @@ main:
 	bl doDiego
 	ret
 
+/*
+	bl delay
+	bl cleanScreen
+	add x21, x21, 100
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Gris
+	bl doDiego
+
+	bl delay
+	bl cleanScreen
+	add x21, x21, 100
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Gris
+	bl doTriangleUp
+ */
 	// Dibujamos un círculo
 	// Medio es 320 x 240
 	// FIXME Checkear

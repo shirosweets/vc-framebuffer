@@ -3,6 +3,10 @@
 
 //.include "app.s"
 
+.globl doCompuVentana
+doCompuVentana:
+	
+
 .globl vertLine
 // NOTE Vertilcal line with a height
 vertLine:
