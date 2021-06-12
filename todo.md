@@ -93,14 +93,14 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 - [ ] Añadir el checkeo de que no se escriban píxeles fuera del framebuffer.
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) y en este archivo [font.s](font.s) (@diegogimenez04):
-    - [ ] doDm (crea una `D` en mayúscula)
-    - [ ] doO (crea una `o` en minúscula)
+    - [x] doDm (crea una `D` en mayúscula)
+    - [x] doO (crea una `o` en minúscula)
     - [ ] doE (crea una `e` en minúscula)
     - [ ] doI (crea una `i` en minúscula)
-    - [ ] doZ (crea una `z` en minúscula)
+    - [x] doZ (crea una `z` en minúscula)
     - [ ] doM (crea una `m` en minúscula)
     - [ ] doG (crea una `g` en minúscula)
-    - [ ] doGm (crea una `G` en mayúscula)
+    - [x] doGm (crea una `G` en mayúscula)
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) [font.s](font.s) (@shirosweets):
     - [ ] doAm (crea una `a` en minúscula)

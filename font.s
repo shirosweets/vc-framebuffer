@@ -17,9 +17,9 @@
 doA:
 	// @Vale
 
-.globl doE
+.globl doEm
 // NOTE e
-doE:	// REVIEW Done
+doEm:	// REVIEW Done
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -70,9 +70,53 @@ endE:
 	ldur lr, [sp]
 	ret
 
-.globl doI
+.globl doE
+// NOTE e
+doE:	// REVIEW Done
+	// @Diego
+	// Args
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
+	// w18 color
+	// Usa:
+	// x23 para la funcion doHorizontalLine
+	sub sp, sp, 32
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	stur x23, [sp, #24]
+
+	mov x23, 10
+	add x22, x22, 10
+	sub x21, x21, 5
+	bl doHorizontalLine
+	add x21, x21, 11
+	sub x22, x22, 7
+	mov x23, 6
+	bl vertLine
+	sub x21, x21, 14
+	sub x22, x22, 1
+	mov x23, 14
+	bl doHorizontalLine
+	sub x21, x21, 1
+	add x22, x22, 1
+	mov x23, 14
+	bl vertLine
+	add x21, x21, 1
+	add x22, x22, 15
+	mov x23, 14
+	bl doHorizontalLine
+
+	ldur x23, [sp, #24]
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	add sp, sp, 32
+	ret
+
+.globl doIm
 // NOTE i
-doI:			//REVIEW Done
+doIm:			//REVIEW Done
 	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -116,6 +160,43 @@ drawIBot:
 	bl doHorizontalLine
 
 endI:
+	ldur x24, [sp, #32]
+	ldur x23, [sp, #24]
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	add sp, sp, 40
+	ret
+
+.globl doI
+// NOTE i
+doI:			//REVIEW Done
+	// @Diego
+	// Args
+	// x21 x lugar dónde empiezo a dibujar la figura
+	// x22 y lugar dónde empiezo a dibujar la figura
+	// w18 color
+	sub sp, sp, 40
+	stur lr, [sp]
+	stur x21, [sp, #8]
+	stur x22, [sp, #16]
+	stur x23, [sp, #24]
+	stur x24, [sp, #32]
+	mov x16, x21
+	mov x12, x22
+	bl drawPixel
+	sub x21, x21, 5
+	add x22, x22, 5
+	mov x23, 5
+	bl doHorizontalLine	
+	add x21, x21, 5
+	mov x23, 15
+	bl vertLine
+	sub x21, x21, 8
+	add x22, x22, 15
+	mov x23, 15
+	bl doHorizontalLine
+
 	ldur x24, [sp, #32]
 	ldur x23, [sp, #24]
 	ldur x22, [sp, #16]
@@ -422,7 +503,7 @@ doGMDiag:
 	bl drawPixel
 	add x12, x12, 1
 	sub x16, x16, 1
-	cmp x9, 10
+	cmp x9, 5
 	b.eq preDoGMDiagR
 	add x9, x9, 1
 	b doGMDiag
@@ -454,7 +535,7 @@ doGMdiagUR:
 	bl drawPixel
 	add x16, x16, 1
 	sub x12, x12, 1
-	cmp x9, 10
+	cmp x9, 5
 	b.eq doGend
 	add x9, x9, 1
 	b doGMdiagUR
@@ -524,11 +605,33 @@ endG:
 // NOTE Diego
 doDiego:
 	// @Diego
-	// bl doDm
-	// bl doI
-	// bl doE
-	// bl doG
-	// bl doO
+	// Args
+	// x21 x
+	// x22 y
+	// w18 color
+	// x23 for O
+	sub sp, sp, 40
+	stur x23, [sp, 32]
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
+	stur w18, [sp, 8]
+	stur lr, [sp]
+
+	bl doDm
+
+	add x21, x21, 50
+	bl doI
+
+	add x21, x21, 50
+	bl doE
+
+	add x21, x21, 50
+	bl doGm
+
+	add x21, x21, 50
+	add x22, x22, 10
+	mov x23, 10
+	bl doO
 
 	// bl doGm
 	// bl doI
@@ -537,6 +640,12 @@ doDiego:
 	// bl doN
 	// bl doE
 	// bl doZ
+	ldur lr, [sp]
+	ldur w18, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	ldur x23, [sp, 32]
+	add sp, sp, 40
 	ret
 
 .globl doValentinaVispo

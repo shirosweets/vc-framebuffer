@@ -119,34 +119,9 @@ main:
 	bl setColour				// R+G+B = Rojo
 	//bl doSquare
 
-	// Pintamos una forma triangular (variable) en el medio de la pantalla
-	mov x21, 300 				// x2
-	mov x22, 400				// y2
-	mov x23, 50					// w largo de pixeles
-	mov x13, 255				// R
-	mov x14, 254				// G
-	mov x15, 8					// B
-	bl setColour				// R+G+B = Rojo
-	bl doI
-
-	// Pintamos una I en la pantalla
-	mov x21, 500 				// x2
-	mov x22, 400				// y2
-	mov x23, 50					// w largo de pixeles
-	mov x13, 255				// R
-	mov x14, 0					// G
-	mov x15, 8					// B
-	bl setColour				// R+G+B = Rojo
-	bl doDm
-
-	mov x21, 250 				// x2
-	mov x22, 400				// y2
-	mov x23, 50					// w largo de pixeles
-	mov x13, 255				// R
-	mov x14, 0					// G
-	mov x15, 8					// B
-	bl setColour				// R+G+B = Rojo
-	bl doE
+	mov x21, 100
+	mov x22, 100
+	bl doDiego
 	ret
 
 	// Dibujamos un círculo
