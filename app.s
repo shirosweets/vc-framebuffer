@@ -1,6 +1,11 @@
 //.ifndef _APP_S
 //.equ    _APP_S, 1
 
+.equ SCREEN_BYTES, 4*640*480
+.equ SCREEN_PIXELS, 640*480
+.data
+	TOTAL_PIXELS: .dword SCREEN_PIXELS
+
 .equ SCREEN_WIDTH, 		640
 .equ SCREEN_HEIGH, 		480
 .equ BITS_PER_PIXEL,  	32
@@ -33,82 +38,6 @@ main:
 //break:
 	mov x20, x0					// X0 Direccion base del framebuffer
 	adr x29, PreFrameBuffer
-	bl cleanScreen				// Limpiamos la pantalla
-	mov x13, 96					// R
-	mov x14, 96					// G
-	mov x15, 96					// B
-	bl setColour				// R+G+B = Gris
-	//bl paintScreen				// NOTE OK
-
-	//bl circleTest
-
-	// Dibujamos un pixel azul al medio de la pantalla
-	mov x16, 320				// x s0etPixel
-	mov x12, 240				// y setPixel
-	bl setPixel					// Pixel a pintar
-	mov x13, 17					// R
-	mov x14, 88					// G
-	mov x15, 253				// B
-	bl setColour				// R+G+B = Azul
-	stur x18, [x0]
-
-	// Dibujamos un pixel verde
-	mov x16, 230				// x setPixel
-	mov x12, 340				// y setPixel
-	bl setPixel					// Pixel a pintar
-	mov x13, 17					// R
-	mov x14, 253				// G
-	mov x15, 64					// B
-	bl setColour				// Verde
-	//stur x18, [x0]
-
-	// Dibujamos un pixel amarillo
-	mov x16, 200				// x setPixel
-	mov x12, 300				// y setPixel
-	bl setPixel					// Pixel a pintar
-	mov x13, 255				// R
-	mov x14, 255				// G
-	mov x15, 0					// B
-	bl setColour				// Amarillo
-	//stur x18, [x0]
-
-	// Pintamos los límites de la pantalla
-	mov x13, 255				// R
-	mov x14, 255				// G
-	mov x15, 255				// B
-	bl setColour				// Blanco
-	//bl drawBorder				// TODO
-
-	// NOTE Línea horizontal
-	mov x21, 320				// xo
-	mov x22, 240				// yo
-	mov x23, 100				// w
-	mov x13, 255				// R
-	mov x14, 255				// G
-	mov x15, 0					// B
-	bl setColour				// R+G+B = Amarillo
-	bl doHorizontalLine
-
-	// Pintamos un rectágulo en el medio de la pantalla
-	mov x21, 320 				// x2
-	mov x22, 240				// y2
-	mov x23, 20					// w largo de pixeles
-	mov x24, 40					// h alto de pixeles
-	mov x13, 255				// R
-	mov x14, 255				// G
-	mov x15, 255				// B
-	bl setColour				// R+G+B = Blanco
-	bl doRectangle
-
-	// Pintamos el origen del rectágunlo
-	mov x16, 320				// x s0etPixel
-	mov x12, 240				// y setPixel
-	bl setPixel					// Pixel a pintar
-	mov x13, 255				// R
-	mov x14, 0					// G
-	mov x15, 8					// B
-	bl setColour				// R+G+B = Rojo
-	stur x18, [x0]				// Lo pinto
 
 	bl cleanScreen
 	// Pintamos un cuadrado en el medio de la pantalla
@@ -262,6 +191,7 @@ return:
 	ret
 
 // TODO revisar
+/*
 drawBorder:
 	// Args
 	// x18 colour
@@ -326,7 +256,7 @@ endBorder:
 	ldur lr, [sp]
 	add sp, sp, #8
 	ret
-
+ */
 /*
 endDraw:
 	// TODO
@@ -340,6 +270,7 @@ borderEnd:
 */
 
 // NOTE Circle Test
+/*
 circleTest:
 	sub sp, sp, #8
 	stur x30, [sp, #0]  		// Guardamos el return pointer en memoria
@@ -358,27 +289,51 @@ circleTest:
 	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria	ret
 	add sp, sp, #8				// Liberamos memoria
 	ret
-
+ */
 // NOTE drawPixel
 drawPixel:
 	// Args: y=x12  -- x=x16  -- colour=x18
-	sub sp, sp, #8
+	sub sp, sp, #16
+	stur x29, [sp, 8]
 	stur x30, [sp, #0]
 	bl setPixel
-	stur w18, [x0]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
+	stur w18, [x29]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
 	ldur x30, [sp, #0]
-	add sp, sp, #8
+	ldur x29, [sp, 8]
+	add sp, sp, #16
 	ret
 
 // NOTE setPixel
 setPixel:
 	// Return:  x0 Pixel a pintar
-	// Args: y=x12  -- x=x16
+	// Args: y=x12  -- x=x16	
 	mov x8, SCREEN_WIDTH
-	mul x0, x12, x8   			// y * WIDTH
-	add x0, x0, x16				// + x
-	lsl x0, x0, 2				// *4
-	add x0, x20, x0				// Pixel a pintar
+	mul x17, x12, x8   			// y * WIDTH
+	add x17, x17, x16			// + x
+	lsl x17, x17, 2				// *4
+	add x29, x29, x17			// Pixel a pintar
+	ret
+
+.globl drawUpdate
+drawUpdate:
+	// x29 PreFrameBuffer
+	// x20 FrameBuffer
+	mov x8, x20
+	mov x7, x29
+	mov x9, 0
+	ldr x10, TOTAL_PIXELS
+
+updateLoop:
+	ldr w6, [x7]
+	str w6, [x8]
+	add x8, x8, 4
+	add x7, x7, 4
+	cmp x9, x10
+	b.eq endUpdate
+	add x9, x9, 1
+	b updateLoop
+
+endUpdate:
 	ret
 
 // NOTE setColour
@@ -494,15 +449,15 @@ cleanScreen:  // Pinta toda la pantalla de negro
 paintScreen:	// 320w 240h -> 76800 + 240
 	// Return -> nada
 	// Args: x18 Colour
-	mov x0, x20					// Origen del frameBuffer
+	adr x29, PreFrameBuffer					// Origen del frameBuffer
 	mov x8, SCREEN_WIDTH
 	mov x9, SCREEN_HEIGH
 	mul x8, x8, x9  			// x8 contador de pixeles a pintar
 	// paintScreenLoop...
 
 paintScreenLoop:
-	stur w18, [x0]	   			// Set color of pixel N
-	add x0, x0, 4	   			// Next pixel
+	stur w18, [x29]	   			// Set color of pixel N
+	add x29, x29, 4	   			// Next pixel
 	sub x8, x8, 1	   			// decrement pixel counter
 	cbnz x8, paintScreenLoop	// If not end row jump
 	ret

@@ -15,7 +15,9 @@ doAnimacionInicial:
 	mov x25, 0
 
 loopDelay:
+	bl drawUpdate
 	bl delay
+	bl cleanScreen
 	add x21, x21, 10
 	sub x22, x22, 5
 	bl doCompuVentana
@@ -561,8 +563,7 @@ doTriangleUp:
 rectAr:					// Dibuja la diagonal hacia arriba
 	add x16, x16, #1	// Me muevo al siguiente
 	sub x12, x12, #1	// Me muevo arriba
-	bl setPixel			// Calculo el pixel
-	stur w18, [x0]		// Lo pinto
+	bl drawPixel
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
 	b.eq rectBaj		// Si llegue a la cantidad bajo
 	add x9, x9, #1		// Si no le sumo 1
@@ -571,8 +572,7 @@ rectAr:					// Dibuja la diagonal hacia arriba
 rectBaj:				// Dibuja la diagonal hacia abajo
 	add x16, x16, #1	// Me muevo al siguiente
 	add x12, x12, #1	// Bajo 1 unidad
-	bl setPixel			// Calculo el pixel
-	stur w18, [x0]		// Lo pinto
+	bl drawPixel
 	cmp x9, #0			// Comparo el contador a w con 0
 	b.eq preRectAr		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
 	sub x9, x9, #1		// Si no, le resto 1 al contador
@@ -614,8 +614,7 @@ doTriangleDown:
 rectArDown:				// Dibuja la diagonal hacia arriba
 	add x16, x16, #1	// Me muevo al siguiente
 	add x12, x12, #1	// Me muevo arriba
-	bl setPixel			// Calculo el pixel
-	stur w18, [x0]		// Lo pinto
+	bl drawPixel
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
 	b.eq rectBajDown	// Si llegue a la cantidad bajo
 	add x9, x9, #1		// Si no le sumo 1
@@ -665,8 +664,7 @@ doPiramide:
 pirAr:					// Dibuja la diagonal hacia arriba
 	sub x16, x16, #1	// Me muevo atras
 	sub x12, x12, #1	// Me muevo arriba
-	bl setPixel			// Calculo el pixel
-	stur w18, [x0]		// Lo pinto
+	bl drawPixel
 	cmp x9, x19			// Comparo mi contador con mi cantidad de pixeles
 	b.eq pirBaj			// Si llegue a la cantidad bajo
 	add x9, x9, #1		// Si no le sumo 1 al contador
@@ -675,8 +673,7 @@ pirAr:					// Dibuja la diagonal hacia arriba
 pirBaj:					// Dibuja la diagonal hacia abajo
 	sub x16, x16, #1	// Me muevo atras
 	add x12, x12, #1	// Bajo 1 unidad
-	bl setPixel			// Calculo el pixel
-	stur w18, [x0]		// Lo pinto
+	bl drawPixel
 	cmp x9, #0			// Comparo el contador a w con 0
 	b.eq prepirAr		// Si llegue a la "base" arranco de nuevo desde 1 posicion menos
 	sub x9, x9, #1		// Si no, le resto 1 al contador

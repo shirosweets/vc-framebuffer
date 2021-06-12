@@ -434,10 +434,10 @@ doVm:
 	// x0
 	// Pixel superior izquierdo
 	mov x8, SCREEN_WIDTH
-	mul x0, x12, x8   			// y * WIDTH
-	add x0, x0, x16				// + x
-	lsl x0, x0, 2				// *4
-	add x0, x20, x0				// Pixel inicial a pintar
+	mul x29, x12, x8   			// y * WIDTH
+	add x29, x29, x16				// + x
+	lsl x29, x29, 2				// *4
+	add x29, x20, x29				// Pixel inicial a pintar
 
 	// TODO
 

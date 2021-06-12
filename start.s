@@ -3,7 +3,7 @@
 
 .globl PreFrameBuffer
 .data
-PreFrameBuffer: .skip 4*640*480
+	PreFrameBuffer: .skip 4*640*480
 	// Setup Frame Buffer
 	.equ SCREEN_WIDTH, 		640
 	.equ SCREEN_HEIGH, 		480
