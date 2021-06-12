@@ -37,7 +37,7 @@
 main:
 //break:
 	mov x20, x0					// X0 Direccion base del framebuffer
-	adr x29, PreFrameBuffer
+	adr x28, PreFrameBuffer
 
 	bl cleanScreen
 	// Pintamos un cuadrado en el medio de la pantalla
@@ -294,12 +294,12 @@ circleTest:
 drawPixel:
 	// Args: y=x12  -- x=x16  -- colour=x18
 	sub sp, sp, #16
-	stur x29, [sp, 8]
+	stur x28, [sp, 8]
 	stur x30, [sp, #0]
 	bl setPixel
-	stur w18, [x29]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
+	stur w18, [x28]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits) IMPORTANTE!!!!!!!!!
 	ldur x30, [sp, #0]
-	ldur x29, [sp, 8]
+	ldur x28, [sp, 8]
 	add sp, sp, #16
 	ret
 
@@ -311,15 +311,15 @@ setPixel:
 	mul x17, x12, x8   			// y * WIDTH
 	add x17, x17, x16			// + x
 	lsl x17, x17, 2				// *4
-	add x29, x29, x17			// Pixel a pintar
+	add x28, x28, x17			// Pixel a pintar
 	ret
 
 .globl drawUpdate
 drawUpdate:
-	// x29 PreFrameBuffer
+	// x28 PreFrameBuffer
 	// x20 FrameBuffer
 	mov x8, x20
-	mov x7, x29
+	mov x7, x28
 	mov x9, 0
 	ldr x10, TOTAL_PIXELS
 
@@ -449,15 +449,15 @@ cleanScreen:  // Pinta toda la pantalla de negro
 paintScreen:	// 320w 240h -> 76800 + 240
 	// Return -> nada
 	// Args: x18 Colour
-	adr x29, PreFrameBuffer					// Origen del frameBuffer
+	adr x28, PreFrameBuffer					// Origen del frameBuffer
 	mov x8, SCREEN_WIDTH
 	mov x9, SCREEN_HEIGH
 	mul x8, x8, x9  			// x8 contador de pixeles a pintar
 	// paintScreenLoop...
 
 paintScreenLoop:
-	stur w18, [x29]	   			// Set color of pixel N
-	add x29, x29, 4	   			// Next pixel
+	stur w18, [x28]	   			// Set color of pixel N
+	add x28, x28, 4	   			// Next pixel
 	sub x8, x8, 1	   			// decrement pixel counter
 	cbnz x8, paintScreenLoop	// If not end row jump
 	ret

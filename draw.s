@@ -23,17 +23,20 @@ loopDelay:
 	bl doCompuVentana
 	bl doMouse
 	cmp x25, 10
-	b.eq endAnimacion
+	b.eq loopDelay2
 	add x25, x25, 1
 	b loopDelay
 
+loopDelay2:
+	ret
+
 endAnimacion:
-	ldur lr, [sp]
-	ldur x22, [sp, 8]
-	ldur x21, [sp, 16]
-	ldur x23, [sp, 24]
-	ldur x24, [sp, 32]
-	ldur x25, [sp, 40]
+	ldr lr, [sp]
+	ldr x22, [sp, 8]
+	ldr x21, [sp, 16]
+	ldr x23, [sp, 24]
+	ldr x24, [sp, 32]
+	ldr x25, [sp, 40]
 	add sp, sp, 48
 	ret
 
