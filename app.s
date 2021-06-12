@@ -121,7 +121,8 @@ main:
 
 	mov x21, 100
 	mov x22, 100
-	bl doDiego
+	bl doCompuVentana
+	
 	ret
 
 /*

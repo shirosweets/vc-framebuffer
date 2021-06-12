@@ -5,7 +5,160 @@
 
 .globl doCompuVentana
 doCompuVentana:
-	
+	sub sp, sp, 56
+	stur x15, [sp, 48] 
+	stur x14, [sp, 40]
+	stur x13, [sp, 32]
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
+	stur w18, [sp, 8]
+	stur lr, [sp]
+
+	// Fondo
+	mov x13, 110
+	mov x14, 50
+	mov x15, 50
+	bl setColour
+	mov x21, 0
+	mov x22, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+
+	// Marco
+	mov x13, 0
+	mov x14, 0
+	mov x15, 0
+	bl setColour
+	mov x21, 100
+	mov x22, 50
+	mov x23, 450
+	mov x24, 300
+	bl doRectangle
+
+	// Pie de monitor
+	add x21, x21, 150
+	add x22, x22, 300
+	mov x23, 150
+	mov x24, 50
+	bl doRectangle
+
+	// Base del monitor
+	sub x21, x21, 100
+	add x22, x22, 50
+	mov x23, 350
+	mov x24, 10
+	bl doRectangle
+
+	// Pantalla "real"
+	movz w18, 0xe6, lsl 16
+	movk w18, 0xf9af, lsl 0
+	mov x21, 110
+	mov x22, 60
+	mov x23, 430
+	mov x24, 280
+	bl doRectangle
+
+	// Boton de play
+	movz w18, 0x0d, lsl 16
+	movk w18, 0x0630, lsl 0
+	mov x21, 270
+	mov x22, 150
+	mov x23, 100
+	mov x24, 100
+	bl doRectangle
+
+	// Triangulo del medio del boton
+	movz w18, 0x8b, lsl 16
+	movk w18, 0xbeb2, lsl 0
+	mov x21, 310
+	mov x22, 165
+	mov x23, 30
+	mov x24, 80
+	bl triangDer
+
+	// Boton de salida
+	movz w18, 0x38, lsl 16
+	movk w18, 0x4e77, lsl 0
+	mov x21, 520
+	mov x22, 60
+	mov x23, 20
+	mov x24, 20
+	bl doRectangle
+
+	// Boton de salida
+	movz w18, 0x18, lsl 16
+	movk w18, 0x314f, lsl 0
+	mov x21, 500
+	mov x22, 60
+	mov x23, 20
+	mov x24, 20
+	bl doRectangle
+
+	ldur lr, [sp]
+	ldur w18, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	ldur x13, [sp, 32]
+	ldur x14, [sp, 40]
+	ldur x15, [sp, 48] 
+	add sp, sp, 56
+	ret
+
+.globl triangDer
+// NOTE Triangulo apuntando a la derecha
+triangDer:
+	// @Diego
+	// Args
+	// x21 x
+	// x22 y
+	// x23 w (cantidad de figuras)
+	sub sp, sp, 32
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
+	stur x23, [sp, 8]
+	stur lr, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+triangDerLoop:
+	bl drawPixel
+	add x16, x16, 1
+	add x12, x12, 1
+	cmp x9, x23
+	b.eq triangDerBack
+	add x9, x9, 1
+	b triangDerLoop
+
+triangDerBack:
+	bl drawPixel
+	sub x16, x16, 1
+	add x12, x12, 1
+	cmp x9, 0
+	b.eq cmpTriang
+	sub x9, x9, 1
+	b triangDerBack
+
+cmpTriang:
+	cmp x23, 0
+	b.eq preEndTriangDer
+	sub x23, x23, 1
+	add x22, x22, 1
+	mov x12, x22
+	b triangDerLoop
+
+preEndTriangDer:
+	ldur x23, [sp, 8]
+	add x23, x23, 2
+	bl vertLine
+endTriangDer:
+	ldur lr, [sp]
+	ldur x23, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	add sp, sp, 32
+	ret
 
 .globl vertLine
 // NOTE Vertilcal line with a height
@@ -179,16 +332,20 @@ doRectangle:	// alto x largo//
 	// x22 y2 lugar dónde empiezo a dibujar la figura
 	// x23 w largo en pixeles
 	// x24 h alto en pixeles
-	// x18 colour
+	// w18 colour
 	// Used
 	// doHorizontalLine
 	// drawPixel: setPixel x16 x, x12 y
 	// x9 posición inicial de x
 	// x10 posición inicial de y
 
-	sub sp, sp, #16				// Reservamos 2 registros de memoria
-	stur x30, [sp, #8]			// Guardamos el return pointer en memoria (8 direcciones de memoria = 1 registro de 64bits)
-	stur x5, [sp, #0]			// Guardamos el x5 en memoria (8 direcciones de memoria = 1 registro de 64bits)
+	sub sp, sp, #48				// Reservamos 2 registros de memoria
+	stur x21, [sp, 40]
+	stur x22, [sp, 32]
+	stur x23, [sp, 24]
+	stur x24, [sp, 16]
+	stur lr, [sp, 8]			// Guardamos el return pointer en memoria (8 direcciones de memoria = 1 registro de 64bits)
+	stur x5, [sp]			// Guardamos el x5 en memoria (8 direcciones de memoria = 1 registro de 64bits)
 
 	mov x5, x22  				// x5 fila inicial
 
@@ -201,9 +358,13 @@ rectangleLoop:					// Se encarga de cambiar la fila
 	b rectangleLoop
 
 endRectangule:
-	ldur x5, [sp, #0]			// Restauramos el x5 original
-	ldur x30, [sp, #8]			// Guardamos el return pointer en memoria
-	add sp, sp, #16				// Liberamos la memoria (movemos el sp "más arriba")
+	ldur x5, [sp]
+	ldur lr, [sp, 8]			// Cargamos el return pointer en memoria (8 direcciones de memoria = 1 regildro de 64bits)
+	ldur x24, [sp, 16]
+	ldur x23, [sp, 24]
+	ldur x22, [sp, 32]
+	ldur x21, [sp, 40]
+	add sp, sp, 48				// Reservamos 2 registros de memoria
 	ret
 
 .globl doCircle
