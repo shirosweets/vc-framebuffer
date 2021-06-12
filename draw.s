@@ -447,7 +447,8 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	// x25 x
 	// x26 y
 	// x28 P
-	sub sp, sp, #8
+	sub sp, sp, #16
+	stur x28, [sp, 8]
 	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x25, x23				// x = r
 	mov x26, xzr   				// y = 0 (xzr = 0)
@@ -542,7 +543,8 @@ cirif2:							// if (x < y)
 
 circleEnd:
 	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
-	add sp, sp, #8
+	ldur x28, [sp, 8]
+	add sp, sp, #16
 	ret
 
 .globl doTriangleUp
