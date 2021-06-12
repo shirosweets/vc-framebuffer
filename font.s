@@ -144,7 +144,7 @@ endO:
 
 .globl doDm
 // NOTE D
-doDm:	// REVIEW Done
+doDm:	// REVIEW Solucionado
 	// @Diego
 	// Args
 	// x21 x inicial
@@ -222,12 +222,13 @@ dDoIzq:
 	bl drawPixel
 	sub x16, x16, 1
 	bl drawPixel
+	b endD
 
 endD:
-	stur x22, [sp, #16]
-	stur x21, [sp, #8]
-	stur lr, [sp]
-	sub sp, sp, 24
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #8]
+	ldur lr, [sp]
+	add sp, sp, 24
 	ret
 
 .globl doL
