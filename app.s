@@ -137,7 +137,16 @@ main:
 	mov x14, 0					// G
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
-	bl doG					
+	bl doD
+
+	mov x21, 250 				// x2
+	mov x22, 400				// y2
+	mov x23, 50					// w largo de pixeles
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 8					// B
+	bl setColour				// R+G+B = Rojo
+	bl doE					
 	ret
 
 	// Dibujamos un círculo
