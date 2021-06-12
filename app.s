@@ -23,6 +23,7 @@
 //.include "animations.s"
 //.include "screen_animations.s"
 
+//.include "start.s"
 .globl main
 .globl setColour				// https://stackoverflow.com/questions/54918639/linking-2-object-files
 .globl drawPixel
@@ -31,6 +32,7 @@
 main:
 //break:
 	mov x20, x0					// X0 Direccion base del framebuffer
+	adr x29, PreFrameBuffer
 	bl cleanScreen				// Limpiamos la pantalla
 	mov x13, 96					// R
 	mov x14, 96					// G
@@ -118,11 +120,10 @@ main:
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
 	//bl doSquare
-
-	mov x21, 100
-	mov x22, 100
-	bl doCompuVentana
-	
+	bl cleanScreen
+	mov x21, 200
+	mov x22, 250
+	bl doAnimacionInicial
 	ret
 
 /*

@@ -3,6 +3,66 @@
 
 //.include "app.s"
 
+.globl doAnimacionInicial
+doAnimacionInicial:
+	sub sp, sp, 48
+	stur x25, [sp, 40]
+	stur x24, [sp, 32]
+	stur x23, [sp, 24]
+	stur x21, [sp, 16]
+	stur x22, [sp, 8]
+	stur lr, [sp]
+	mov x25, 0
+
+loopDelay:
+	bl delay
+	add x21, x21, 10
+	sub x22, x22, 5
+	bl doCompuVentana
+	bl doMouse
+	cmp x25, 10
+	b.eq endAnimacion
+	add x25, x25, 1
+	b loopDelay
+
+endAnimacion:
+	ldur lr, [sp]
+	ldur x22, [sp, 8]
+	ldur x21, [sp, 16]
+	ldur x23, [sp, 24]
+	ldur x24, [sp, 32]
+	ldur x25, [sp, 40]
+	add sp, sp, 48
+	ret
+
+.globl doMouse
+doMouse:
+	// @Diego
+	// Args
+	// x21 x
+	// x22 y
+	sub sp, sp, 40
+	stur x24, [sp, 32]
+	stur x23, [sp, 24]
+	stur x21, [sp, 16]
+	stur x22, [sp, 8]
+	stur lr, [sp]
+
+	mov x23, 3
+	mov x24, 5
+	bl doTriangleUp
+	sub x21, x21, 4
+	mov x23, 9
+	bl doRectangle
+
+	ldur lr, [sp]
+	ldur x22, [sp, 8]
+	ldur x21, [sp, 16]
+	ldur x23, [sp, 24]
+	ldur x24, [sp, 32]
+	add sp, sp, 24
+	ret
+
 .globl doCompuVentana
 doCompuVentana:
 	sub sp, sp, 56

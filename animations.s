@@ -8,7 +8,7 @@
 delay:
 	add x8, xzr, xzr			// counter = 0
 	add x8, x8, #0xFFF			// counter = 0xF...F (un numero enorme)
-	lsl x8, x8, #9				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+	lsl x8, x8, #12				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
 
 delayloop:
 	cbz x8, delayEnd
