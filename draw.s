@@ -25,7 +25,6 @@ doAnimacionInicial:
 	mov x25, 0
 	mov x3, #1					// Seteamos al PreFrameBuffer
 
-
 loopDelay:
 	bl delay					// Retraso
 	bl cleanScreen				// Limpio la pantalla
@@ -45,12 +44,11 @@ endFirstDelay:
 	bl doComputerBroken
 	bl drawUpdate
 	bl longDelay
-	bl drawUpdateWithCleanScreen
-	bl drawUpdate
 	mov x21, 39
 	mov x9, 0
 	sub sp, sp, 8
 	stur x9, [sp, 56] 
+
 doSun:
 	bl cleanScreen
 	bl anPiramidesDia
@@ -65,13 +63,46 @@ doSun:
 
 	ldr x9, [sp, 56]
 	cmp x9, 57
-	b.eq endAnimacion
+	b.eq doNoche
 	add x9, x9, 1
 	str x9, [sp, 56]
 
 	b doSun
 
-doNight:
+doNoche:
+	add sp, sp, 8
+	sub sp, sp, 8
+	mov x9, 0
+	str x9, [sp, 56]
+	mov x21, 0
+loopNoche:
+	bl cleanScreen
+	bl anPiramidesNoche
+
+	mov w18, 0xFFFFFF
+	mov x23, 30
+	mov x22, 0
+	bl circRelleno
+	add x21, x21, 10
+	bl drawUpdate
+
+	ldr x9, [sp, 56]
+	cmp x9, 57
+	b.eq endAnimacion
+	add x9, x9, 1
+	str x9, [sp, 56]
+	b loopNoche
+
+endAnimacion:
+	ldr lr, [sp]
+	ldr x22, [sp, 8]
+	ldr x21, [sp, 16]
+	ldr x23, [sp, 24]
+	ldr x24, [sp, 32]
+	ldr x25, [sp, 40]
+	ldr x3, [sp, 48]
+	add sp, sp, 56
+	ret
 
 .globl circRelleno
 circRelleno:
@@ -91,16 +122,6 @@ endRellenoCir:
 	add sp, sp, 16
 	ret
 
-endAnimacion:
-	ldr lr, [sp]
-	ldr x22, [sp, 8]
-	ldr x21, [sp, 16]
-	ldr x23, [sp, 24]
-	ldr x24, [sp, 32]
-	ldr x25, [sp, 40]
-	ldr x3, [sp, 48]
-	add sp, sp, 56
-	ret
 
 .globl doComputerBroken
 // NOTE doComputerBroken
@@ -195,8 +216,8 @@ endAnPir:
 	add sp, sp, 56
 	ret
 
-.globl anPiramideNoche
-anPiramideNoche:
+.globl anPiramidesNoche
+anPiramidesNoche:
 	sub sp, sp, 40
 	str x21, [sp, 32]
 	str x22, [sp, 24]
@@ -205,8 +226,8 @@ anPiramideNoche:
 	str lr, [sp]
 
 	// Fondo
-	movz w18, 0xF3, lsl 16
-	movk w18, 0x9F18, lsl 0
+	movz w18, 0x31, lsl 16
+	movk w18, 0x1f62, lsl 0
 	mov x21, 0
 	mov x22, 0
 	mov x23, 640
@@ -214,7 +235,8 @@ anPiramideNoche:
 	bl doRectangle
 
 	// Piramides
-	mov w18, 0xFFFF00
+	movz w18, 0x8d, lsl 16
+	movk w18, 0x5273, lsl0
 	mov x21, 200
 	mov x22, 300
 	mov x23, 50
@@ -224,6 +246,8 @@ anPiramideNoche:
 	bl doPiramide
 
 	// Desierto
+	movz w18, 0xc3, lsl 16
+	movk w18, 0x727c, lsl0
 	mov x21, 0
 	mov x23, 640
 	mov x24, 480
@@ -238,7 +262,7 @@ anPiramideNoche:
 	ldr x22, [sp, 24]
 	ldr x21, [sp, 32]
 	add sp, sp, 40
-
+	ret
 
 .globl doMouse
 // NOTE doMouse
