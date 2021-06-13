@@ -53,6 +53,10 @@ main:
 	mov x21, 200
 	mov x22, 250
 	bl doAnimacionInicial
+	mov x21, #320					// xc x centro
+	mov x22, #250					// yc y centro
+	bl doRaven
+	bl drawUpdate
 	ret
 
 /*
