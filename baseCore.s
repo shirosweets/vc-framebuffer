@@ -14,7 +14,7 @@
 
 .globl drawPixel
 drawPixel:
-	// Args: y=x12  -- x=x16  -- colour=x18
+	// Args: y=x12  -- x=x16  -- colour=x18 -- BufferSwitch = x3
 	sub sp, sp, #8
 	stur x30, [sp, #0]
 	bl setPixel                     // ret : x0
