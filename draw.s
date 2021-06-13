@@ -44,11 +44,12 @@ endFirstDelay:
 	bl doComputerBroken
 	bl drawUpdate
 	bl longDelay
+
+preDoSun:
 	mov x21, 39
 	mov x9, 0
 	sub sp, sp, 8
 	stur x9, [sp, 56] 
-
 doSun:
 	bl cleanScreen
 	bl anPiramidesDia
@@ -87,8 +88,8 @@ loopNoche:
 	bl drawUpdate
 
 	ldr x9, [sp, 56]
-	cmp x9, 57
-	b.eq endAnimacion
+	cmp x9, 65
+	b.eq preDoSun
 	add x9, x9, 1
 	str x9, [sp, 56]
 	b loopNoche
