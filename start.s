@@ -1,17 +1,20 @@
 	.text
 	.org 0x80000
 
+.globl PreFrameBuffer
+.data
+	PreFrameBuffer: .skip 4*640*480
 	// Setup Frame Buffer
 	.equ SCREEN_WIDTH, 		640
 	.equ SCREEN_HEIGH, 		480
 	.equ BITS_PER_PIXEL, 	32
 
-	.equ MAIL_BASE,  0xB880 // Mailbox Base Address
+	.equ MAIL_BASE, 0xB880 // Mailbox Base Address
 	.equ MAIL_WRITE, 0x20 // Mailbox Write Register
-	.equ MAIL_TAGS,  0x8    // Mailbox Channel 8: Tags (ARM to VC)
+	.equ MAIL_TAGS, 0x8    // Mailbox Channel 8: Tags (ARM to VC)
 	.equ PERIPHERAL_BASE, 0x3F000000 // Peripheral Base Address
 
-	.equ Get_Allocate_Buffer,      0x00040001 // Frame Buffer: Allocate Buffer (Response: Frame Buffer Base Address In Bytes, Frame Buffer Size In Bytes)
+	.equ Get_Allocate_Buffer, 0x00040001 // Frame Buffer: Allocate Buffer (Response: Frame Buffer Base Address In Bytes, Frame Buffer Size In Bytes)
 
 	.equ Set_Physical_Display, 0x00048003 // Frame Buffer: Set Physical (Display) Width/Height (Response: Width In Pixels, Height In Pixels)
 	.equ Set_Virtual_Buffer,   0x00048004 // Frame Buffer: Set Virtual (Buffer) Width/Height (Response: Width In Pixels, Height In Pixels)
@@ -46,39 +49,41 @@
 .globl _start
 
 _start:
-	mrs     x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
-	and     x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
-	cbz     x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
+
+	mrs x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
+	and x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
+	cbz x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
 	// Infinite Loop For Core 1, 2 and 3
 CoreLoop:
 	b CoreLoop
 
 StackInit:
 // set stack before our code
-    ldr     x1, =_start
-    mov     sp, x1
+    ldr x1, =_start
+    mov sp, x1
 
     // clear bss
-    ldr     x1, =__bss_start
-    ldr     w2, =__bss_size
+
+    ldr x1, =__bss_start
+    ldr w2, =__bss_size
 _StackInit_loop:
-    cbz     w2, FB_Init
-    str     xzr, [x1], #8
-    sub     w2, w2, #1
-    cbnz    w2, _StackInit_loop
+    cbz w2, FB_Init
+    str xzr, [x1], #8
+    sub w2, w2, #1
+    cbnz w2, _StackInit_loop
 
 // Core 0 Init the framebuffer
 FB_Init:
 	ldr x0, =(FB_STRUCT + MAIL_TAGS)
 	ldr x1, =MAIL_BASE
 	ldr x2, =FB_POINTER
-	orr x1,x1,PERIPHERAL_BASE
-	str w0,[x1,MAIL_WRITE + MAIL_TAGS] // Mail Box Write
-	ldr w0,[x2] // W0 = Frame Buffer Pointer
-	cbz w0,FB_Init // IF (Frame Buffer Pointer == Zero) Re-Initialize Frame Buffer
-	and w0,w0,0x3FFFFFFF // Convert Mail Box Frame Buffer Pointer From BUS Address To Physical Address ($CXXXXXXX -> $3XXXXXXX)
-	str w0,[x2] // Store Frame Buffer Pointer Physical Address
-	add w10,w0,wzr
+	orr x1, x1, PERIPHERAL_BASE
+	str w0, [x1, MAIL_WRITE + MAIL_TAGS] // Mail Box Write
+	ldr w0, [x2] // W0 = Frame Buffer Pointer
+	cbz w0, FB_Init // IF (Frame Buffer Pointer == Zero) Re-Initialize Frame Buffer
+	and w0, w0, 0x3FFFFFFF // Convert Mail Box Frame Buffer Pointer From BUS Address To Physical Address ($CXXXXXXX -> $3XXXXXXX)
+	str w0, [x2] // Store Frame Buffer Pointer Physical Address
+	add w10, w0, wzr
 	b main
 
 .align 16
@@ -135,5 +140,3 @@ FB_SIZE:
 
 	.word 0x00000000 // $0 (End Tag)
 FB_STRUCT_END:
-
-//.include "app.s"

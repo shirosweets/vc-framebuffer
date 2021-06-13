@@ -1,4 +1,3 @@
-//.include "draw.s"
 
 .globl doRaven
 doRaven:
