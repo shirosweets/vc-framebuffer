@@ -211,6 +211,12 @@ anPiramidesDia:
 	mov x22, 0
 	mov x23, 50
 
+	movz w18, 0xFF, lsl 16
+	movk w18, 0xFFFF, lsl 0
+	mov x22, 350
+	mov x21, 100
+	bl doDiego
+
 endAnPir:
 	ldr lr, [sp]
 	ldr x24, [sp, 8]
@@ -260,6 +266,12 @@ anPiramidesNoche:
 	mov x21, 50
 	mov x22, 0
 	mov x23, 50
+
+	movz w18, 0x00, lsl 16
+	movk w18, 0x0000, lsl 0
+	mov x22, 350
+	mov x21, 100
+	bl doDiego
 
 	ldr lr, [sp]
 	ldr x24, [sp, 8]

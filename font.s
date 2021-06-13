@@ -414,6 +414,32 @@ endM:
 // NOTE n
 doN:
 	// @Vale
+	// Args
+	// x21 x
+	// x22 y
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
+
+	add x22, x22, 5
+
+	mov x23, 15
+	bl vertLine
+	mov x23, 9
+	bl doHorizontalLine
+	add x21, x21, 10
+	add x22, x22, 1
+	mov x23, 14
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+	ret
 
 .globl doVm
 // NOTE V
@@ -467,7 +493,7 @@ doZDiag:
 	sub x21, x21, 1
 	sub x16, x16, 1
 	add x12, x12, 1
-	cmp x9, 20
+	cmp x9, 19
 	b.eq doZBot
 	add x9, x9, 1
 	b doZDiag
@@ -617,7 +643,7 @@ doDiego:
 	sub x22, x22, 8
 	add x21, x21, 50
 	bl doGm
-	add x21, x21, 20
+	add x21, x21, 25
 	bl doI
 	add x21, x21, 10
 	add x22, x22, 5
@@ -625,11 +651,11 @@ doDiego:
 	sub x22, x22, 5
 	add x21, x21, 30
 	bl doE
-	add x21, x21, 20
+	add x21, x21, 15
 	bl doN
-	add x21, x21, 20
+	add x21, x21, 25
 	bl doE
-	add x21, x21, 20
+	add x21, x21, 15
 	bl doZ
 
 endDiego:
