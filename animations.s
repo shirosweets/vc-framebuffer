@@ -4,7 +4,7 @@
 delay:
 	add x8, xzr, xzr			// counter = 0
 	add x8, x8, #0xFFF			// counter = 0xF...F (un numero enorme)
-	lsl x8, x8, #8				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+	lsl x8, x8, #9				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
 
 delayloop:
 	cbz x8, delayEnd
@@ -14,6 +14,30 @@ delayloop:
 	b delayloop
 
 delayEnd:
+	ret
+
+.globl longDelay
+// NOTE delay
+longDelay:
+	sub sp, sp, 16
+	str x8, [sp, 8]
+	str x9, [sp]
+
+	mov x8, 0
+	add x8, x8, #0xFFF
+	lsl x8, x8, 15
+
+ldelayloop:
+	cbz x8, ldelayEnd
+	ldur x9, [sp, #0]
+	stur x9, [sp, #0]
+	sub x8, x8, #1				// counter--
+	b ldelayloop
+
+ldelayEnd:
+	ldr x9, [sp]
+	ldr x8, [sp, 8]
+	add sp, sp, 16
 	ret
 
 .globl lineAnimation

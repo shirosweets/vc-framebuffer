@@ -44,13 +44,13 @@ main:
 	mov x21, 200
 	mov x22, 250
 	bl doAnimacionInicial
-	mov x21, #320					// xc x centro
+	/*mov x21, #320					// xc x centro
 	mov x22, #250					// yc y centro
 	bl drawUpdate
 	bl doRaven
 	mov x21, #150				// xc x centro
 	mov x22, #150				// yc y centro
-	bl doOwl					// Dibujamos un búho
+	bl doOwl*/					// Dibujamos un búho
 	ret
 
 /*

@@ -25,6 +25,7 @@ doAnimacionInicial:
 	mov x25, 0
 	mov x3, #1					// Seteamos al PreFrameBuffer
 
+
 loopDelay:
 	bl delay					// Retraso
 	bl cleanScreen				// Limpio la pantalla
@@ -32,18 +33,63 @@ loopDelay:
 	bl doCompuVentana
 	add x21, x21, 6				//
 	sub x22, x22, 3				// Muevo el mouse
-	bl doMouse
-	cmp x25, 19
-	b.eq loopDelay2
+	bl doMouse					// Lo dibujo
+	cmp x25, 18					// Comparo si itere un par de veces
+	b.eq endFirstDelay				// Cuando toque el boton del medio de la pantalla. Se rompe
 	add x25, x25, 1
 	b loopDelay
 
-loopDelay2:
+endFirstDelay:
 	bl delay
 	bl cleanScreen
 	bl doComputerBroken
 	bl drawUpdate
+	bl longDelay
+	bl drawUpdateWithCleanScreen
+	bl drawUpdate
+	mov x21, 39
+	mov x9, 0
+	sub sp, sp, 8
+	stur x9, [sp, 56] 
+doSun:
 	bl cleanScreen
+	bl anPiramidesDia
+
+	mov w18, 0xFFFFFF
+	mov x23, 30
+	mov x22, 0
+	bl circRelleno
+	
+	add x21, x21, 10
+	bl drawUpdate
+
+	ldr x9, [sp, 56]
+	cmp x9, 57
+	b.eq endAnimacion
+	add x9, x9, 1
+	str x9, [sp, 56]
+
+	b doSun
+
+doNight:
+
+.globl circRelleno
+circRelleno:
+	sub sp, sp, 16
+	str x23, [sp, 8]
+	str lr, [sp]
+
+loopRelleno:
+	bl doCircle
+	cbz x23, endRellenoCir
+	sub x23, x23, 1
+	b loopRelleno
+
+endRellenoCir:
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	add sp, sp, 16
+	ret
 
 endAnimacion:
 	ldr lr, [sp]
@@ -98,6 +144,101 @@ doComputerBroken:
 	ldr x25, [sp, 40]
 	add sp, sp, 48
 	ret
+
+.globl anPiramidesDia
+// NOTE Segunda animacion
+anPiramidesDia:
+	sub sp, sp, 56
+	str x3, [sp, 40]
+	str x21, [sp, 32]
+	str x22, [sp, 24]
+	str x23, [sp, 16]
+	str x24, [sp, 8]
+	str lr, [sp]
+	mov x3, 1
+
+	// Fondo
+	movz w18, 0xF3, lsl 16
+	movk w18, 0x9F18, lsl 0
+	mov x21, 0
+	mov x22, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+
+	// Piramides
+	mov w18, 0xFFFF00
+	mov x21, 200
+	mov x22, 300
+	mov x23, 50
+	bl doPiramide
+	add x21, x21, 200
+	add x23, x23, x23
+	bl doPiramide
+
+	// Desierto
+	mov x21, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+	mov x21, 50
+	mov x22, 0
+	mov x23, 50
+
+endAnPir:
+	ldr lr, [sp]
+	ldr x24, [sp, 8]
+	ldr x23, [sp, 16]
+	ldr x22, [sp, 24]
+	ldr x21, [sp, 32]
+	ldr x3, [sp, 40]
+	add sp, sp, 56
+	ret
+
+.globl anPiramideNoche
+anPiramideNoche:
+	sub sp, sp, 40
+	str x21, [sp, 32]
+	str x22, [sp, 24]
+	str x23, [sp, 16]
+	str x24, [sp, 8]
+	str lr, [sp]
+
+	// Fondo
+	movz w18, 0xF3, lsl 16
+	movk w18, 0x9F18, lsl 0
+	mov x21, 0
+	mov x22, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+
+	// Piramides
+	mov w18, 0xFFFF00
+	mov x21, 200
+	mov x22, 300
+	mov x23, 50
+	bl doPiramide
+	add x21, x21, 200
+	add x23, x23, x23
+	bl doPiramide
+
+	// Desierto
+	mov x21, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+	mov x21, 50
+	mov x22, 0
+	mov x23, 50
+
+	ldr lr, [sp]
+	ldr x24, [sp, 8]
+	ldr x23, [sp, 16]
+	ldr x22, [sp, 24]
+	ldr x21, [sp, 32]
+	add sp, sp, 40
+
 
 .globl doMouse
 // NOTE doMouse
@@ -467,7 +608,8 @@ doRectangle:	// alto x largo//
 	// x9 posición inicial de x
 	// x10 posición inicial de y
 
-	sub sp, sp, #48				// Reservamos 2 registros de memoria
+	sub sp, sp, #56				// Reservamos memoria
+	str x3, [sp, 48]
 	stur x21, [sp, 40]
 	stur x22, [sp, 32]
 	stur x23, [sp, 24]
@@ -492,7 +634,8 @@ endRectangule:
 	ldur x23, [sp, 24]
 	ldur x22, [sp, 32]
 	ldur x21, [sp, 40]
-	add sp, sp, 48				// Reservamos 2 registros de memoria
+	ldr x3, [sp, 48]
+	add sp, sp, 56				// Reservamos 2 registros de memoria
 	ret
 
 .globl doCircle
@@ -510,7 +653,10 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	// x25 x
 	// x26 y
 	// x27 P
-	sub sp, sp, #16
+	sub sp, sp, #40
+	stur x23, [sp, 32]
+	stur x22, [sp, 24]
+	stur x21, [sp, 16]
 	stur x27, [sp, 8]
 	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x25, x23				// x = r
@@ -605,9 +751,12 @@ cirif2:						// if (x < y)
 	b.gt doCircleLoop
 
 circleEnd:
-	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
+	ldur x30, [sp]  		// Guardamos el return pointer en memoria ret
 	ldur x27, [sp, 8]
-	add sp, sp, #16
+	ldur x21, [sp, 16]
+	ldur x22, [sp, 24]
+	ldur x23, [sp, 32]
+	add sp, sp, 40
 	ret
 
 .globl doTriangleUp

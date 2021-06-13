@@ -11,7 +11,6 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
-
 .globl drawPixel
 drawPixel:
 	// Args: y=x12  -- x=x16  -- colour=x18 -- BufferSwitch = x3
@@ -78,6 +77,41 @@ updateLoop:
 	b updateLoop
 
 endUpdate:
+	ldr x8, [sp, 32]
+	ldr x7, [sp, 24]
+	ldr x9, [sp, 16]
+	ldr x10, [sp, 8]
+	ldr lr, [sp]
+	add sp, sp, 40
+	ret
+
+.globl drawUpdateWithCleanScreen
+drawUpdateWithCleanScreen:
+	// x28 PreFrameBuffer
+	// x20 FrameBuffer
+	sub sp, sp, 40
+	str x8, [sp, 32]
+	str x7, [sp, 24]
+	str x9, [sp, 16]
+	str x10, [sp, 8]
+	str lr, [sp]
+	mov x8, x20
+	mov x7, x28
+	mov x9, 0
+	ldr x10, TOTAL_PIXELS
+	mov w15, 0x00
+
+updateLoopWithClean:
+	str w15, [x7]
+	str w15, [x8]
+	add x8, x8, 4
+	add x7, x7, 4
+	cmp x9, x10
+	b.eq endUpdateAndClean
+	add x9, x9, 1
+	b updateLoopWithClean
+
+endUpdateAndClean:
 	ldr x8, [sp, 32]
 	ldr x7, [sp, 24]
 	ldr x9, [sp, 16]
