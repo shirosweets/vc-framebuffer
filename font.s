@@ -1,8 +1,3 @@
-//.ifndef _FONT_S
-//.equ    _FONT_S, 1
-
-//.include "app.s"
-
 // Font https://www.dafont.com/es/minitel.font?text=console
 
 .equ SCREEN_WIDTH, 		640
@@ -16,11 +11,11 @@
 // NOTE a
 doA:
 	// @Vale
+	
 
 .globl doEm
-// NOTE e
-doEm:	// REVIEW Done
-	// @Diego
+// NOTE E
+doEm:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -72,8 +67,7 @@ endE:
 
 .globl doE
 // NOTE e
-doE:	// REVIEW Done
-	// @Diego
+doE:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -115,9 +109,8 @@ doE:	// REVIEW Done
 	ret
 
 .globl doIm
-// NOTE i
-doIm:			//REVIEW Done
-	// @Diego
+// NOTE I
+doIm:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -170,8 +163,7 @@ endI:
 
 .globl doI
 // NOTE i
-doI:			//REVIEW Done
-	// @Diego
+doI:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -188,7 +180,7 @@ doI:			//REVIEW Done
 	sub x21, x21, 5
 	add x22, x22, 5
 	mov x23, 5
-	bl doHorizontalLine	
+	bl doHorizontalLine
 	add x21, x21, 5
 	mov x23, 15
 	bl vertLine
@@ -207,8 +199,7 @@ doI:			//REVIEW Done
 
 .globl doO
 // NOTE o
-doO:	//REVIEW Done
-	// @Diego
+doO:
 	// Args
 	// x21 x
 	// x22 y
@@ -342,8 +333,7 @@ doP:
 
 .globl doM
 // NOTE m
-doM:	// REVIEW Done
-	// @Diego
+doM:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -451,8 +441,7 @@ doT:
 
 .globl doZ
 // NOTE z
-doZ:	// REVIEW Done
-	// @Diego
+doZ:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -496,8 +485,7 @@ endZ:
 
 .globl doGm
 // NOTE G mayus
-doGm:	//REVIEW Done
-	// @Diego
+doGm:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -548,7 +536,7 @@ doGm:	//REVIEW Done
 
 .globl doG
 // NOTE g
-doG:	//REVIEW Done
+doG:
 	// @Diego
 	// Args
 	// x21 x inicial
@@ -572,17 +560,17 @@ doG:	//REVIEW Done
 	add x22, x22, 5
 	mov x23, 10
 	bl doHorizontalLine
-	
+
 	add x21, x21, 10
 	sub x22, x22, 5
 	mov x23, 14
 	bl vertLine
-	
+
 	add x22, x22, 15
 	sub x21, x21, 9
 	mov x23, 9
 	bl doHorizontalLine
-	
+
 	sub x21, x21, 1
 	sub x22, x22, 5
 	mov x23, 4
@@ -599,7 +587,6 @@ doG:	//REVIEW Done
 .globl doDiego
 // NOTE Diego
 doDiego:
-	// @Diego
 	// Args
 	// x21 x
 	// x22 y
@@ -678,5 +665,3 @@ doValentinaVispo:
 	// bl doP
 	// bl doO
 	ret
-
-//.endif

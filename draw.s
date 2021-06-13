@@ -1,11 +1,21 @@
-//.ifndef _DRAW_S
-//.equ    _DRAW_S, 1
 
-//.include "app.s"
+.equ SCREEN_BYTES, 4*640*480
+.equ SCREEN_PIXELS, 640*480
+.data
+	TOTAL_PIXELS: .dword SCREEN_PIXELS
+
+.equ SCREEN_WIDTH, 		640
+.equ SCREEN_HEIGH, 		480
+.equ BITS_PER_PIXEL,  	32
+.equ COLOR_1,			0xFF   // Color blanco R // 0xC7
+.equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
+.equ COLOR_NEGRO,		0x00
 
 .globl doAnimacionInicial
+// NOTE doAnimacionInicial
 doAnimacionInicial:
-	sub sp, sp, 48
+	sub sp, sp, 56
+	str x3, [sp, 48]
 	str x25, [sp, 40]
 	str x24, [sp, 32]
 	str x23, [sp, 24]
@@ -13,14 +23,15 @@ doAnimacionInicial:
 	str x22, [sp, 8]
 	str lr, [sp]
 	mov x25, 0
+	mov x3, #1					// Seteamos al PreFrameBuffer
 
 loopDelay:
-	bl delay		// Retraso
-	bl cleanScreen	// Limpio la pantalla
-	bl drawUpdate	// Actualizo FB
+	bl delay					// Retraso
+	bl cleanScreen				// Limpio la pantalla
+	bl drawUpdate				// Actualizo FB
 	bl doCompuVentana
-	add x21, x21, 6	// 
-	sub x22, x22, 3	// Muevo el mouse
+	add x21, x21, 6				//
+	sub x22, x22, 3				// Muevo el mouse
 	bl doMouse
 	cmp x25, 19
 	b.eq loopDelay2
@@ -41,10 +52,12 @@ endAnimacion:
 	ldr x23, [sp, 24]
 	ldr x24, [sp, 32]
 	ldr x25, [sp, 40]
-	add sp, sp, 48
+	ldr x3, [sp, 48]
+	add sp, sp, 56
 	ret
 
 .globl doComputerBroken
+// NOTE doComputerBroken
 doComputerBroken:
 	sub sp, sp, 48
 	stur x25, [sp, 40]
@@ -87,6 +100,7 @@ doComputerBroken:
 	ret
 
 .globl doMouse
+// NOTE doMouse
 doMouse:
 	// @Diego
 	// Args
@@ -110,9 +124,10 @@ doMouse:
 	ret
 
 .globl doCompuVentana
+// NOTE doCompuVentana
 doCompuVentana:
 	sub sp, sp, 56
-	stur x15, [sp, 48] 
+	stur x15, [sp, 48]
 	stur x14, [sp, 40]
 	stur x13, [sp, 32]
 	stur x21, [sp, 24]
@@ -165,7 +180,7 @@ doCompuVentana:
 	mov x24, 280
 	bl doRectangle
 
-	// Boton de play
+	// Botón de play
 	movz w18, 0x0d, lsl 16
 	movk w18, 0x0630, lsl 0
 	mov x21, 270
@@ -174,7 +189,7 @@ doCompuVentana:
 	mov x24, 100
 	bl doRectangle
 
-	// Triangulo del medio del boton
+	// Triángulo del medio del boton
 	movz w18, 0x8b, lsl 16
 	movk w18, 0xbeb2, lsl 0
 	mov x21, 310
@@ -183,7 +198,7 @@ doCompuVentana:
 	mov x24, 80
 	bl triangDer
 
-	// Boton de salida
+	// Botón de salida
 	movz w18, 0x38, lsl 16
 	movk w18, 0x4e77, lsl 0
 	mov x21, 520
@@ -192,7 +207,7 @@ doCompuVentana:
 	mov x24, 20
 	bl doRectangle
 
-	// Boton de salida
+	// Botón de salida
 	movz w18, 0x18, lsl 16
 	movk w18, 0x314f, lsl 0
 	mov x21, 500
@@ -213,12 +228,12 @@ doCompuVentana:
 	ldur x21, [sp, 24]
 	ldur x13, [sp, 32]
 	ldur x14, [sp, 40]
-	ldur x15, [sp, 48] 
+	ldur x15, [sp, 48]
 	add sp, sp, 56
 	ret
 
 .globl triangDer
-// NOTE Triangulo apuntando a la derecha
+// NOTE Triángulo apuntando a la derecha
 triangDer:
 	// @Diego
 	// Args
@@ -264,6 +279,7 @@ preEndTriangDer:
 	ldur x23, [sp, 8]
 	add x23, x23, 2
 	bl vertLine
+
 endTriangDer:
 	ldur lr, [sp]
 	ldur x23, [sp, 8]
@@ -309,7 +325,7 @@ endVertLine:
 
 
 .globl drawLine
-// NOTE Line
+// NOTE drawLine Line
 drawLine:
 	// Args
 	// x21 xc0 coordenada x del primer punto
@@ -376,16 +392,16 @@ loopLine:
 	bl drawPixel				// plot(xc0, yc0)
 
 	cmp x21, x23				// Comparamos xc0 con xc1
-	b.ne checkLine				// xc0 != xc1	// FIXME
+	b.ne checkLine				// xc0 != xc1
 	b endDrawLine				// break
 
 checkLine:
 	cmp x22, x24				// Comparamos yc0 con yc1
-	b.ne lineNoBreak			// yc0 != yc1	// FIXME
+	b.ne lineNoBreak			// yc0 != yc1
 	b endDrawLine				// break
 
 lineNoBreak:
-	//lsl x8, x19, #1				// x8 = e2 = 2*err
+	//lsl x8, x19, #1			// x8 = e2 = 2*err
 	add x8, x19, x19			// x8 = e2 = 2*err
 
 	cmp x8, x6
@@ -457,7 +473,7 @@ doRectangle:	// alto x largo//
 	stur x23, [sp, 24]
 	stur x24, [sp, 16]
 	stur lr, [sp, 8]			// Guardamos el return pointer en memoria (8 direcciones de memoria = 1 registro de 64bits)
-	stur x5, [sp]			// Guardamos el x5 en memoria (8 direcciones de memoria = 1 registro de 64bits)
+	stur x5, [sp]				// Guardamos el x5 en memoria (8 direcciones de memoria = 1 registro de 64bits)
 
 	mov x5, x22  				// x5 fila inicial
 
@@ -524,7 +540,7 @@ doCircleLoop:				// While x > y
 	b.le cirif1					// Si P <= 0 entra en el if
 	b cirelse1       			// Si no, entra en el else
 
-cirif1:							// if (P <= 0)
+cirif1:						// if (P <= 0)
 	// F(p) < 0 -> the point is inside the circle
 	// F(p) = 0 -> the point is on the perimeter
 	lsl x8, x26, #1				// x8 = 2*y
@@ -542,7 +558,7 @@ cirelse1:						// Mid-point is outside the perimeter
 	add x27, x27, x9			// P = P + 2*y - 2*x + 1
 	// cirif2...
 
-cirif2:							// if (x < y)
+cirif2:						// if (x < y)
 	cmp x25, x26
 	b.lt circleEnd
 
@@ -595,7 +611,7 @@ circleEnd:
 	ret
 
 .globl doTriangleUp
-// NOTE Triangulo hacia arriba
+// NOTE Triángulo hacia arriba
 doTriangleUp:
 	// @Diego
 	// Args
@@ -608,11 +624,11 @@ doTriangleUp:
 	str x23, [sp, 24]
 	str x22, [sp, 16]
 	str x21, [sp, 8]
-	str lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
-	mov x16, x21	// Instancio x16 para dibujar
-	mov x12, x22	// Instancio x12 para setPixel
-	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
-	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
+	str lr, [sp]		// Guardo el link register para no pisarlo en la subrutina setPixel
+	mov x16, x21		// Instancio x16 para dibujar
+	mov x12, x22		// Instancio x12 para setPixel
+	mov x19, x23		// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
+	mov x9, #0 	    	// Instancio un contador que me va a servir para contar cantidad de pixeles
 	b rectAr
 
 rectAr:					// Dibuja la diagonal hacia arriba
@@ -651,7 +667,7 @@ endTriang:
 	ret
 
 .globl doTriangleDown
-// NOTE Triangulo hacia abajo
+// NOTE Triángulo hacia abajo
 doTriangleDown:
 	// @Diego
 	// Args
@@ -664,12 +680,12 @@ doTriangleDown:
 	stur x23, [sp, 24]
 	stur x22, [sp, 16]
 	stur x21, [sp, 8]
-	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
-	mov x16, x21	// Instancio x16 para dibujar
-	mov x12, x22	// Instancio x12 para setPixel
-	bl setPixel		// Calculo la posicion inicial
-	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
-	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
+	stur lr, [sp]		// Guardo el link register para no pisarlo en la subrutina setPixel
+	mov x16, x21		// Instancio x16 para dibujar
+	mov x12, x22		// Instancio x12 para setPixel
+	bl setPixel			// Calculo la posicion inicial
+	mov x19, x23		// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
+	mov x9, #0 	    	// Instancio un contador que me va a servir para contar cantidad de pixeles
 	b rectArDown
 
 rectArDown:				// Dibuja la diagonal hacia arriba
@@ -681,7 +697,7 @@ rectArDown:				// Dibuja la diagonal hacia arriba
 	add x9, x9, #1		// Si no le sumo 1
 	b rectArDown		// Empiezo de nuevo
 
-rectBajDown:				// Dibuja la diagonal hacia abajo
+rectBajDown:			// Dibuja la diagonal hacia abajo
 	add x16, x16, #1	// Me muevo al siguiente
 	sub x12, x12, #1	// Bajo 1 unidad
 	bl setPixel			// Calculo el pixel
@@ -709,7 +725,7 @@ endTriangDown:
 	ret
 
 .globl doPiramide
-// NOTE Piramide
+// NOTE Pirámide
 doPiramide:
 	// @Diego
 	// Args
@@ -722,11 +738,11 @@ doPiramide:
 	str x23, [sp, 24]
 	str x22, [sp, 16]
 	str x21, [sp, 8]
-	stur lr, [sp]	// Guardo el link register para no pisarlo en la subrutina setPixel
-	mov x16, x21	// Instancio x16 para dibujar
-	mov x12, x22	// Instancio x12 para setPixel
-	mov x19, x23	// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
-	mov x9, #0 	    // Instancio un contador que me va a servir para contar cantidad de pixeles
+	stur lr, [sp]		// Guardo el link register para no pisarlo en la subrutina setPixel
+	mov x16, x21		// Instancio x16 para dibujar
+	mov x12, x22		// Instancio x12 para setPixel
+	mov x19, x23		// La cantidad de pixeles sera la cantidad de veces que entro al ciclo
+	mov x9, #0 	    	// Instancio un contador que me va a servir para contar cantidad de pixeles
 
 pirAr:					// Dibuja la diagonal hacia arriba
 	sub x16, x16, #1	// Me muevo atras
@@ -763,4 +779,67 @@ endPir:
 	add sp, sp, #32
 	ret
 
-//.endif
+// NOTE Line
+verticalLine:
+	// Args
+	// x21 x
+	// x18 Colour
+	sub sp, sp, #16				// Guardamos 2 lugares del stack
+	str x30, [sp, #8]			// registro 30 para el RET en el stack
+	str x1, [sp, #0]			// Guardamos en el stack pointer el registro x1 anterior
+	mov x1, SCREEN_HEIGH
+	mov x16, x21  				// x = argument
+	mov x12, xzr  				// y = 0
+	// verLineLoop...
+
+verLineLoop:
+	cmp x1, x12					// Comparamos SCREEN_HEIGH con y
+	b.eq verLineEnd				// Si x1 es igual a x12 termina
+	bl drawPixel
+	add x12, x12, #1			// Pasamos a la siguiente "fila" (bajamos 1 en y)
+	b verLineLoop				// Continuamos con el loop
+
+verLineEnd:
+	ldr x1, [sp, #0]			// Carga lo que guardó en el stack
+	ldr x30, [sp, #8]			// Cargamos variables anteriores
+	add sp, sp, #16				// Libera el stack
+	ret
+
+.globl doHorizontalLine
+// NOTE LineH
+doHorizontalLine:	// Crea líneas horizontales en la coordenada (xo, po) con w cantidad de pixeles que se extienden hacia la derecha //
+	// Args
+	// x21 xo valor de origen x
+	// x22 yo valor de origen y
+	// x23 w cantidad de pixeles
+	// Used
+	// drawPixel: setPixel x16 x, x12 y
+	// x18 Colour
+	sub sp, sp, #48
+	str x12, [sp, #40]
+	str x16, [sp, #32]
+	str x23, [sp, #24]
+	str x22, [sp, #16]
+	str x21, [sp, #8]
+	str x30, [sp, #0]			// Guardamos el return pointer en memoria
+	mov x16, x21				// x = xo
+	// horLineLoop...
+
+horLineLoop:
+	sub x8, x16, x21			// Cuantos pixeles hemos dibujado hasta ahora
+	cmp x23, x8					// Comparamos x23=w con x8
+	b.eq endHorizontalLine		// Si son iguales terminamos porque pintamos todo ya
+	mov x12, x22
+	bl drawPixel				// Sino, dibujamos
+	add x16, x16, #1			// Nos movemos de pixel, x++
+	b horLineLoop
+
+endHorizontalLine:
+	ldr x30, [sp, #0]  			// Guardamos el return pointer en memoria
+	ldr x21, [sp, #8]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #24]
+	ldr x16, [sp, #32]
+	ldr x12, [sp, #40]
+	add sp, sp, #48				// Liberamos espacio en memoria
+	ret
