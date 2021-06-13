@@ -49,8 +49,8 @@ _start:
 	mrs     x1, mpidr_el1 	// X0 = Multiprocessor Affinity Register (MPIDR)
 	and     x1, x1, #3 		// X0 = CPU ID (Bits 0..1)
 	cbz     x1, StackInit 	// IF (CPU ID == 0) Branch To Finit else (Core ID 1..3) CoreLoop
-	// Infinite Loop For Core 1, 2 and 3	
-CoreLoop:  
+	// Infinite Loop For Core 1, 2 and 3
+CoreLoop:
 	b CoreLoop
 
 StackInit:
@@ -61,7 +61,7 @@ StackInit:
     // clear bss
     ldr     x1, =__bss_start
     ldr     w2, =__bss_size
-_StackInit_loop:  
+_StackInit_loop:
     cbz     w2, FB_Init
     str     xzr, [x1], #8
     sub     w2, w2, #1
