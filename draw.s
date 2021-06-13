@@ -54,7 +54,8 @@ doSun:
 	bl cleanScreen
 	bl anPiramidesDia
 
-	mov w18, 0xFFFFFF
+	movz w18, 0xF2, lsl 16
+	movk w18, 0x740B, lsl 0
 	mov x23, 30
 	mov x22, 0
 	bl circRelleno
@@ -63,7 +64,7 @@ doSun:
 	bl drawUpdate
 
 	ldr x9, [sp, 56]
-	cmp x9, 57
+	cmp x9, 58
 	b.eq doNoche
 	add x9, x9, 1
 	str x9, [sp, 56]
@@ -180,8 +181,8 @@ anPiramidesDia:
 	mov x3, 1
 
 	// Fondo
-	movz w18, 0xF3, lsl 16
-	movk w18, 0x9F18, lsl 0
+	movz w18, 0xA3, lsl 16
+	movk w18, 0x371F, lsl 0
 	mov x21, 0
 	mov x22, 0
 	mov x23, 640
@@ -189,7 +190,8 @@ anPiramidesDia:
 	bl doRectangle
 
 	// Piramides
-	mov w18, 0xFFFF00
+	movz w18, 0xDF, lsl 16
+	movk w18, 0x915E, lsl 0
 	mov x21, 200
 	mov x22, 300
 	mov x23, 50
@@ -199,6 +201,8 @@ anPiramidesDia:
 	bl doPiramide
 
 	// Desierto
+	movz w18, 0x6B, lsl 16
+	movk w18, 0x3E3E, lsl 0
 	mov x21, 0
 	mov x23, 640
 	mov x24, 480
