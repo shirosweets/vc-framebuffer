@@ -51,6 +51,11 @@ main:
 	mov x21, #150				// xc x centro
 	mov x22, #150				// yc y centro
 	bl doOwl					// Dibujamos un búho
+	mov x3, #0
+	//bl circleTest
+	bl circleTestFill
+	//bl cleanScreenBuffer
+	b EndMain
 	ret
 
 /*

@@ -106,12 +106,35 @@ circleTest:
 	mov x14, 81					// G
 	mov x15, 171				// B
 	bl setColour				// R+G+B = Rosa
-	stur x18, [x0]
-	mov x21, 320				// xc x centro
+	mov x21, 250				// xc x centro
 	mov x22, 240				// yc y centro
-	mov x23, 20					// radio
+	mov x23, 50					// radio
+	mov x16, x21
+	mov x12, x22
+	bl drawPixel				// Pintamos el medio
+	mov x24, #1
 	bl doCircle
-	// Return
+	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria	ret
+	add sp, sp, #8				// Liberamos memoria
+	ret
+
+.globl circleTestFill
+// NOTE circleTestFill
+circleTestFill:
+	sub sp, sp, #8
+	stur x30, [sp, #0]  		// Guardamos el return pointer en memoria
+	mov x13, 250				// R
+	mov x14, 81					// G
+	mov x15, 171				// B
+	bl setColour				// R+G+B = Rosa
+	mov x21, 350				// xc x centro
+	mov x22, 240				// yc y centro
+	mov x23, 50					// radio
+	mov x24, xzr
+	bl doCircle
+	mov x16, x21
+	mov x12, x22
+	bl drawPixel
 	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria	ret
 	add sp, sp, #8				// Liberamos memoria
 	ret
@@ -119,6 +142,8 @@ circleTest:
 .globl testLines
 // NOTE testLines
 testLines:
+	sub sp, sp, #8
+	stur x30, [sp, #0]  		// Guardamos el return pointer en memoria
 	// Dibujamos una línea xc0, yc0 -> xc1, yc1
 	mov x21, 150
 	mov x22, 30
@@ -177,6 +202,9 @@ testLines:
 
 	mov x21, 300
 	//bl verticalLine			// NOTE OK
+	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria	ret
+	add sp, sp, #8				// Liberamos memoria
+	ret
 
 .globl testRGB1
 // NOTE testRGB1

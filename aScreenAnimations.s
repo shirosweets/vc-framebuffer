@@ -108,6 +108,40 @@ cleanScreen: 	// Pinta toda la pantalla de negro
 	add sp, sp, #16
 	ret
 
+.globl cleanScreenBuffer
+// NOTE cleanScreenBuffer
+cleanScreenBuffer: 	// Pinta toda la pantalla de negro
+	sub sp, sp, #16
+	stur lr, [sp]				// Guardo el link register para no pisarlo
+	stur x30, [sp, #8]  		// Guardamos el return pointer en memoria
+	mov x13, xzr				// R
+	mov x14, xzr				// G
+	mov x15, xzr				// B
+	bl setColour				// Negro
+	bl paintScreenBuffer
+	ldur x30, [sp, #8]  		// Guardamos el return pointer en memoria ret
+	ldur lr, [sp]				// Devuelvo el link register
+	add sp, sp, #16
+	ret
+
+.globl paintScreenBuffer
+// NOTE paintScreenBuffer
+paintScreenBuffer:	// 320w 240h -> 76800 + 240
+	// Return -> nada
+	// Args: x18 Colour
+	mov x0, x20					// Origen del frameBuffer
+	mov x8, SCREEN_WIDTH
+	mov x9, SCREEN_HEIGH
+	mul x8, x8, x9  			// x8 contador de pixeles a pintar
+	// paintScreenBufferLoop...
+
+paintScreenBufferLoop:
+	stur w18, [x0]	   			// Set color of pixel N
+	add x0, x0, 4	   			// Next pixel
+	sub x8, x8, 1	   			// decrement pixel counter
+	cbnz x8, paintScreenBufferLoop	// If not end row jump
+	ret
+
 .globl paintScreen
 // NOTE paintScreen
 paintScreen:	// 320w 240h -> 76800 + 240

@@ -26,14 +26,8 @@ drawBuffer:
     b drawPixelEnd
 
 drawPrebuffer:                      // then dibujar en x28
-    // direccion del buffer = x20
-    // direccion del prebuffer = x28
-    // x20 + (x28-x20) = x28
-    // x20 + offset + (x28-x20) = x28 + offset
-    // x20 + offset = X0 ->
-    // X0 + X28 - X20 = X28 + offset == traducción del buffer al prebuffer
-    add x8, x0, x28
-    sub x8, x8, x20
+    add x8, x0, x28					// Traducción del buffer al prebuffer:
+    sub x8, x8, x20					// x8 = x0 + (X28 - X20)
 
 drawPixelEnd:
     stur w18, [x8]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits)
