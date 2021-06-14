@@ -23,7 +23,7 @@ kernel8.img
 kernel8.list
 
 # Python
-sprite_parser.py
+
 
 # Examples
 assets/algorithms

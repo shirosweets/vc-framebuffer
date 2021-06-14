@@ -71,7 +71,6 @@ updateLoop:
 
 	cmp x9, x10
 	b.eq endUpdate
-	
 	add x9, x9, 1
 	b updateLoop
 
@@ -85,6 +84,7 @@ endUpdate:
 	ret
 
 .globl drawUpdateWithCleanScreen
+// NOTE drawUpdateWithCleanScreen
 drawUpdateWithCleanScreen:
 	// x28 PreFrameBuffer
 	// x20 FrameBuffer
@@ -129,9 +129,10 @@ setColour:
 	// x14 g
 	// x15 b
 	// 24 bits
-	sub sp, sp, #16
+	sub sp, sp, #24
 	str x13, [sp, #8]
 	str x14, [sp, #0]
+	str x15, [sp, #16]
 
 	lsl x13, x13, 16			// Movemos 16 bits
 	lsl x14, x14, 8				// Movemos 8 bits
@@ -140,5 +141,6 @@ setColour:
 
 	ldr x13, [sp, #8]
 	ldr x14, [sp, #0]
-	add sp, sp, #16
+	ldr x15, [sp, #16]
+	add sp, sp, #24
 	ret

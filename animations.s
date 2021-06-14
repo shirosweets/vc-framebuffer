@@ -4,7 +4,7 @@
 delay:
 	add x8, xzr, xzr			// counter = 0
 	add x8, x8, #0xFFF			// counter = 0xF...F (un numero enorme)
-	lsl x8, x8, #9				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+	lsl x8, x8, #10				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
 
 delayloop:
 	cbz x8, delayEnd
@@ -16,8 +16,25 @@ delayloop:
 delayEnd:
 	ret
 
+.globl fastDelay
+// NOTE fastDelay
+fastDelay:
+	add x8, xzr, xzr			// counter = 0
+	add x8, x8, #0xFFF			// counter = 0xF...F (un numero enorme)
+	lsl x8, x8, #2				// 3th = * 2^~10 (slow = 1s) // * 2^~9 (medium = ~0,3s)
+
+fastDelayloop:
+	cbz x8, fastDelayEnd
+	ldur x9, [sp, #0]
+	stur x9, [sp, #0]
+	sub x8, x8, #1				// counter--
+	b fastDelayloop
+
+fastDelayEnd:
+	ret
+
 .globl longDelay
-// NOTE delay
+// NOTE longDelay
 longDelay:
 	sub sp, sp, 16
 	str x8, [sp, 8]
@@ -41,7 +58,7 @@ ldelayEnd:
 	ret
 
 .globl lineAnimation
-// FIXME lineAnimation
+// NOTE lineAnimation
 lineAnimation:
 	sub sp, sp, #8				// Guardamos 1 lugar del stack
 	stur x30, [sp, #0]			// Registro 30 para el RET en el stack
@@ -183,3 +200,66 @@ doSceneEye:
 endDoSceneEye:
 	ret
 
+.globl rgbLinesAnim
+// NOTE rgbLinesAnim
+rgbLinesAnim:
+	sub sp, sp, #24				// Guardamos 1 lugar del stack
+	stur x5, [sp, #16]
+	stur x3, [sp, #8]
+	stur x30, [sp, #0]			// Registro 30 para el RET en el stack
+	mov x3, #1					// Buffer secundario
+	mov x5, xzr
+	mov x13, #255				// R Inicial
+	mov x14, #0					// G Inicial
+	mov x15, #0					// B Inicial
+	bl setColour
+
+rgbLinesAnimLoop:
+	cmp x5, #319				// Si x5 ya terminó
+	b.ge rgbLinesAnimEnd
+	mov x21, #295
+	mov x22, xzr
+	mov x23, #50
+	mov x24, #480
+	bl doRectangle
+	bl rgbAnimation
+	bl setColour
+	mov x21, #320
+	mov x22, #240
+	mov x23, x5
+	bl doCircle
+	add x23, x23, #1
+	bl doCircle
+	bl rgbAnimation
+	bl setColour
+	mov x21, xzr
+
+rgbLinesAnimSubLoop:
+	cmp x21, #640
+	b.ge rgbLinesAnimSubEnd
+	mov x22, xzr				// y = 0
+	mov x23, #640				// x = WIDTH
+	sub x23, x23, x21			// x = WIDTH - x21
+	sub x23, x23, #1			// x = WIDTH - x21 - 1
+	mov x24, #480
+	bl drawLine
+	add x21, x21, #1
+	add x23, x23, #1
+	bl drawLine
+	bl rgbAnimation
+	bl setColour
+	add x21, x21, #1
+	b rgbLinesAnimSubLoop
+
+rgbLinesAnimSubEnd:
+	add x5, x5, #1
+	bl drawUpdate
+	bl fastDelay
+	b rgbLinesAnimLoop
+
+rgbLinesAnimEnd:
+	ldur x30, [sp, #0]			// Registro 30 para el RET en el stack
+	ldur x3, [sp, #8]
+	ldur x5, [sp, #16]
+	add sp, sp, #24				// Guardamos 1 lugar del stack
+	ret

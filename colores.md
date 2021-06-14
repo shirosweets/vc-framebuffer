@@ -24,3 +24,26 @@ F9FF33
 FF8C33
 
 FF3333
+
+## Rojo
+    mov x13, 255				// R
+    mov x14, 0					// G
+    mov x15, 0					// B
+    bl setColour				// R+G+B = Rojo
+
+## Amarillo
+    mov x13, 255				// R
+	mov x14, 255				// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Amarillo
+## Rosa
+
+## Celeste
+
+## Verde
+
+## Blanco
+    mov x13, 255				// R
+	mov x14, 255				// G
+	mov x15, 255				// B
+	bl setColour				// R+G+B = Blanco

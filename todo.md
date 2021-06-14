@@ -77,7 +77,7 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 
 - [x] Completar función para dibujar círculos.
     - [x] Arreglar la "cruz" en los ejes `xc` e `yc` (no se pintan).
-    - [ ] Añadir lógica de rellenar la figura con un argumento.
+    - [x] Añadir lógica de rellenar la figura con un argumento.
 
 - [-] Modificar función `setPixel` para que use el stack pointer **(no la necesita)**.
 
@@ -108,13 +108,14 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
     - [x] doGm (crea una `G` en mayúscula)
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) [font.s](font.s) (@shirosweets):
-    - [ ] doA (crea una `a` en minúscula)
-    - [ ] doT (crea una `t` en minúscula)
-    - [ ] doVm (crea una `V` en mayúscula)
-    - [ ] doN (crea una `n` en minúscula)
-    - [ ] doP (crea una `p` en minúscula)
-    - [ ] doS (crea una `s` en minúscula)
-    - [ ] doL (crea una `l` en minúscula)
+    - [x] doA (crea una `a` en minúscula)
+    - [x] doAm (crea una `A` en mayúscula)
+    - [x] doT (crea una `t` en minúscula)
+    - [x] doVm (crea una `V` en mayúscula)
+    - [x] doN (crea una `n` en minúscula)
+    - [x] doP (crea una `p` en minúscula)
+    - [x] doS (crea una `s` en minúscula)
+    - [x] doL (crea una `l` en minúscula)
 
 - Añadir al archivo [variables.md](variables.md):
     - [ ] Tags/funciones usadas como título.
@@ -127,7 +128,7 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 
 - [x] Estructura básica del EJ2.
 
-- [ ] Repasar
+- [x] Repasar
 
 - [x] Buscar alternativa para no tener que checkear el memory_map.txt
 

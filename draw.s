@@ -35,7 +35,7 @@ loopDelay:
 	sub x22, x22, 3				// Muevo el mouse
 	bl doMouse					// Lo dibujo
 	cmp x25, 18					// Comparo si itere un par de veces
-	b.eq endFirstDelay				// Cuando toque el boton del medio de la pantalla. Se rompe
+	b.eq endFirstDelay			// Cuando toque el boton del medio de la pantalla. Se rompe
 	add x25, x25, 1
 	b loopDelay
 
@@ -45,12 +45,15 @@ endFirstDelay:
 	bl doComputerBroken
 	bl drawUpdate
 	bl longDelay
+	bl drawUpdateWithCleanScreen
+	bl rgbLinesAnim
+	bl drawUpdate
 
 preDoSun:
 	mov x21, 39
 	mov x9, 0
 	sub sp, sp, 8
-	stur x9, [sp, 56] 
+	stur x9, [sp, 56]
 doSun:
 	bl cleanScreen
 	bl anPiramidesDia
@@ -60,7 +63,7 @@ doSun:
 	mov x23, 30
 	mov x22, 0
 	bl circRelleno
-	
+
 	add x21, x21, 10
 	bl drawUpdate
 
@@ -132,20 +135,19 @@ doEstrella:
 
 .globl circRelleno
 circRelleno:
-	sub sp, sp, 16
+	sub sp, sp, 24
+	str x24, [sp, 16]
 	str x23, [sp, 8]
 	str lr, [sp]
+	mov x24, xzr
 
-loopRelleno:
 	bl doCircle
-	cbz x23, endRellenoCir
-	sub x23, x23, 1
-	b loopRelleno
 
 endRellenoCir:
 	ldr lr, [sp]
 	ldr x23, [sp, 8]
-	add sp, sp, 16
+	ldr x24, [sp, 16]
+	add sp, sp, 24
 	ret
 
 
@@ -185,7 +187,7 @@ loopCompBro2:
 
 	add x21, x21, 10
 	bl doRectangle
-	
+
 	add x7, x7, 1
 	b loopCompBro2
 endLoopCompBro2:
@@ -306,7 +308,7 @@ anPiramidesNoche:
 	movk w18, 0x0000, lsl 0
 	mov x22, 350
 	mov x21, 100
-	bl doDiego
+	bl doValentinaVispo
 
 	ldr lr, [sp]
 	ldr x24, [sp, 8]
@@ -554,7 +556,11 @@ drawLine:
 	// x7 sy
 	// x19 err
 
-	sub sp, sp, #48				// Reservamos 6 registros de memoria
+	sub sp, sp, #80				// Reservamos 6 registros de memoria
+	stur x24, [sp, #72]
+	stur x23, [sp, #64]
+	stur x22, [sp, #56]
+	stur x21, [sp, #48]
 	stur x30, [sp, #40]			// Guardamos el return pointer en memoria
 	stur x19, [sp, #32]
 	stur x4, [sp, #24]
@@ -635,13 +641,17 @@ break2:
 	b loopLine
 
 endDrawLine:
-	ldur x30, [sp, #40]
-	ldur x19, [sp, #32]
-	ldur x4, [sp, #24]
-	ldur x5, [sp, #16]
-	ldur x6, [sp, #8]
 	ldur x7, [sp, #0]
-	add sp, sp, #48				// Liberamos espacio en memoria
+	ldur x6, [sp, #8]
+	ldur x5, [sp, #16]
+	ldur x4, [sp, #24]
+	ldur x19, [sp, #32]
+	ldur x30, [sp, #40]
+	ldur x21, [sp, #48]
+	ldur x22, [sp, #56]
+	ldur x23, [sp, #64]
+	ldur x24, [sp, #72]
+	add sp, sp, #80				// Liberamos espacio en memoria
 	ret
 
 .globl doSquare

@@ -7,11 +7,81 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
+.globl doAm
+// NOTE a minus
+doAm:	// 16x8
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
+
+	sub x22, x22, 19
+	mov x23, 19
+	bl vertLine
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 10
+	bl doHorizontalLine
+	add x21, x21, 11
+	add x22, x22, 1
+	mov x23, 19
+	bl vertLine
+	add x22, x22, 10
+	sub x21, x21, 10
+	mov x23, 10
+	bl doHorizontalLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+	ret
+
 .globl doA
-// NOTE a
-doA:
-	// @Vale
+doA:	// 16x8
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
+
+	add x21, x21, 1
+	mov x23, 5
+	bl doHorizontalLine
 	
+	sub x21, x21, 1
+	sub x22, x22, 7
+	mov x23, 6
+	bl vertLine
+
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 4
+	bl doHorizontalLine
+
+	add x21, x21, 4
+	add x22, x22, 1
+	mov x23, 1
+	bl doHorizontalLine
+	
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 8
+	bl vertLine
+
+	add x22, x22, 7
+	sub x21, x21, 1
+	mov x23, 1
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+	ret
 
 .globl doEm
 // NOTE E
@@ -66,46 +136,45 @@ endE:
 	ret
 
 .globl doE
-// NOTE e
-doE:
+// NOTE e minus
+doE:	// 16x8
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
 	// w18 color
 	// Usa:
-	// x23 para la funcion doHorizontalLine
-	sub sp, sp, 32
+	// x23 para la función doHorizontalLine
+	sub sp, sp, #32
 	stur lr, [sp]
 	stur x21, [sp, #8]
 	stur x22, [sp, #16]
 	stur x23, [sp, #24]
 
-	mov x23, 11
-	add x22, x22, 10
-	sub x21, x21, 5
-	bl doHorizontalLine
-	add x21, x21, 11
+	add x21, x21, 1
+	mov x23, 6
+	bl doHorizontalLine			// Linea h inferior
+	sub x21, x21, 1
 	sub x22, x22, 7
 	mov x23, 6
-	bl vertLine
-	sub x21, x21, 14
-	sub x22, x22, 1
-	mov x23, 14
-	bl doHorizontalLine
-	sub x21, x21, 1
-	add x22, x22, 1
-	mov x23, 16
-	bl vertLine
+	bl vertLine					// Linea vert izquierda
 	add x21, x21, 1
-	add x22, x22, 17
-	mov x23, 14
-	bl doHorizontalLine
+	sub x22, x22, 1
+	mov x23, 5
+	bl doHorizontalLine			// Linea sup
+	add x21, x21, 5
+	add x22, x22, 1
+	mov x23, 2
+	bl vertLine					// Linea v derecha
+	sub x21, x21, 5
+	add x22, x22, 2
+	mov x23, 5
+	bl doHorizontalLine			// Linea intermedia
 
 	ldur x23, [sp, #24]
 	ldur x22, [sp, #16]
 	ldur x21, [sp, #8]
 	ldur lr, [sp]
-	add sp, sp, 32
+	add sp, sp, #32
 	ret
 
 .globl doIm
@@ -174,19 +243,19 @@ doI:
 	stur x22, [sp, #16]
 	stur x23, [sp, #24]
 	stur x24, [sp, #32]
-	mov x16, x21
-	mov x12, x22
-	bl drawPixel
-	sub x21, x21, 5
-	add x22, x22, 5
-	mov x23, 5
+
+	mov x23, 10
 	bl doHorizontalLine
 	add x21, x21, 5
-	mov x23, 15
+	sub x22, x22, 10
+	mov x23, 10
 	bl vertLine
-	sub x21, x21, 8
-	add x22, x22, 15
-	mov x23, 15
+	sub x22, x22, 3
+	mov x23, 1
+	bl doHorizontalLine
+	add x22, x22, 3
+	sub x21, x21, 3
+	mov x23, 3
 	bl doHorizontalLine
 
 	ldur x24, [sp, #32]
@@ -200,8 +269,8 @@ doI:
 .globl doO
 // NOTE o
 doO:
-	sub sp, sp, 32
-	str x23, [sp, 24]
+	sub sp, sp, #32
+	str x23, [sp, #24]
 	stur x22, [sp, #16]
 	stur x21, [sp, #8]
 	stur lr, [sp]
@@ -222,14 +291,16 @@ doO:
 
 	bl vertLine						// Linea v izquierda
 
-	ldr x23, [sp, 24]
-	add sp, sp, 32
+	ldr lr, [sp]
+	ldr x21, [sp, #8]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #24]
+	add sp, sp, #32
 	ret
 
 .globl doDm
 // NOTE D
-doDm:	// REVIEW Solucionado
-	// @Diego
+doDm:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -244,13 +315,9 @@ doDm:	// REVIEW Solucionado
 	mov x12, x22
 	mov x9, 0
 
-dIzq:
-	add x12, x12, 1
-	bl drawPixel
-	cmp x9, 20
-	b.eq preDDer
-	add x9, x9, 1
-	b dIzq
+	sub x22, x22, 20
+	mov x23, 20
+	bl vertLine
 
 preDDer:
 	mov x23, 5
@@ -277,7 +344,7 @@ preDDer:
 dDer:
 	add x12, x12, 1
 	bl drawPixel
-	cmp x9, 10
+	cmp x9, 9
 	b.eq dDoIzq
 	add x9, x9, 1
 	b dDer
@@ -312,23 +379,112 @@ endD:
 	ldur x22, [sp, #16]
 	ldur x21, [sp, #8]
 	ldur lr, [sp]
-	add sp, sp, 24
+	add sp, sp, #24
 	ret
 
 .globl doL
-// NOTE l
-doL:
-	// @Vale
+// NOTE l minus
+doL:	// 16x8
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x23 w
+	// w18 color
+	sub sp, sp, #32
+	str x21, [sp, #24]
+	str x22, [sp, #16]
+	str x23, [sp, #8]
+	str lr, [sp]
+
+	add x21, x21, 2
+	mov x23, 8
+	bl doHorizontalLine
+	add x21, x21, 4
+	sub x22, x22, 17
+	mov x23, 16
+	bl vertLine
+	sub x21, x21, 3
+	mov x23, 4
+	bl doHorizontalLine
+
+	ldr lr, [sp]
+	ldr x21, [sp, #24]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #8]
+	add sp, sp, #32
+	ret
 
 .globl doS
-// NOTE s
-doS:
-	// @Vale
+// NOTE s minus
+doS:	// 16x8
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x23 w
+	// w18 color
+	sub sp, sp, #24
+	str x21, [sp, #16]
+	str x22, [sp, #8]
+	str lr, [sp]
+
+	mov x23, 8
+	bl doHorizontalLine
+	add x21, x21, 8
+	sub x22, x22, 3
+	mov x23, 3
+	bl vertLine
+	sub x21, x21, 7
+	sub x22, x22, 1
+	mov x23, 7
+	bl doHorizontalLine
+	sub x21, x21, 1
+	sub x22, x22, 3
+	mov x23, 3
+	bl vertLine
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 7
+	bl doHorizontalLine
+
+	ldr lr, [sp]
+	ldr x22, [sp, #8]
+	ldr x21, [sp, #16]
+	add sp, sp, #24
+	ret
 
 .globl doP
 // NOTE p
-doP:
-	// @Vale
+doP:	// 16x8
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x23 w
+	// w18 color
+	sub sp, sp, 32
+	str x23, [sp, 24]
+	str x21, [sp, 16]
+	str x22, [sp, 8]
+	str lr, [sp]
+
+	mov x23, 9
+	bl doHorizontalLine
+	add x21, x21, 8
+	sub x22, x22, 4
+	mov x23, 3
+	bl vertLine
+	sub x21, x21, 8
+	sub x22, x22, 1
+	mov x23, 8
+	bl doHorizontalLine
+	mov x23, 12
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 24]
+	ldr x21, [sp, 16]
+	ldr x22, [sp, 8]
+	add sp, sp, 32
+	ret
 
 .globl doM
 // NOTE m
@@ -344,14 +500,15 @@ doM:
 	stur x21, [sp, #8]
 	stur x22, [sp, #16]
 
-	mov x23, 16
+	sub x22, x22, 8
+	mov x23, 8
 	bl vertLine
 
 	mov x23, 5
 	bl doHorizontalLine
 	add x21, x21, 6
 	add x22, x22, 1
-	mov x23, 15
+	mov x23, 7
 	bl vertLine
 	add x21, x21, 1
 	sub x22, x22, 1
@@ -359,7 +516,7 @@ doM:
 	bl doHorizontalLine
 	add x21, x21, 6
 	add x22, x22, 1
-	mov x23, 15
+	mov x23, 7
 	bl vertLine
 
 
@@ -412,7 +569,6 @@ endM:
 .globl doN
 // NOTE n
 doN:
-	// @Vale
 	// Args
 	// x21 x
 	// x22 y
@@ -422,15 +578,14 @@ doN:
 	str x23, [sp, 8]
 	str lr, [sp]
 
-	add x22, x22, 5
-
-	mov x23, 15
+	sub x22, x22, 8
+	mov x23, 8
 	bl vertLine
-	mov x23, 9
+	mov x23, 5
 	bl doHorizontalLine
-	add x21, x21, 10
+	add x21, x21, 6
 	add x22, x22, 1
-	mov x23, 14
+	mov x23, 7
 	bl vertLine
 
 	ldr lr, [sp]
@@ -443,30 +598,50 @@ doN:
 .globl doVm
 // NOTE V
 doVm:
-	// @Vale
-	// x16 x
-	// x12 y
-	// x0
-	// Pixel superior izquierdo
-/*
-	mov x8, SCREEN_WIDTH
-	mul x28, x12, x8   			// y * WIDTH
-	add x28, x28, x16				// + x
-	lsl x28, x28, 2				// *4
-	add x28, x20, x28				// Pixel inicial a pintar
- */
-	// TODO
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
 
+	sub x22, x22, 20
+	mov x23, 5
+	bl vertLine
+
+	add x21, x21, 6
+	bl vertLine
+	sub x21, x21, 6
+
+	add x21, x21, 1
+	add x22, x22, 6
+	bl vertLine
+
+	add x21, x21, 4
+	bl vertLine
+	sub x21, x21, 4
+
+	add x21, x21, 1
+	add x22, x22, 6
+	bl vertLine
+
+	add x21, x21, 2
+	bl vertLine
+	sub x21, x21, 2
+
+	add x21, x21, 1
+	add x22, x22, 6
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
 	ret
 
-.globl doT
-// NOTE t
-doT:
-	// @Vale
-
-.globl doZ
-// NOTE z
-doZ:	// REVIEW Done
+.globl doZzzeta
+// NOTE doZzzeta
+doZzzeta:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -483,8 +658,55 @@ doZ:	// REVIEW Done
 
 	mov x23, 20
 	bl doHorizontalLine
-	add x21, x21, 20
-	add x16, x16, 20
+	add x21, x21, 19
+	mov x16, x21
+
+doZDiagz:
+	bl drawPixel
+	sub x22, x22, 1
+	add x21, x21, 1
+	add x16, x16, 1
+	sub x12, x12, 1
+	cmp x9, 19
+	b.eq doZBotz
+	add x9, x9, 1
+	b doZDiagz
+
+doZBotz:
+	mov x23, 20
+	bl doHorizontalLine
+
+endZz:
+	ldur x22, [sp]
+	ldur x21, [sp, 8]
+	ldur lr, [sp, 16]
+	add sp, sp, 24
+	ret
+
+.globl doZ
+// NOTE z minus
+doZ:
+	// Args
+	// x21 x inicial
+	// x22 y inicial
+	// x18 Color
+	// Usa:
+	// x23 para doHorizontalLine
+	sub sp, sp, 24
+	stur lr, [sp, 16]
+	stur x21, [sp, 8]
+	stur x22, [sp]
+	mov x16, x21
+	mov x12, x22
+	mov x9, 0
+
+	sub x22, x22, 8
+
+	mov x23, 8
+	bl doHorizontalLine
+	add x21, x21, 8
+	mov x16, x21
+	mov x12, x22
 
 doZDiag:
 	bl drawPixel
@@ -492,13 +714,13 @@ doZDiag:
 	sub x21, x21, 1
 	sub x16, x16, 1
 	add x12, x12, 1
-	cmp x9, 19
+	cmp x9, 7
 	b.eq doZBot
 	add x9, x9, 1
 	b doZDiag
 
 doZBot:
-	mov x23, 20
+	mov x23, 8
 	bl doHorizontalLine
 
 endZ:
@@ -510,53 +732,52 @@ endZ:
 
 .globl doGm
 // NOTE G mayus
-doGm:		// REVIEW Done
+doGm:
 	// Args
 	// x21 x inicial
 	// x22 y inicial
-	// x18 color
+	// w18 color
 	// AUX fun:
 	// doVertLine
-	sub sp, sp, 40
-	stur x21, [sp, 32]
-	stur x22, [sp, 24]
-	stur x18, [sp, 16]
+	sub sp, sp, 32
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
 	stur x23, [sp, 8]
 	stur lr, [sp]
-	mov x23, 11
-	mov x9, 0
-	bl doHorizontalLine
-	add x16, x16, 3
 
-	add x21, x21, 11
-	add x22, x22, 1
-	mov x23, 3
-	bl vertLine
-
-	sub x21, x21, 12
-	mov x23, 18
-	bl vertLine
-
-	add x21, x21, 1
-	add x22, x22, 19
+	add x21, x21, 1				// Ignoramos el primer pixel
 	mov x23, 10
-	bl doHorizontalLine
+	bl doHorizontalLine			// Linea h inferior
 
-	add x21, x21, 11
-	sub x22, x22, 8
-	mov x23, 7
+	add x21, x21, 10
+	sub x22, x22, 6
+	mov x23, 5
 	bl vertLine
 
 	sub x21, x21, 5
 	mov x23, 5
 	bl doHorizontalLine
 
-	ldur x21, [sp, 32]
-	ldur x22, [sp, 24]
-	ldur x18, [sp, 16]
-	ldur x23, [sp, 8]
+	sub x21, x21, 5
+	sub x22, x22, 9
+	mov x23, 14
+	bl vertLine					// Linea v izquierda
+
+	add x21, x21, 1
+	sub x22, x22, 1
+	mov x23, 9
+	bl doHorizontalLine			// Linea h superior
+
+	add x21, x21, 9
+	add x22, x22, 1
+	mov x23, 1
+	bl vertLine
+
 	ldur lr, [sp]
-	add sp, sp, 40
+	ldur x23, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	add sp, sp, 32
 	ret
 
 .globl doG
@@ -568,7 +789,6 @@ doG:	// 16x8
 	// w18 color
 	// x23 = w = 16
 	sub sp, sp, #48
-	mov x3, 0
 	stur x9, [sp, #40]		// x1
 	stur x10, [sp, #32]		// x2
 	stur x21, [sp, #24]
@@ -619,6 +839,34 @@ doG:	// 16x8
 	add sp, sp, #48
 	ret
 
+.globl doT
+// NOTE doT minus
+doT:	// 16x8
+	sub sp, sp, 32
+	str lr, [sp]
+	str x23, [sp, 8]
+	str x22, [sp, 16]
+	str x21, [sp, 24]
+
+	add x21, x21, 1
+	mov x23, 3
+	bl doHorizontalLine
+	sub x21, x21, 1
+	sub x22, x22, 17
+	mov x23, 16
+	bl vertLine
+
+	add x22, x22, 7
+	mov x23, 4
+	bl doHorizontalLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+	ret
+
 .globl doDiego
 // NOTE Diego
 doDiego:
@@ -627,78 +875,117 @@ doDiego:
 	// x22 y
 	// w18 color
 	// x23 for O
-	sub sp, sp, 40
-	stur x23, [sp, 32]
-	stur x21, [sp, 24]
-	stur x22, [sp, 16]
-	stur w18, [sp, 8]
-	stur lr, [sp]
+	sub sp, sp, #40
+	str x18, [sp, #32]
+	str x23, [sp, #24]
+	str x22, [sp, #16]
+	str x21, [sp, #8]
+	str lr, [sp]
 
 	bl doDm
 
-	add x21, x21, 25
+	add x21, x21, 15			// Espacio entre letras
 	bl doI
 
-	add x21, x21, 25
+	add x21, x21, 15			// Espacio entre letras
 	bl doE
 
-	add x21, x21, 20
-	add x22, x22, 10
+	add x21, x21, 15			// Espacio entre letras
 	bl doG
-	sub x22, x22, 10
 
-	add x21, x21, 20
-	add x22, x22, 8
+	add x21, x21, 15			// Espacio entre letras
 	bl doO
 
-	sub x22, x22, 8
-	add x21, x21, 50
+	add x21, x21, 30			// Espacio entre letras
 	bl doGm
-	add x21, x21, 25
+
+	add x21, x21, 15			// Espacio entre letras
 	bl doI
-	add x21, x21, 10
-	add x22, x22, 5
+
+	add x21, x21, 15			// Espacio entre letras
 	bl doM
-	sub x22, x22, 5
-	add x21, x21, 30
+
+	add x21, x21, 20			// Espacio entre letras
 	bl doE
-	add x21, x21, 15
+
+	add x21, x21, 14			// Espacio entre letras
 	bl doN
-	add x21, x21, 25
+
+	add x21, x21, 15			// Espacio entre letras
 	bl doE
-	add x21, x21, 15
+
+	add x21, x21, 15			// Espacio entre letras
 	bl doZ
 
 endDiego:
-	ldur lr, [sp]
-	ldur w18, [sp, 8]
-	ldur x22, [sp, 16]
-	ldur x21, [sp, 24]
-	ldur x23, [sp, 32]
-	add sp, sp, 40
+	ldr lr, [sp]
+	ldr x21, [sp, #8]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #24]
+	ldr x18, [sp, #32]
+	add sp, sp, #40
 	ret
 
 .globl doValentinaVispo
 // NOTE Vale
 doValentinaVispo:
 	// @Valentina Vispo
-	// x16 xo
-	// x12 yo
-	// w cantidad de pixeles ((2*w)xw)
-	// x18 Colour
-	bl doVm
-	// bl doA
-	// bl doL
-	// bl doE
-	// bl doN
-	// bl doT
-	// bl doI
-	// bl doN
-	// bl doA
+	// x21 xo
+	// x22 yo
+	// w18 Colour
+	sub sp, sp, #40
+	str x18, [sp, #32]
+	str x23, [sp, #24]
+	str x22, [sp, #16]
+	str x21, [sp, #8]
+	str lr, [sp]
 
-	// bl doVm
-	// bl doI
-	// bl doS
-	// bl doP
-	// bl doO
+	bl doVm
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doA
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doL
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doE
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doN
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doT
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doI
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doN
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doA
+
+	add x21, x21, 30			// Espacio entre letras
+	bl doVm
+
+	add x21, x21, 10			// Espacio entre letras
+	bl doI
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doS
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doP
+
+	add x21, x21, 15			// Espacio entre letras
+	bl doO
+
+endDoValentinaVispo:
+	ldr lr, [sp]
+	ldr x21, [sp, #8]
+	ldr x22, [sp, #16]
+	ldr x23, [sp, #24]
+	ldr x18, [sp, #32]
+	add sp, sp, #40
 	ret
