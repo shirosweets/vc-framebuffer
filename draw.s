@@ -86,6 +86,8 @@ loopNoche:
 	mov x22, 0
 	bl circRelleno
 	add x21, x21, 10
+	mov x18, 0xFFFFFF
+	bl doEstrella
 	bl drawUpdate
 
 	ldr x9, [sp, 56]
@@ -104,6 +106,29 @@ endAnimacion:
 	ldr x25, [sp, 40]
 	ldr x3, [sp, 48]
 	add sp, sp, 56
+	ret
+
+.globl doEstrella
+// NOTE Estrella
+doEstrella:
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
+
+	mov x23, 5
+	bl doHorizontalLine
+	add x21, x21, 2
+	sub x22, x22, 2
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+
 	ret
 
 .globl circRelleno
