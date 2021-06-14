@@ -128,7 +128,10 @@ endRellenoCir:
 .globl doComputerBroken
 // NOTE doComputerBroken
 doComputerBroken:
-	sub sp, sp, 48
+	sub sp, sp, 72
+	str x7, [sp, 64]
+	str x8, [sp, 56]
+	str x9, [sp, 48]
 	stur x25, [sp, 40]
 	stur x24, [sp, 32]
 	stur x23, [sp, 24]
@@ -138,34 +141,42 @@ doComputerBroken:
 
 	bl doCompuVentana
 	bl doMouse
-	mov x21, 115
-	mov x22, 114
-	mov x23, 10
-	mov x24, 10
-	bl doRectangle
-	add x21, x21, 50
+	mov x22, 80
+	mov x23, 8
+	mov x24, 8
+	mov x10, 40
+	mov x9, 0
+	mov x7, 0
+
+loopCompBro1:		//FIXME No anda
+	cmp x9, 12
+	b.eq endCompBro
+	mov x7, 0
 	add x22, x22, 20
-	bl doRectangle
-	add x21, x21, 100
-	sub x22, x22, 40
-	bl doRectangle
+	mov x21, 120
 
-	mov x21, 300
-	mov x22, 300
-	mov x23, 5
-	bl doRectangle
+loopCompBro2:
+	cmp x7, x10
+	b.eq endLoopCompBro2
 
-	mov x21, 350
-	mov x22, 200
+	add x21, x21, 10
 	bl doRectangle
+	
+	add x7, x7, 1
+	b loopCompBro2
+endLoopCompBro2:
+	add x9, x9, 1
+	b loopCompBro1
 
+endCompBro:
 	ldr lr, [sp]
 	ldr x22, [sp, 8]
 	ldr x21, [sp, 16]
 	ldr x23, [sp, 24]
 	ldr x24, [sp, 32]
 	ldr x25, [sp, 40]
-	add sp, sp, 48
+	ldr x9, [sp, 48]
+	add sp, sp, 56
 	ret
 
 .globl anPiramidesDia

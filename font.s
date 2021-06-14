@@ -467,7 +467,7 @@ doT:
 
 .globl doZ
 // NOTE z
-doZ:
+doZ:	// REVIEW Done
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -511,7 +511,7 @@ endZ:
 
 .globl doGm
 // NOTE G mayus
-doGm:
+doGm:		// REVIEW Done
 	// Args
 	// x21 x inicial
 	// x22 y inicial
@@ -562,7 +562,7 @@ doGm:
 
 .globl doG
 // NOTE g
-doG:
+doG:		// REVIEW Done
 	// @Diego
 	// Args
 	// x21 x inicial
@@ -612,7 +612,7 @@ doG:
 
 .globl doDiego
 // NOTE Diego
-doDiego:
+doDiego:	// REVIEW Done
 	// Args
 	// x21 x
 	// x22 y
@@ -634,7 +634,9 @@ doDiego:
 	bl doE
 
 	add x21, x21, 20
-	bl doGm
+	add x22, x22, 10
+	bl doG
+	sub x22, x22, 10
 
 	add x21, x21, 20
 	add x22, x22, 8
