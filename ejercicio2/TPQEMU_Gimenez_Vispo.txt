@@ -4,7 +4,9 @@ Explicación breve:
 
 La animación es una serie de escenas donde se ve una computadora con una selección, una transición de círculos y líneas RGB para luego mostrar dos pirámides con el nombre de los integrantes que va cambiando entre día y noche respectivamente.
 
-** Explicación completa
+---
+
+** Explicación completa **
 En el ejercicio 2 la idea es hacer 3 escenas diferentes:
 
 En la primera escena se encuentra una computadora, un mouse clickea un botón como inicio de la animación, esto provoca que se "rompa" la pantalla.
@@ -12,6 +14,8 @@ En la primera escena se encuentra una computadora, un mouse clickea un botón co
 La siguiente escena empieza como una especie de cuenta regresiva con colores y formas en un fondo negro. Se ven líneas que convergen desde el punto central y se extienen hacia el lado inferior y superior de la ventana; estas líneas van cambiando de colores RBG de izquierda a derecha en la parte superior y de derecha a izquierda en la parte inferior. Esto ocurre mientras se expande un círculo desde el centro, ambos con colores RBG.
 
 Cuando termina esa cuenta se muestran pirámides y el nombre y apellido de cada intetgrante (un ciclo es de día y el otro de noche). Arriba se ve el respectivo sol/luna moviéndose de izquierda a derecha. Esta esta última escena se repite en bucle.
+
+---
 
 Trabajo en Github:
 https://github.com/shirosweets/vc-framebuffer
