@@ -29,7 +29,7 @@ main:
 	mov x20, x0					// X0 Dirección base del FrameBuffer
 	adr x28, PreFrameBuffer		// x28 Dirección base del PreFrameBuffer
 
-	bl cleanScreen
+	//bl cleanScreen
 
 	// Pintamos un cuadrado en el medio de la pantalla
 	mov x21, 300 				// x2
@@ -40,10 +40,46 @@ main:
 	mov x15, 8					// B
 	bl setColour				// R+G+B = Rojo
 	//bl doSquare
-	bl cleanScreen
+	//bl cleanScreen
 	mov x21, 200
 	mov x22, 250
-	bl doAnimacionInicial
+	//bl doAnimacionInicial
+	mov x21, 300 				// x2
+	mov x22, 300				// y2
+	mov x23, 50					// w largo de pixeles
+
+	//movz w18, 0x00, lsl 16
+	//movk w18, 0x0000, lsl 0
+	mov x21, 100				// x
+	mov x22, 100				// y
+	//mov x22, 380				// y
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Rojo
+	mov x23, 400					// w
+	bl doHorizontalLine
+	mov x21, 100				// x
+	mov x22, 100				// y
+	//mov x22, 380				// y
+	mov x13, 238				// R
+	mov x14, 255				// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Amarillo
+	bl doG
+	//bl doDiego
+	///
+	mov x21, 100				// x
+	mov x22, 425				// y
+	mov x13, 255				// R
+	mov x14, 0					// G
+	mov x15, 0					// B
+	bl setColour				// R+G+B = Rojo
+	mov x23, 400				// w
+	bl doHorizontalLine
+	b EndMain
+	ret
+	//bl drawUpdate
 	/*mov x21, #320					// xc x centro
 	mov x22, #250					// yc y centro
 	bl drawUpdate

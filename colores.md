@@ -24,3 +24,22 @@ F9FF33
 FF8C33
 
 FF3333
+
+
+## Morado
+mov x13, 144				// R
+mov x14, 0					// G
+mov x15, 255				// B
+bl setColour				// R+G+B = Morado
+
+## Rosa
+mov x13, 255				// R
+mov x14, 0					// G
+mov x15, 255				// B
+bl setColour				// R+G+B = Rosa
+
+## Verde
+mov x13, 0					// R
+mov x14, 255				// G
+mov x15, 0					// B
+bl setColour				// R+G+B = Verde

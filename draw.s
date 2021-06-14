@@ -50,7 +50,7 @@ preDoSun:
 	mov x21, 39
 	mov x9, 0
 	sub sp, sp, 8
-	stur x9, [sp, 56] 
+	stur x9, [sp, 56]
 doSun:
 	bl cleanScreen
 	bl anPiramidesDia
@@ -60,7 +60,7 @@ doSun:
 	mov x23, 30
 	mov x22, 0
 	bl circRelleno
-	
+
 	add x21, x21, 10
 	bl drawUpdate
 
@@ -185,7 +185,7 @@ loopCompBro2:
 
 	add x21, x21, 10
 	bl doRectangle
-	
+
 	add x7, x7, 1
 	b loopCompBro2
 endLoopCompBro2:
@@ -246,8 +246,12 @@ anPiramidesDia:
 	mov x22, 0
 	mov x23, 50
 
-	movz w18, 0xFF, lsl 16
-	movk w18, 0xFFFF, lsl 0
+	//movz w18, 0xFF, lsl 16
+	//movk w18, 0xFFFF, lsl 0
+	mov x13, 255	// R
+	mov x14, 238	// G
+	mov x15, 0		// B
+	bl setColour	// R+G+B = Amarillo
 	mov x22, 350
 	mov x21, 100
 	bl doDiego

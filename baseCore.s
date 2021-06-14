@@ -71,7 +71,7 @@ updateLoop:
 
 	cmp x9, x10
 	b.eq endUpdate
-	
+
 	add x9, x9, 1
 	b updateLoop
 
