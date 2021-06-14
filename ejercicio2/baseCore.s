@@ -84,7 +84,6 @@ endUpdate:
 	ret
 
 .globl drawUpdateWithCleanScreen
-// NOTE drawUpdateWithCleanScreen
 drawUpdateWithCleanScreen:
 	// x28 PreFrameBuffer
 	// x20 FrameBuffer
@@ -119,11 +118,9 @@ endUpdateAndClean:
 	add sp, sp, 40
 	ret
 
-.globl setColour				// https://stackoverflow.com/questions/54918639/linking-2-object-files
-// NOTE setColour
+.globl setColour
 setColour:
-	// Return
-	// x18 Color a pintar
+	// Return x18 Color a pintar
 	// Args
 	// x13 r
 	// x14 g

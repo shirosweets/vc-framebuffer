@@ -12,8 +12,8 @@
 .equ COLOR_NEGRO,		0x00
 
 
+
 .globl doAnimacionInicial
-// NOTE doAnimacionInicial
 doAnimacionInicial:
 	sub sp, sp, 56
 	str x3, [sp, 48]
@@ -54,6 +54,7 @@ preDoSun:
 	mov x9, 0
 	sub sp, sp, 8
 	stur x9, [sp, 56]
+
 doSun:
 	bl cleanScreen
 	bl anPiramidesDia
@@ -81,6 +82,7 @@ doNoche:
 	mov x9, 0
 	str x9, [sp, 56]
 	mov x21, 0
+
 loopNoche:
 	bl cleanScreen
 	bl anPiramidesNoche
@@ -111,7 +113,6 @@ endAnimacion:
 	ret
 
 .globl doEstrella
-// NOTE Estrella
 doEstrella:
 	sub sp, sp, 32
 	str x21, [sp, 24]
@@ -152,7 +153,6 @@ endRellenoCir:
 
 
 .globl doComputerBroken
-// NOTE doComputerBroken
 doComputerBroken:
 	sub sp, sp, 72
 	str x7, [sp, 64]
@@ -174,7 +174,7 @@ doComputerBroken:
 	mov x9, 0
 	mov x7, 0
 
-loopCompBro1:		//FIXME No anda
+loopCompBro1:
 	cmp x9, 12
 	b.eq endCompBro
 	mov x7, 0
@@ -190,6 +190,7 @@ loopCompBro2:
 
 	add x7, x7, 1
 	b loopCompBro2
+
 endLoopCompBro2:
 	add x9, x9, 1
 	b loopCompBro1
@@ -206,7 +207,6 @@ endCompBro:
 	ret
 
 .globl anPiramidesDia
-// NOTE Segunda animacion
 anPiramidesDia:
 	sub sp, sp, 56
 	str x3, [sp, 40]
@@ -319,7 +319,6 @@ anPiramidesNoche:
 	ret
 
 .globl doMouse
-// NOTE doMouse
 doMouse:
 	// Args
 	// x21 x
@@ -342,7 +341,6 @@ doMouse:
 	ret
 
 .globl doCompuVentana
-// NOTE doCompuVentana
 doCompuVentana:
 	sub sp, sp, 56
 	stur x15, [sp, 48]
@@ -451,7 +449,6 @@ doCompuVentana:
 	ret
 
 .globl triangDer
-// NOTE Triángulo apuntando a la derecha
 triangDer:
 	// Args
 	// x21 x
@@ -506,7 +503,6 @@ endTriangDer:
 	ret
 
 .globl vertLine
-// NOTE Vertilcal line with a height
 vertLine:
 	// Args
 	// x21 x
@@ -540,9 +536,7 @@ endVertLine:
 	add sp, sp, 40
 	ret
 
-
 .globl drawLine
-// NOTE drawLine Line
 drawLine:
 	// Args
 	// x21 xc0 coordenada x del primer punto
@@ -635,6 +629,7 @@ skipIf1:
 	cmp x8, x4
 	b.gt loopLine				// e2 > dx
 	// If we are here -> e2 <= dx
+
 break2:
 	add x19, x19, x4			// err += dx
 	add x22, x22, x7			// yc0 += sy
@@ -655,7 +650,6 @@ endDrawLine:
 	ret
 
 .globl doSquare
-// NOTE Square
 doSquare:
 	// Args
 	// x21 xo lugar dónde empiezo a dibujar la figura
@@ -675,7 +669,6 @@ doSquare:
 	ret
 
 .globl doRectangle
-// NOTE Rectangle alto(h) x largo(w)
 doRectangle:	// alto x largo//
 	// Args
 	// x21 x2 lugar dónde empiezo a dibujar la figura
@@ -688,7 +681,6 @@ doRectangle:	// alto x largo//
 	// drawPixel: setPixel x16 x, x12 y
 	// x9 posición inicial de x
 	// x10 posición inicial de y
-
 	sub sp, sp, #56				// Reservamos memoria
 	str x3, [sp, 48]
 	stur x21, [sp, 40]
@@ -720,7 +712,6 @@ endRectangule:
 	ret
 
 .globl doCircle
-// NOTE Circle
 doCircle: // Mid-Point Circle Drawing Algorithm //
 	// (0, 0) centro
 	// point p(x, y)
@@ -908,9 +899,7 @@ endCircleFillAux:
 	ret
 
 .globl doTriangleUp
-// NOTE Triángulo hacia arriba
 doTriangleUp:
-	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -964,9 +953,7 @@ endTriang:
 	ret
 
 .globl doTriangleDown
-// NOTE Triángulo hacia abajo
 doTriangleDown:
-	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -1022,9 +1009,7 @@ endTriangDown:
 	ret
 
 .globl doPiramide
-// NOTE Pirámide
 doPiramide:
-	// @Diego
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
 	// x22 y lugar dónde empiezo a dibujar la figura
@@ -1077,7 +1062,6 @@ endPir:
 	ret
 
 .globl verticalLine
-// NOTE Line
 verticalLine:
 	// Args
 	// x21 x
@@ -1104,7 +1088,6 @@ verLineEnd:
 	ret
 
 .globl doHorizontalLine
-// NOTE LineH
 doHorizontalLine:	// Crea líneas horizontales en la coordenada (xo, po) con w cantidad de pixeles que se extienden hacia la derecha //
 	// Args
 	// x21 xo valor de origen x

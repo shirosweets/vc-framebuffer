@@ -7,8 +7,9 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
+
+
 .globl doAm
-// NOTE a minus
 doAm:	// 16x8
 	sub sp, sp, 32
 	str x21, [sp, 24]
@@ -50,7 +51,7 @@ doA:	// 16x8
 	add x21, x21, 1
 	mov x23, 5
 	bl doHorizontalLine
-	
+
 	sub x21, x21, 1
 	sub x22, x22, 7
 	mov x23, 6
@@ -65,7 +66,7 @@ doA:	// 16x8
 	add x22, x22, 1
 	mov x23, 1
 	bl doHorizontalLine
-	
+
 	add x21, x21, 1
 	sub x22, x22, 1
 	mov x23, 8
@@ -84,7 +85,6 @@ doA:	// 16x8
 	ret
 
 .globl doEm
-// NOTE E
 doEm:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -136,7 +136,6 @@ endE:
 	ret
 
 .globl doE
-// NOTE e minus
 doE:	// 16x8
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -178,7 +177,6 @@ doE:	// 16x8
 	ret
 
 .globl doIm
-// NOTE I
 doIm:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -231,7 +229,6 @@ endI:
 	ret
 
 .globl doI
-// NOTE i
 doI:
 	// Args
 	// x21 x lugar dónde empiezo a dibujar la figura
@@ -267,7 +264,6 @@ doI:
 	ret
 
 .globl doO
-// NOTE o
 doO:
 	sub sp, sp, #32
 	str x23, [sp, #24]
@@ -299,7 +295,6 @@ doO:
 	ret
 
 .globl doDm
-// NOTE D
 doDm:
 	// Args
 	// x21 x inicial
@@ -383,7 +378,6 @@ endD:
 	ret
 
 .globl doL
-// NOTE l minus
 doL:	// 16x8
 	// Args
 	// x21 x inicial
@@ -415,7 +409,6 @@ doL:	// 16x8
 	ret
 
 .globl doS
-// NOTE s minus
 doS:	// 16x8
 	// Args
 	// x21 x inicial
@@ -453,7 +446,6 @@ doS:	// 16x8
 	ret
 
 .globl doP
-// NOTE p
 doP:	// 16x8
 	// Args
 	// x21 x inicial
@@ -487,7 +479,6 @@ doP:	// 16x8
 	ret
 
 .globl doM
-// NOTE m
 doM:
 	// Args
 	// x21 x inicial
@@ -519,46 +510,6 @@ doM:
 	mov x23, 7
 	bl vertLine
 
-
-/*
-doPalo:
-	add x12, x12, 1
-	bl drawPixel
-	cmp x9, 20
-	b.eq doMr
-	add x9, x9, 1
-	b doPalo
-
-doMr:
-	mov x12, x22
-	mov x9, 0
-doMrLoop:
-	add x16, x16, 1
-	add x12, x12, 1
-	bl drawPixel
-	cmp x9, 10
-	b.eq doMrUp
-	add x9, x9, 1
-	b doMrLoop
-
-doMrUp:
-	add x16, x16, 1
-	sub x12, x12, 1
-	bl drawPixel
-	cmp x9, 0
-	b.eq doPaloD
-	sub x9, x9, 1
-	b doMrUp
-
-doPaloD:
-	add x12, x12, 1
-	bl drawPixel
-	cmp x9, 20
-	b.eq endM
-	add x9, x9, 1
-	b doPaloD
-*/
-
 endM:
 	ldur x22, [sp, #16]
 	ldur x21, [sp, #8]
@@ -567,7 +518,6 @@ endM:
 	ret
 
 .globl doN
-// NOTE n
 doN:
 	// Args
 	// x21 x
@@ -596,7 +546,6 @@ doN:
 	ret
 
 .globl doVm
-// NOTE V
 doVm:
 	sub sp, sp, 32
 	str x21, [sp, 24]
@@ -640,7 +589,6 @@ doVm:
 	ret
 
 .globl doZzzeta
-// NOTE doZzzeta
 doZzzeta:
 	// Args
 	// x21 x inicial
@@ -684,7 +632,6 @@ endZz:
 	ret
 
 .globl doZ
-// NOTE z minus
 doZ:
 	// Args
 	// x21 x inicial
@@ -731,7 +678,6 @@ endZ:
 	ret
 
 .globl doGm
-// NOTE G mayus
 doGm:
 	// Args
 	// x21 x inicial
@@ -781,7 +727,6 @@ doGm:
 	ret
 
 .globl doG
-// NOTE g minus
 doG:	// 16x8
 	// Args
 	// x21 x inicial
@@ -840,7 +785,6 @@ doG:	// 16x8
 	ret
 
 .globl doT
-// NOTE doT minus
 doT:	// 16x8
 	sub sp, sp, 32
 	str lr, [sp]
@@ -868,7 +812,6 @@ doT:	// 16x8
 	ret
 
 .globl doDiego
-// NOTE Diego
 doDiego:
 	// Args
 	// x21 x
@@ -927,9 +870,7 @@ endDiego:
 	ret
 
 .globl doValentinaVispo
-// NOTE Vale
 doValentinaVispo:
-	// @Valentina Vispo
 	// x21 xo
 	// x22 yo
 	// w18 Colour
