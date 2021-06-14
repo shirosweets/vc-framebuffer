@@ -11,7 +11,7 @@ rec
 assets/rename_me
 
 # Ignora
-*.txt
+assets/owl_md.txt
 *.o
 app.o
 start.o

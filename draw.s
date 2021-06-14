@@ -1076,6 +1076,7 @@ endPir:
 	add sp, sp, #32
 	ret
 
+.globl verticalLine
 // NOTE Line
 verticalLine:
 	// Args
