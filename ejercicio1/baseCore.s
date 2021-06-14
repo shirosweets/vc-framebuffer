@@ -120,8 +120,7 @@ endUpdateAndClean:
 
 .globl setColour
 setColour:
-	// Return
-	// x18 Color a pintar
+	// Return x18 Color a pintar
 	// Args
 	// x13 r
 	// x14 g

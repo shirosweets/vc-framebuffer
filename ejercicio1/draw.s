@@ -11,6 +11,8 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
+
+
 .globl anPiramidesDia
 anPiramidesDia:
 	sub sp, sp, 56
@@ -98,6 +100,7 @@ endRellenoCir:
 	ldr x24, [sp, 16]
 	add sp, sp, 24
 	ret
+
 .globl doEstrella
 doEstrella:
 	sub sp, sp, 32
@@ -529,7 +532,6 @@ cleanScreenBuffer: 	// Pinta toda la pantalla de negro
 
 .globl paintScreenBuffer
 paintScreenBuffer:	// 320w 240h -> 76800 + 240
-	// Return -> nada
 	// Args: x18 Colour
 	mov x0, x20					// Origen del frameBuffer
 	mov x8, SCREEN_WIDTH
@@ -546,7 +548,6 @@ paintScreenBufferLoop:
 
 .globl paintScreen
 paintScreen:	// 320w 240h -> 76800 + 240
-	// Return -> nada
 	// Args: x18 Colour
 	adr x28, PreFrameBuffer		// Origen del frameBuffer
 	mov x8, SCREEN_WIDTH
@@ -594,4 +595,3 @@ endVertLine:
 	ldur x9, [sp, 32]
 	add sp, sp, 40
 	ret
-

@@ -7,6 +7,8 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
+
+
 .globl doAm
 doAm:	// 16x8
 	sub sp, sp, 32
@@ -869,7 +871,6 @@ endDiego:
 
 .globl doValentinaVispo
 doValentinaVispo:
-	// @Valentina Vispo
 	// x21 xo
 	// x22 yo
 	// w18 Colour
