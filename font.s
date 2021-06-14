@@ -213,16 +213,9 @@ doO:	// 16x8 -> wx(w/2)
 	// w18 color
 	sub sp, sp, 32
 	str x23, [sp, 24]
-	stur x22, [sp, #16]
-	stur x21, [sp, #8]
+	stur x22, [sp, 16]
+	stur x21, [sp, 8]
 	stur lr, [sp]
-
-	/// FIXME
-	mov x13, 0					// R
-	mov x14, 255				// G
-	mov x15, 0					// B
-	bl setColour				// R+G+B = Verde
-	///
 
 	add x21, x21, 1
 	mov x23, 7						// Cant de pixeles
@@ -241,8 +234,8 @@ doO:	// 16x8 -> wx(w/2)
 	ldur lr, [sp]
 	ldur x21, [sp, #8]
 	ldur x22, [sp, #16]
-	ldr x23, [sp, 24]
-	add sp, sp, 32
+	ldr x23, [sp, #24]
+	add sp, sp, #32
 	ret
 
 .globl doDm
@@ -585,14 +578,14 @@ doG:	// 16x8
 	// x22 y inicial
 	// w18 color
 	// x23 = w = 16
-	sub sp, sp, #48
+	sub sp, sp, 48
 	//stur x18, [sp, #48]
 	mov x3, 0
-	stur x9, [sp, #40]		// x1
-	stur x10, [sp, #32]		// x2
-	stur x21, [sp, #24]
-	stur x22, [sp, #16]
-	stur x23, [sp, #8]
+	stur x9, [sp, 40]		// x1
+	stur x10, [sp, 32]		// x2
+	stur x21, [sp, 24]
+	stur x22, [sp, 16]
+	stur x23, [sp, 8]
 	stur lr, [sp]
 
 	add x21, x21, 1				// Ignoramos el primer pixel
@@ -626,13 +619,13 @@ doG:	// 16x8
 	bl doHorizontalLine
 
 	ldur lr, [sp]
-	ldur x23, [sp, #8]
-	ldur x22, [sp, #16]
-	ldur x21, [sp, #24]
-	ldur x10, [sp, #32]
-	ldur x9, [sp, #40]
+	ldur x23, [sp, 8]
+	ldur x22, [sp, 16]
+	ldur x21, [sp, 24]
+	ldur x10, [sp, 32]
+	ldur x9, [sp, 40]
 	//ldur x18, [sp, #48]
-	add sp, sp, #48
+	add sp, sp, 48
 	ret
 
 .globl doDiego

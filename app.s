@@ -57,27 +57,30 @@ main:
 	mov x14, 0					// G
 	mov x15, 0					// B
 	bl setColour				// R+G+B = Rojo
-	mov x23, 400					// w
-	bl doHorizontalLine
-	mov x21, 100				// x
-	mov x22, 100				// y
+	//mov x23, 400					// w
+	//bl doHorizontalLine
+	//mov x21, 100				// x
+	//mov x22, 100				// y
 	//mov x22, 380				// y
-	mov x13, 238				// R
-	mov x14, 255				// G
-	mov x15, 0					// B
-	bl setColour				// R+G+B = Amarillo
-	bl doG
-	//bl doDiego
+	//mov x13, 238				// R
+	//mov x14, 255				// G
+	//mov x15, 0					// B
+	//bl setColour				// R+G+B = Amarillo
+	//bl doG
+	mov x23, 16
+	//bl doG
+	mov x3, xzr
+	bl doDiego
 	///
-	mov x21, 100				// x
-	mov x22, 425				// y
-	mov x13, 255				// R
-	mov x14, 0					// G
-	mov x15, 0					// B
-	bl setColour				// R+G+B = Rojo
-	mov x23, 400				// w
-	bl doHorizontalLine
-	b EndMain
+	//mov x21, 100				// x
+	//mov x22, 425				// y
+	//mov x13, 255				// R
+	//mov x14, 0					// G
+	//mov x15, 0					// B
+	//bl setColour				// R+G+B = Rojo
+	//mov x23, 400				// w
+	//bl doHorizontalLine
+	//b EndMain
 	ret
 	//bl drawUpdate
 	/*mov x21, #320					// xc x centro
@@ -117,10 +120,10 @@ main:
 	//bl cleanScreen				// cleanScreen negro
 
 	// Creamos el nombre Valentina Vispo
-	mov x13, 209				// R
-	mov x14, 0					// G
-	mov x15, 0					// B
-	bl setColour				// R+G+B = Rojo
+	//mov x13, 209				// R
+	//mov x14, 0					// G
+	//mov x15, 0					// B
+	//bl setColour				// R+G+B = Rojo
 	//bl doValentinaVispo
 	//bl delay
 
