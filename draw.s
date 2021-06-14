@@ -11,6 +11,7 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
+
 .globl doAnimacionInicial
 // NOTE doAnimacionInicial
 doAnimacionInicial:
@@ -318,7 +319,6 @@ anPiramidesNoche:
 .globl doMouse
 // NOTE doMouse
 doMouse:
-	// @Diego
 	// Args
 	// x21 x
 	// x22 y
@@ -451,7 +451,6 @@ doCompuVentana:
 .globl triangDer
 // NOTE Triángulo apuntando a la derecha
 triangDer:
-	// @Diego
 	// Args
 	// x21 x
 	// x22 y
@@ -648,7 +647,6 @@ endDrawLine:
 .globl doSquare
 // NOTE Square
 doSquare:
-	// Return -> nada
 	// Args
 	// x21 xo lugar dónde empiezo a dibujar la figura
 	// x22 yo lugar dónde empiezo a dibujar la figura
@@ -669,8 +667,6 @@ doSquare:
 .globl doRectangle
 // NOTE Rectangle alto(h) x largo(w)
 doRectangle:	// alto x largo//
-	// @Diego
-	// Return -> nada
 	// Args
 	// x21 x2 lugar dónde empiezo a dibujar la figura
 	// x22 y2 lugar dónde empiezo a dibujar la figura
@@ -723,6 +719,7 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	// x21 xc x centro
 	// x22 yc y centro
 	// x23 r radio (asumimos que el radio es mayor que 0)
+	// x24 no fill in: (x24 == 0 -> Fill, x24 != 0 -> No Fill)
 	// x18 colour
 	// Used
 	// x25 x
@@ -752,6 +749,26 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	sub x16, x21, x23			// x16 xd = xc - r
 	mov x12, x22				// x12 yd = yc
 	bl drawPixel
+	cbnz x24, doCircleLoop // doCircleLoop...
+	b doPixelsForCircleFill
+
+doPixelsForCircleFill:
+	sub sp, sp, #16
+	stur x6, [sp, #8]
+	stur x5, [sp, #0]
+
+	mov x5, x22					// x5 = yc
+	mov x6, x23 				// x6 = r
+
+	sub x22, x5, x6 			// yd = yc - r
+	lsl x23, x6, #1				// h = 2 * r
+	bl vertLine					// x21 x - x22 y - x23 height
+
+	mov x22, x5
+	mov x23, x6
+	ldur x6, [sp, #8]
+	ldur x5, [sp, #0]
+	add sp, sp, #16
 	// doCircleLoop...
 
 doCircleLoop:				// While x > y
@@ -782,7 +799,11 @@ cirelse1:						// Mid-point is outside the perimeter
 cirif2:						// if (x < y)
 	cmp x25, x26
 	b.lt circleEnd
+	cbnz x24, circlNoFill
+	bl circleFillAux
+	b doCircleLoop
 
+circlNoFill:
 	add x16, x25, x21			// x16 xd = x + x_centre
 	add x12, x26, x22			// x12 yd = y + y_centre
 	bl drawPixel
@@ -832,6 +853,48 @@ circleEnd:
 	ldur x22, [sp, 24]
 	ldur x23, [sp, 32]
 	add sp, sp, 40
+	ret
+
+circleFillAux:
+	sub sp, sp, #32
+	stur x4, [sp, #24]
+	stur x5, [sp, #16]
+	stur x23, [sp, #8]
+	stur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
+
+	mov x4, x21					// x4 = xc
+	mov x5, x22					// x5 = yc
+	add x21, x4, x25			// x = xc + x
+	sub x22, x5, x26			// y = yc - y
+	mov x23, x26
+	add x23, x23, x26			// height = 2*y + 1
+	bl vertLine
+
+	sub x21, x4, x25			// x = xc - x
+	bl vertLine
+
+	cmp x25, x26
+	b.eq endCircleFillAux		// Siguientes cuadrantes...
+
+	add x21, x4, x26			// x = xc + y
+	sub x22, x5, x25			// y = yc - x
+	add x23, x25, x25			// height = 2 * x
+	bl vertLine
+
+	sub x21, x4, x26			// x = xc - y
+	sub x22, x5, x25			// y = yc - x
+	mov x23, x25
+	add x23, x23, x25			// height = 2 * x
+	bl vertLine
+
+endCircleFillAux:
+	mov x21, x4
+	mov x22, x5
+	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
+	ldur x23, [sp, #8]
+	ldur x5, [sp, #16]
+	ldur x4, [sp, #24]
+	add sp, sp, #32
 	ret
 
 .globl doTriangleUp

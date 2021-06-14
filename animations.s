@@ -170,3 +170,16 @@ rgbaniloop:
 	bl delay
 	bl rgbAnimation
 	b rgbaniloop
+
+.globl doSceneEye
+// NOTE dpScemeEue
+doSceneEye:
+	//sub sp, sp, #???				// Guardamos 1 lugar del stack
+	stur x30, [sp, #0]			// Registro 30 para el RET en el stack
+	// Ojo
+
+	//
+
+endDoSceneEye:
+	ret
+
