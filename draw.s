@@ -32,18 +32,68 @@ loopDelay:
 	bl doCompuVentana
 	add x21, x21, 6				//
 	sub x22, x22, 3				// Muevo el mouse
-	bl doMouse
-	cmp x25, 19
-	b.eq loopDelay2
+	bl doMouse					// Lo dibujo
+	cmp x25, 18					// Comparo si itere un par de veces
+	b.eq endFirstDelay				// Cuando toque el boton del medio de la pantalla. Se rompe
 	add x25, x25, 1
 	b loopDelay
 
-loopDelay2:
+endFirstDelay:
 	bl delay
 	bl cleanScreen
 	bl doComputerBroken
 	bl drawUpdate
+	bl longDelay
+
+preDoSun:
+	mov x21, 39
+	mov x9, 0
+	sub sp, sp, 8
+	stur x9, [sp, 56] 
+doSun:
 	bl cleanScreen
+	bl anPiramidesDia
+
+	movz w18, 0xF2, lsl 16
+	movk w18, 0x740B, lsl 0
+	mov x23, 30
+	mov x22, 0
+	bl circRelleno
+	
+	add x21, x21, 10
+	bl drawUpdate
+
+	ldr x9, [sp, 56]
+	cmp x9, 58
+	b.eq doNoche
+	add x9, x9, 1
+	str x9, [sp, 56]
+
+	b doSun
+
+doNoche:
+	add sp, sp, 8
+	sub sp, sp, 8
+	mov x9, 0
+	str x9, [sp, 56]
+	mov x21, 0
+loopNoche:
+	bl cleanScreen
+	bl anPiramidesNoche
+
+	mov w18, 0xFFFFFF
+	mov x23, 30
+	mov x22, 0
+	bl circRelleno
+	add x21, x21, 10
+	bl drawUpdate
+
+	ldr x9, [sp, 56]
+	cmp x9, 65
+	b.eq preDoSun
+	add x9, x9, 1
+	str x9, [sp, 56]
+	b loopNoche
 
 endAnimacion:
 	ldr lr, [sp]
@@ -56,10 +106,55 @@ endAnimacion:
 	add sp, sp, 56
 	ret
 
+.globl doEstrella
+// NOTE Estrella
+doEstrella:
+	sub sp, sp, 32
+	str x21, [sp, 24]
+	str x22, [sp, 16]
+	str x23, [sp, 8]
+	str lr, [sp]
+
+	mov x23, 5
+	bl doHorizontalLine
+	add x21, x21, 2
+	sub x22, x22, 2
+	bl vertLine
+
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	ldr x22, [sp, 16]
+	ldr x21, [sp, 24]
+	add sp, sp, 32
+
+	ret
+
+.globl circRelleno
+circRelleno:
+	sub sp, sp, 16
+	str x23, [sp, 8]
+	str lr, [sp]
+
+loopRelleno:
+	bl doCircle
+	cbz x23, endRellenoCir
+	sub x23, x23, 1
+	b loopRelleno
+
+endRellenoCir:
+	ldr lr, [sp]
+	ldr x23, [sp, 8]
+	add sp, sp, 16
+	ret
+
+
 .globl doComputerBroken
 // NOTE doComputerBroken
 doComputerBroken:
-	sub sp, sp, 48
+	sub sp, sp, 72
+	str x7, [sp, 64]
+	str x8, [sp, 56]
+	str x9, [sp, 48]
 	stur x25, [sp, 40]
 	stur x24, [sp, 32]
 	stur x23, [sp, 24]
@@ -69,34 +164,155 @@ doComputerBroken:
 
 	bl doCompuVentana
 	bl doMouse
-	mov x21, 115
-	mov x22, 114
-	mov x23, 10
-	mov x24, 10
-	bl doRectangle
-	add x21, x21, 50
+	mov x22, 80
+	mov x23, 8
+	mov x24, 8
+	mov x10, 40
+	mov x9, 0
+	mov x7, 0
+
+loopCompBro1:		//FIXME No anda
+	cmp x9, 12
+	b.eq endCompBro
+	mov x7, 0
 	add x22, x22, 20
-	bl doRectangle
-	add x21, x21, 100
-	sub x22, x22, 40
-	bl doRectangle
+	mov x21, 120
 
-	mov x21, 300
-	mov x22, 300
-	mov x23, 5
-	bl doRectangle
+loopCompBro2:
+	cmp x7, x10
+	b.eq endLoopCompBro2
 
-	mov x21, 350
-	mov x22, 200
+	add x21, x21, 10
 	bl doRectangle
+	
+	add x7, x7, 1
+	b loopCompBro2
+endLoopCompBro2:
+	add x9, x9, 1
+	b loopCompBro1
 
+endCompBro:
 	ldr lr, [sp]
 	ldr x22, [sp, 8]
 	ldr x21, [sp, 16]
 	ldr x23, [sp, 24]
 	ldr x24, [sp, 32]
 	ldr x25, [sp, 40]
-	add sp, sp, 48
+	ldr x9, [sp, 48]
+	add sp, sp, 56
+	ret
+
+.globl anPiramidesDia
+// NOTE Segunda animacion
+anPiramidesDia:
+	sub sp, sp, 56
+	str x3, [sp, 40]
+	str x21, [sp, 32]
+	str x22, [sp, 24]
+	str x23, [sp, 16]
+	str x24, [sp, 8]
+	str lr, [sp]
+	mov x3, 1
+
+	// Fondo
+	movz w18, 0xA3, lsl 16
+	movk w18, 0x371F, lsl 0
+	mov x21, 0
+	mov x22, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+
+	// Piramides
+	movz w18, 0xDF, lsl 16
+	movk w18, 0x915E, lsl 0
+	mov x21, 200
+	mov x22, 300
+	mov x23, 50
+	bl doPiramide
+	add x21, x21, 200
+	add x23, x23, x23
+	bl doPiramide
+
+	// Desierto
+	movz w18, 0x6B, lsl 16
+	movk w18, 0x3E3E, lsl 0
+	mov x21, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+	mov x21, 50
+	mov x22, 0
+	mov x23, 50
+
+	movz w18, 0xFF, lsl 16
+	movk w18, 0xFFFF, lsl 0
+	mov x22, 350
+	mov x21, 100
+	bl doDiego
+
+endAnPir:
+	ldr lr, [sp]
+	ldr x24, [sp, 8]
+	ldr x23, [sp, 16]
+	ldr x22, [sp, 24]
+	ldr x21, [sp, 32]
+	ldr x3, [sp, 40]
+	add sp, sp, 56
+	ret
+
+.globl anPiramidesNoche
+anPiramidesNoche:
+	sub sp, sp, 40
+	str x21, [sp, 32]
+	str x22, [sp, 24]
+	str x23, [sp, 16]
+	str x24, [sp, 8]
+	str lr, [sp]
+
+	// Fondo
+	movz w18, 0x31, lsl 16
+	movk w18, 0x1f62, lsl 0
+	mov x21, 0
+	mov x22, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+
+	// Piramides
+	movz w18, 0x8d, lsl 16
+	movk w18, 0x5273, lsl0
+	mov x21, 200
+	mov x22, 300
+	mov x23, 50
+	bl doPiramide
+	add x21, x21, 200
+	add x23, x23, x23
+	bl doPiramide
+
+	// Desierto
+	movz w18, 0xc3, lsl 16
+	movk w18, 0x727c, lsl0
+	mov x21, 0
+	mov x23, 640
+	mov x24, 480
+	bl doRectangle
+	mov x21, 50
+	mov x22, 0
+	mov x23, 50
+
+	movz w18, 0x00, lsl 16
+	movk w18, 0x0000, lsl 0
+	mov x22, 350
+	mov x21, 100
+	bl doDiego
+
+	ldr lr, [sp]
+	ldr x24, [sp, 8]
+	ldr x23, [sp, 16]
+	ldr x22, [sp, 24]
+	ldr x21, [sp, 32]
+	add sp, sp, 40
 	ret
 
 .globl doMouse
@@ -467,7 +683,8 @@ doRectangle:	// alto x largo//
 	// x9 posición inicial de x
 	// x10 posición inicial de y
 
-	sub sp, sp, #48				// Reservamos 2 registros de memoria
+	sub sp, sp, #56				// Reservamos memoria
+	str x3, [sp, 48]
 	stur x21, [sp, 40]
 	stur x22, [sp, 32]
 	stur x23, [sp, 24]
@@ -492,7 +709,8 @@ endRectangule:
 	ldur x23, [sp, 24]
 	ldur x22, [sp, 32]
 	ldur x21, [sp, 40]
-	add sp, sp, 48				// Reservamos 2 registros de memoria
+	ldr x3, [sp, 48]
+	add sp, sp, 56				// Reservamos 2 registros de memoria
 	ret
 
 .globl doCircle
@@ -510,7 +728,10 @@ doCircle: // Mid-Point Circle Drawing Algorithm //
 	// x25 x
 	// x26 y
 	// x27 P
-	sub sp, sp, #16
+	sub sp, sp, #40
+	stur x23, [sp, 32]
+	stur x22, [sp, 24]
+	stur x21, [sp, 16]
 	stur x27, [sp, 8]
 	stur x30, [sp, #0]			// Guardamos el return pointer en memoria
 	mov x25, x23				// x = r
@@ -605,9 +826,12 @@ cirif2:						// if (x < y)
 	b.gt doCircleLoop
 
 circleEnd:
-	ldur x30, [sp, #0]  		// Guardamos el return pointer en memoria ret
+	ldur x30, [sp]  		// Guardamos el return pointer en memoria ret
 	ldur x27, [sp, 8]
-	add sp, sp, #16
+	ldur x21, [sp, 16]
+	ldur x22, [sp, 24]
+	ldur x23, [sp, 32]
+	add sp, sp, 40
 	ret
 
 .globl doTriangleUp

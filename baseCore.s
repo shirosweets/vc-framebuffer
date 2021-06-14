@@ -11,11 +11,11 @@
 .equ COLOR_2,			0xFFFF // Color blanco GB // 0x1607
 .equ COLOR_NEGRO,		0x00
 
-
 .globl drawPixel
 drawPixel:
 	// Args: y=x12  -- x=x16  -- colour=x18 -- BufferSwitch = x3
-	sub sp, sp, #8
+	sub sp, sp, #16
+	str x8, [sp, 8]
 	stur x30, [sp, #0]
 	bl setPixel                     // ret : x0
 	cbz x3, drawBuffer              // if x3 == 0 dibujar en el buffer
@@ -38,7 +38,8 @@ drawPrebuffer:                      // then dibujar en x28
 drawPixelEnd:
     stur w18, [x8]				// stur xN guarda 64bits, y stur wN guarda medio registro (32bits)
 	ldur x30, [sp, #0]
-	add sp, sp, #8
+	ldr x8, [sp, 8]
+	add sp, sp, #16
 	ret
 
 .globl setPixel
@@ -62,6 +63,7 @@ drawUpdate:
 	str x9, [sp, 16]
 	str x10, [sp, 8]
 	str lr, [sp]
+
 	mov x8, x20
 	mov x7, x28
 	mov x9, 0
@@ -72,12 +74,49 @@ updateLoop:
 	str w6, [x8]
 	add x8, x8, 4
 	add x7, x7, 4
+
 	cmp x9, x10
 	b.eq endUpdate
+	
 	add x9, x9, 1
 	b updateLoop
 
 endUpdate:
+	ldr lr, [sp]
+	ldr x10, [sp, 8]
+	ldr x9, [sp, 16]
+	ldr x7, [sp, 24]
+	ldr x8, [sp, 32]
+	add sp, sp, 40
+	ret
+
+.globl drawUpdateWithCleanScreen
+drawUpdateWithCleanScreen:
+	// x28 PreFrameBuffer
+	// x20 FrameBuffer
+	sub sp, sp, 40
+	str x8, [sp, 32]
+	str x7, [sp, 24]
+	str x9, [sp, 16]
+	str x10, [sp, 8]
+	str lr, [sp]
+	mov x8, x20
+	mov x7, x28
+	mov x9, 0
+	ldr x10, TOTAL_PIXELS
+	mov w15, 0x00
+
+updateLoopWithClean:
+	str w15, [x7]
+	str w15, [x8]
+	add x8, x8, 4
+	add x7, x7, 4
+	cmp x9, x10
+	b.eq endUpdateAndClean
+	add x9, x9, 1
+	b updateLoopWithClean
+
+endUpdateAndClean:
 	ldr x8, [sp, 32]
 	ldr x7, [sp, 24]
 	ldr x9, [sp, 16]
