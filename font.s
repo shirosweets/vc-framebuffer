@@ -200,31 +200,30 @@ doI:
 .globl doO
 // NOTE o
 doO:
-	// Args
-	// x21 x
-	// x22 y
-	// w18 color
-	sub sp, sp, 24
+	sub sp, sp, 32
+	str x23, [sp, 24]
 	stur x22, [sp, #16]
 	stur x21, [sp, #8]
 	stur lr, [sp]
 
 	add x21, x21, 1
-	mov x23, 10
-	bl doHorizontalLine
+
+	mov x23, 7						// Cant de pixeles
+	bl doHorizontalLine				// Linea h inferior
+	add x21, x21, 7
+	sub x22, x22, 8
+	mov x23, 7
+	bl vertLine						// Linea v derecha
+	sub x21, x21, 7
+	sub x22, x22, 1
+	bl doHorizontalLine				// Linea h superior
 	sub x21, x21, 1
 	add x22, x22, 1
-	bl vertLine
-	add x21, x21, 11
-	bl vertLine
-	sub x21, x21, 10
-	add x22, x22, 11
-	bl doHorizontalLine
 
-	ldur lr, [sp]
-	ldur x21, [sp, #8]
-	ldur x22, [sp, #16]
-	add sp, sp, 24
+	bl vertLine						// Linea v izquierda
+
+	ldr x23, [sp, 24]
+	add sp, sp, 32
 	ret
 
 .globl doDm
@@ -561,58 +560,68 @@ doGm:		// REVIEW Done
 	ret
 
 .globl doG
-// NOTE g
-doG:		// REVIEW Done
-	// @Diego
+// NOTE g minus
+doG:	// 16x8
 	// Args
 	// x21 x inicial
 	// x22 y inicial
-	// x18 color
-	sub sp, sp, 40
-	stur x21, [sp, 32]
-	stur x22, [sp, 24]
-	stur x18, [sp, 16]
-	stur x23, [sp, 8]
+	// w18 color
+	// x23 = w = 16
+	sub sp, sp, #48
+	mov x3, 0
+	stur x9, [sp, #40]		// x1
+	stur x10, [sp, #32]		// x2
+	stur x21, [sp, #24]
+	stur x22, [sp, #16]
+	stur x23, [sp, #8]
 	stur lr, [sp]
 
-	mov x23, 10
+	add x21, x21, 1				// Ignoramos el primer pixel
+	mov x23, 7
+	bl doHorizontalLine			// Linea h inferior
+	add x21, x21, 7
+	mov x10, x22				// yih
+	sub x22, x22, 7
+	mov x9, x21					// xih
+	bl vertLine					// Linea v derecha
+	sub x21, x21, 7
+	mov x23, 7
 	bl doHorizontalLine
-	sub x21, x21, 1
+
+	sub x21, x21, 1				// Ignoramos el primer pixel
 	add x22, x22, 1
 	mov x23, 5
+
+	bl vertLine					// Linea v izq
+
+	mov x21, x9
+	mov x22, x10
+
+	mov x23, 6					// hago la line hacia abajo
 	bl vertLine
 
-	add x21, x21, 1
-	add x22, x22, 5
-	mov x23, 10
+	add x22, x22, 7
+	sub x21, x21, 6
+	mov x23, 6
 	bl doHorizontalLine
-
-	add x21, x21, 10
-	sub x22, x22, 5
-	mov x23, 14
-	bl vertLine
-
-	add x22, x22, 15
-	sub x21, x21, 9
-	mov x23, 9
-	bl doHorizontalLine
-
+	sub x22, x22, 1
 	sub x21, x21, 1
-	sub x22, x22, 5
-	mov x23, 4
-	bl vertLine
 
-	ldur x21, [sp, 32]
-	ldur x22, [sp, 24]
-	ldur x18, [sp, 16]
-	ldur x23, [sp, 8]
+	mov x23, 1
+	bl doHorizontalLine
+
 	ldur lr, [sp]
-	add sp, sp, 40
+	ldur x23, [sp, #8]
+	ldur x22, [sp, #16]
+	ldur x21, [sp, #24]
+	ldur x10, [sp, #32]
+	ldur x9, [sp, #40]
+	add sp, sp, #48
 	ret
 
 .globl doDiego
 // NOTE Diego
-doDiego:	// REVIEW Done
+doDiego:
 	// Args
 	// x21 x
 	// x22 y

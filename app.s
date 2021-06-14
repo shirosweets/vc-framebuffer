@@ -43,7 +43,19 @@ main:
 	bl cleanScreen
 	mov x21, 200
 	mov x22, 250
-	bl doAnimacionInicial
+	//bl doAnimacionInicial
+	mov x13, 255				// R
+	mov x14, 255				// G
+	mov x15, 255				// B
+	bl setColour				// R+G+B = Blanco
+	mov x23, 400
+	bl doHorizontalLine
+	mov x13, 255				// R
+	mov x14, 255				// G
+	mov x15, 8					// B
+	bl setColour				// R+G+B = Rojo
+	mov x23, 20
+	bl doDiego
 	/*mov x21, #320					// xc x centro
 	mov x22, #250					// yc y centro
 	bl drawUpdate
