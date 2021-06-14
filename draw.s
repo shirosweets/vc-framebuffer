@@ -86,8 +86,6 @@ loopNoche:
 	mov x22, 0
 	bl circRelleno
 	add x21, x21, 10
-	mov x18, 0xFFFFFF
-	bl doEstrella
 	bl drawUpdate
 
 	ldr x9, [sp, 56]
