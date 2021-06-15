@@ -1,17 +1,20 @@
 # Contenido
-- [¿Cómo se corre desde el QEMU?](#¿Cómo-se-corre-desde-el-QEMU?)
-- [Ejercicio 1](#Ejercicio-1)
-- [Ejercicio 2](#Ejercicio-2)
-- [TODO](#Todo)
-- [Figuras a dibujar](#Figuras-a-dibujar)
-- [Animaciones](#Animaciones)
-- [Escenas](#Escenas)
-- [Pixel Art](#Pixel-Art)
- - [Colores](#Colores)
+- [Contenido](#contenido)
+- [¿Cómo se corre desde el QEMU?](#cómo-se-corre-desde-el-qemu)
+  - [Correr sin QEMU](#correr-sin-qemu)
+- [Ejercicio 1](#ejercicio-1)
+- [Ejercicio 2](#ejercicio-2)
+- [TODO](#todo)
+- [Animaciones](#animaciones)
+- [Escenas](#escenas)
+- [Figuras a dibujar](#figuras-a-dibujar)
+- [Pixel Art](#pixel-art)
+  - [Colores](#colores)
+  - [Bugs XD](#bugs-xd)
 
 # ¿Cómo se corre desde el QEMU?
 
-`make`
+`make clean`
 
 `make runQEMU`
 
@@ -55,7 +58,7 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 - [x] Agregar y definir la variable del color del fondo.
 
 - [x] Definir variable de la velocidad de la animación (discutir).
-    - [ ] Definir la función `delay`.
+    - [x] Definir la función `delay`.
 
 - [x] Crear función `doHorizontalLine` para dibujar líneas horizontales.
     ```js
@@ -68,21 +71,21 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
     x18 : Colour
     ```
 
-- [ ] Completar función para dibujar cuadrados.
+- [x] Completar función para dibujar cuadrados.
 
 - [x] Completar función para dibujar rectángulos.
 
 - [x] Completar función para dibujar círculos.
     - [x] Arreglar la "cruz" en los ejes `xc` e `yc` (no se pintan).
-    - [ ] Añadir lógica de rellenar la figura con un argumento.
+    - [x] Añadir lógica de rellenar la figura con un argumento.
 
 - [-] Modificar función `setPixel` para que use el stack pointer **(no la necesita)**.
 
 - [x] Averiguar como correrlo con GBA (si es que se puede).
     - [-] (\S) Si no se puede, encontrar alternativa.
 
-- [ ] Definir escenas para dibujarlas.
-    - [ ] Definir animaciones de transición.
+- [x] Definir escenas para dibujarlas.
+    - [x] Definir animaciones de transición.
     - [x] Definir la función `paintScreen`. Esta función lo que hace es pintar la pantalla de un color.
         ```js
         Argumentos
@@ -93,36 +96,50 @@ NOTA IMPORTANTE: Tener en cuenta las diferencias existentes entre el set de inst
 - [ ] Añadir el checkeo de que no se escriban píxeles fuera del framebuffer.
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) y en este archivo [font.s](font.s) (@diegogimenez04):
-    - [ ] doDm (crea una `D` en mayúscula)
-    - [ ] doO (crea una `o` en minúscula)
-    - [ ] doE (crea una `e` en minúscula)
-    - [ ] doI (crea una `i` en minúscula)
-    - [ ] doZ (crea una `z` en minúscula)
-    - [ ] doM (crea una `m` en minúscula)
-    - [ ] doG (crea una `g` en minúscula)
-    - [ ] doGm (crea una `G` en mayúscula)
+    - [x] doDm (crea una `D` en mayúscula)
+    - [x] doO (crea una `o` en minúscula)
+    - [x] doE (crea una `e` en minúscula)
+    - [x] doEm (crea una `E` en mayúscula)
+    - [x] doI (crea una `i` en minúscula)
+    - [x] doIm (crea una `I` en mayúscula)
+    - [x] doZ (crea una `z` en minúscula)
+    - [x] doM (crea una `m` en minúscula)
+    - [x] doG (crea una `g` en minúscula)
+    - [x] doGm (crea una `G` en mayúscula)
 
 - Crear las siguientes letras con esta [fuente](https://www.dafont.com/es/minitel.font?text=console) [font.s](font.s) (@shirosweets):
-    - [ ] doAm (crea una `a` en minúscula)
-    - [ ] doT (crea una `t` en minúscula)
-    - [ ] doVm (crea una `V` en mayúscula)
-    - [ ] doN (crea una `n` en minúscula)
-    - [ ] doP (crea una `p` en minúscula)
-    - [ ] doS (crea una `s` en minúscula)
-    - [ ] doL (crea una `l` en minúscula)
+    - [x] doA (crea una `a` en minúscula)
+    - [x] doAm (crea una `A` en mayúscula)
+    - [x] doT (crea una `t` en minúscula)
+    - [x] doVm (crea una `V` en mayúscula)
+    - [x] doN (crea una `n` en minúscula)
+    - [x] doP (crea una `p` en minúscula)
+    - [x] doS (crea una `s` en minúscula)
+    - [x] doL (crea una `l` en minúscula)
 
 - Añadir al archivo [variables.md](variables.md):
     - [ ] Tags/funciones usadas como título.
     - [ ] Breve descripción de lo que hace.
     - [ ] "Argumentos" a utilizar.
 
-- [ ] Averiguar por qué corre más rápido al separar archivos.
+- [x] Averiguar por qué corre más rápido al separar archivos.
 
-- [ ] Finalizar una estructura básica del EJ1.
+- [x] Finalizar una estructura básica del EJ1.
 
-- [ ] Estructura básica del EJ2.
+- [x] Estructura básica del EJ2.
 
-- [ ] Repasar
+- [x] Repasar
+
+- [x] Buscar alternativa para no tener que checkear el memory_map.txt
+
+- [x] Mover las animaciones de pantalla completa a `aScreenAnimations.s`
+
+- [x] Mover las funciones base para setear pixeles, pintar, etc. a `baseCore.s`
+
+- [ ] En el archivo `test.s`, en la función `makeSomeLines`: limpiar y cambiar x -> w en los stur
+
+- [ ] Importante: agregar guardado del registro **x30** de las funciones del archivo `test.s`
+
 
 # Animaciones
 1. Girar colores en RBG
@@ -170,3 +187,35 @@ https://nootall.tumblr.com/image/613601319149846528
 https://www.rapidtables.com/web/color/RGB_Color.html
 
 https://htmlcolorcodes.com/es/
+
+## Bugs XD
+
+Cuando ocurre este error hermoso:
+```bash
+shirosweets@shiro:~/Desktop/ORG/vc-framebuffer$ make remake
+rm -f *.o memory_map.txt kernel8.list kernel8.img kernel8.elf
+make run
+make[1]: Entering directory '/home/shirosweets/Desktop/ORG/vc-framebuffer'
+aarch64-linux-gnu-as -g --warn --fatal-warnings animations.s -o animations.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings draw.s -o draw.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings raven.s -o raven.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings font.s -o font.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings test.s -o test.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings owl.s -o owl.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings app.s -o app.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings baseCore.s -o baseCore.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings start.s -o start.o
+aarch64-linux-gnu-as -g --warn --fatal-warnings screenAnimations.s -o screenAnimations.o
+aarch64-linux-gnu-ld animations.o draw.o raven.o font.o test.o owl.o app.o baseCore.o start.o screenAnimations.o -T memmap -o kernel8.elf -M > memory_map.txt
+screenAnimations.o: in function `paintScreen':
+(.data+0x124): relocation truncated to fit: R_AARCH64_ADR_PREL_LO21 against symbol `PreFrameBuffer' defined in .data section in start.o
+make[1]: *** [Makefile:16: kernel8.img] Error 1
+make[1]: Leaving directory '/home/shirosweets/Desktop/ORG/vc-framebuffer'
+make: *** [Makefile:24: remake] Error 2
+```
+
+Es porque el BL que debe realizar al compilarse es mayor al que puede realizar xdxdxd.
+
+Solución: renombre el archivo para que esté más arriba uwu
+
+---

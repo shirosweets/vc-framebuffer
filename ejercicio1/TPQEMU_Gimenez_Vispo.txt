@@ -1,0 +1,10 @@
+Ejercicio 1:
+
+En el ejercicio uno se ven 2 pirámides durante el día con los nombres de los integrantes.
+
+Trabajo en Github:
+https://github.com/shirosweets/vc-framebuffer
+
+Alumnos:
+- Gimenez, Diego Nicolás
+- Vispo, Valentina Solange

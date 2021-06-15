@@ -11,7 +11,7 @@ rec
 assets/rename_me
 
 # Ignora
-*.txt
+assets/owl_md.txt
 *.o
 app.o
 start.o
@@ -23,15 +23,17 @@ kernel8.img
 kernel8.list
 
 # Python
-sprite_parser.py
+
 
 # Examples
 assets/algorithms
 
 # Krita
 *.kra
+*.kra~
 
 # ToDos README
 todo_readme.md
+tod
 
 # Archivos grandes

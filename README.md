@@ -7,7 +7,7 @@
 # Vc framebuffer
 Framebuffer to the graphics device access method of a computer system, in which each pixel on the screen is represented as locations of a specific portion of the random access memory map (main memory system)
 
-# Instalation
+# Debian Based Instalation
 `sudo apt update`
 
 `sudo apt install gcc-aarch64-linux-gnu`
@@ -111,22 +111,24 @@ Your browser does not support the video tag.
 
 **[app.s](app.s)** **→** "main"
 
+**[baseCore.s](baseCore.s)** **→** low level abstractions for framebuffer manipulation
+
 **[draw.s](draw.s)** **→** basic lines and figures
 
 **[font.s](font.s)** **→** upper case and lower case
 
 **[animations.s](animations.s)** **→** delay
 
-**[screen_animations.s](screen_animation.s)** **→** screen animations (animations across the screen)
+**[aScreenAnimations.s](aScreenAnimation.s)** **→** screen animations (animations across the screen)
 
 **[todo.md](todo.md)**
 
-**[owl.s](owl.s)** **→** Pixel Art
+**[zowl.s](zowl.s)** **→** Pixel Art
 <p align="center">
   <img src="png/owl_100x100.png" width="350" title="doOwl">
 </p>
 
-**[raven.s](raven.s)** **→** Pixel Art
+**[zraven.s](zraven.s)** **→** Pixel Art
 <p align="center">
   <img src="png/raven_100x100.png" width="350" title="doRaven">
 </p>
