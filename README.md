@@ -34,7 +34,6 @@ Framebuffer to the graphics device access method of a computer system, in which 
 - `make runGDB`: after `make runQEMU` need to use in other console (remember path) **[DEBUG]**
 - `make remake`: run `make clean` then `make run`
 
-
 # How to debug
 
 `stepi`
@@ -97,13 +96,19 @@ setColour:
   <img src="assets/colours/morado_a255ff.png" width="350" title="morado_a255ff">
 </p>
 
+# Final animation
+`doAnimacionInicial`
+
+[![Alt text for your video](https://i9.ytimg.com/vi/stEPF3ZAWOM/mq1.jpg?sqp=CKDQrYYG&rs=AOn4CLCPR-xgW59QgnwAQ_ByMkgbFlMZjw)](https://youtu.be/stEPF3ZAWOM)
+
 # Partial animation
 `circleAnimation1`
 
-<video width="800" height="450" controls>
-  <source src="assets/video/circleAnimation1.mkv">
-Your browser does not support the video tag.
-</video>
+[![Alt text for your video](https://i9.ytimg.com/vi/imamwMzBx7A/mq2.jpg?sqp=CKDQrYYG&rs=AOn4CLD9Tn7km8eO249dL9ppg9oM4PEo1Q)](https://youtu.be/imamwMzBx7A)
+
+`rgbAnimation`
+
+[![Alt text for your video](https://i9.ytimg.com/vi/0fbYNrxMBks/mq2.jpg?sqp=CPTNrYYG&rs=AOn4CLBOcKHD_Pb6IB7TZg9G4qpF-CkESg)](https://youtu.be/0fbYNrxMBks)
 
 # <img src="assets/logos/files.svg" width="25" height="25"> Files
 
